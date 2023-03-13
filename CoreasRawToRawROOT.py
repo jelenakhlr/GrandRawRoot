@@ -1,11 +1,10 @@
-from optparse import OptionParser
 import glob
-import time
+import datetime #to get the unix timestamp
+import time #to get the unix timestamp
 from grand.io.root_trees import *
-from CorsikaInfoFuncs import *
 import raw_root_trees as RawTrees
+from CorsikaInfoFuncs import *
 
-# TODO: check if the IDs in SIM.reas and RUN.inp match
 
 
 def CoreasRawToRawROOT(path):
@@ -13,16 +12,17 @@ def CoreasRawToRawROOT(path):
   put meaningful comments here
 
   """
-  OutputFileName = "Test.root"
-  #######################
-  # load Corsika files  #
-  #######################
+  # output file name hardcoded in the root tree section
+
+  ###############################
+  # Part A: load Corsika files  #
+  ###############################
 
   print("Checking", path, "for *.reas and *.inp files (shower info).")
-
-  # ********** load SIM.reas and RUN.inp **********
+  # TODO: check if the IDs in SIM.reas and RUN.inp match
   # TODO: maybe specify RUN number as input value - or as choice when there is more than one 
 
+  # ********** load SIM.reas **********
   # find reas files
   if glob.glob(path + "SIM??????-*.reas"):
       available_reas_files = glob.glob(path + "SIM??????-*.reas") # these are from parallel runs
@@ -45,7 +45,7 @@ def CoreasRawToRawROOT(path):
   print("*****************************************")
 
 
-
+  # ********** load RUN.inp **********
   # find inp files
   available_inp_files = glob.glob(path + "RUN??????.inp")
 
@@ -65,63 +65,25 @@ def CoreasRawToRawROOT(path):
 
   # ********** load traces **********
   print("Checking subdirectories for *.dat files (traces).")
-  available_traces = glob.glob(options.dir + "SIM??????_coreas/*.dat")
+  available_traces = glob.glob(path + "SIM??????_coreas/*.dat")
   print("Found", len(available_traces), "*.dat files (traces).")
   print("*****************************************")
   # in each dat file:
   # time stamp and the north-, west-, and vertical component of the electric field
 
 
-
-  # prepare traces as in DataStoringExample.py
-  filename = reas_input.split(".reas")[0] + ".root"
-  event_count = 1
-  adc_traces = []
-  traces = []
-  for ev in range(event_count):
-      adc_traces.append([])
-      traces.append([])
-      for i, file in enumerate(available_traces):
-          adc_traces[-1].append(
-              (
-                  np.genfromtxt(file)[:,0].astype(np.int16),
-                  np.genfromtxt(file)[:,1].astype(np.int16),
-                  np.genfromtxt(file)[:,2].astype(np.int16),
-                  np.genfromtxt(file)[:,3].astype(np.int16),
-              )
-          )
-          traces[-1].append(
-              (
-                  (adc_traces[-1][i][0] * 0.9 / 8192).astype(np.float32),
-                  (adc_traces[-1][i][1] * 0.9 / 8192).astype(np.float32),
-                  (adc_traces[-1][i][2] * 0.9 / 8192).astype(np.float32),
-              )
-          )
-
-
-
-  #######################
-  # Generate ROOT Trees #
-  #######################
-
-  
-  #############################################################################################################################
-  # ShowerSimInfo (deals with the details for the simulation). This might be simulator-dependent (CoREAS has different parameters)
-  #############################################################################################################################
-  
-  # The tree with the Shower information common to ZHAireS and Coreas
-  RawShower = RawTrees.RawShowerTree(OutputFileName)
-  # The tree with Coreas-only info
-
-
+  ###############################
+  # Part B: Generate ROOT Trees #
+  ###############################
 
   #########################################################################################################################
-  # Part I: get the information from Coreas
+  # Part B.I.i: get the information from Coreas input files
   #########################################################################################################################   
   # from reas file
-  CoreCoordinateNorth = read_params(reas_input, "CoreCoordinateNorth") * 100
-  CoreCoordinateWest = read_params(reas_input, "CoreCoordinateWest") * 100
-  CoreCoordinateVertical = read_params(reas_input, "CoreCoordinateVertical") * 100
+  CoreCoordinateNorth = read_params(reas_input, "CoreCoordinateNorth") * 100 # convert to m
+  CoreCoordinateWest = read_params(reas_input, "CoreCoordinateWest") * 100 # convert to m
+  CoreCoordinateVertical = read_params(reas_input, "CoreCoordinateVertical") * 100 # convert to m
+  CorePosition = [CoreCoordinateNorth, CoreCoordinateWest, CoreCoordinateVertical]
 
   TimeResolution = read_params(reas_input, "TimeResolution")
   AutomaticTimeBoundaries = read_params(reas_input, "AutomaticTimeBoundaries")
@@ -156,22 +118,55 @@ def CoreasRawToRawROOT(path):
   radnkg = read_params(inp_input, "RADNKG")
 
   # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # fix these values! for now: placeholders
   # TODO: read and store all seeds as a list
-  # RandomSeed = read_params(inp_input, "SEED")
+
+  RandomSeed = [1,2,3,4,5,6]
   
-  # TODO: read keywords with multiple values as string
-  # ecuts = 
-  # parallel = 
-  # elmflg = 
-  # thin = 
-  # thinh = 
+  ecuts = [1,2,3,4] 
+  # 0: hadrons & nuclei, 1: muons, 2: e-, 3: photons
+  GammaEnergyCut    = ecuts[3]
+  ElectronEnergyCut = ecuts[2]
+  MuonEnergyCut     = ecuts[1] # TODO: check if this exists in Zhaires
+  HadronEnergyCut   = ecuts[0]
+  NucleonEnergyCut  = ecuts[0]
+  MesonEnergyCut    = HadronEnergyCut # mesons are hadronic, so this should be fine
+
+  parallel = [1,2] # COREAS-only
+  # PARALLEL = [ECTCUT, ECTMAX, MPIID, FECTOUT]
+  # ECTCUT: limit for subshowers
+  # ECTMAX: maximum energy for complete shower
+  # MPIID: ID for mpi run (ignore for now)
+  # T/F flag for extra output file (ignore for now)
+
+  elmflg = [1,2,3] # COREAS-only
+
+  # In Zhaires converter: RelativeThinning, WeightFactor
+  # I have:
+  thin  = [1,2,3] 
+  # THIN = [limit, weight, Rmax]
+  thinh = [1,2,3] 
+  # THINH = [limit, weight] for hadrons
   
+  # !!!! suggestion: 
+  ThinLimit  = [thin[0], thinh[0]]
+  ThinWeight = [thin[1], thinh[1]]
+  ThinRmax   = thin[2]
+
+
   # TODO: read keywords with T or F flags as string
-  # MUMULT  T
-  # MUADDI  T
-  # PAROUT  T  F
-  # LONGI   T   5.     T       T
+  mumult = "T"
+  muaddi = "T"
+  parout = ["T", "F"]
+  longi  = ["T", "5", "T", "T"]
   # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+  # from long file
+  # TODO: add params from long file
+
+  EnergyInNeutrinos = 1. # placeholder
+  # + energy in all other particles
 
   # RawROOT addition
   EventName = "Event_" + str(EventID)
@@ -186,21 +181,178 @@ def CoreasRawToRawROOT(path):
   LowEnergyModel = "urqmd" #TODO:Unhardcode this
   print("Warning, hard-coded LowEnergyModel", LowEnergyModel)
 
-  # TODO: add CPU time
   # TODO: add function for reading logs
+  # TODO: add CPU time
+  CPUTime = 1.
+  # TODO: find injection altitude
+  InjectionAltitude = 100.
+
+  ArrayName = "GP13" # TODO: unhardcode this
+
+  # TODO: find xmax
+  # SlantXmax
+  # XmaxPosition
+  # XmaxDistance
+  # XmaxAltitude
 
   ############################################################################################################################
-  # Part II: Fill RawShower TTree 
+  # Part B.I.ii: Create and fill the RAW Shower Tree
   ############################################################################################################################
+  OutputFileName = "Coreas_" + EventName +".root"
+
+  # The tree with the Shower information common to ZHAireS and Coreas
+  RawShower = RawTrees.RawShowerTree(OutputFileName)
+  # The tree with Coreas-only info
+  SimCoreasShower = RawTrees.RawCoreasTree(OutputFileName)
+  # TODO: figure out what goes here -> its all leftover info 
+
+  # ********** fill RawShower **********
   RawShower.run_number = RunID
-  RawShower.shower_sim = "Coreas"  #TODO:Unhardcode this, add version, etc
+  RawShower.shower_sim = "Coreas"  # TODO:Unhardcode this, add version, etc
   RawShower.event_number = EventID
-  RawShower.prim_energy = [Energy] #TODO: test multiple primaries
+  RawShower.event_name = EventName
+  RawShower.event_date = Date
+  RawShower.unix_date = UnixDate
+
+  RawShower.rnd_seed = RandomSeed
+
+  RawShower.energy_in_neutrinos = EnergyInNeutrinos
+  RawShower.prim_energy = [Energy]
   RawShower.shower_azimuth = Azimuth
   RawShower.shower_zenith = Zenith
+  RawShower.prim_type = [str(Primary)]
+  RawShower.prim_inj_alt_shc = [InjectionAltitude]
+  RawShower.atmos_model = str(AtmosphericModel)
+
+  RawShower.magnetic_field = np.array([FieldInclination,FieldDeclination,FieldIntensity])
+  # RawShower.xmax_grams = SlantXmax
+  # RawShower.xmax_pos_shc = XmaxPosition
+  # RawShower.xmax_distance = XmaxDistance
+  # RawShower.xmax_alt = XmaxAltitude
+  RawShower.hadronic_model = HadronicModel
+  RawShower.low_energy_model = LowEnergyModel
+  RawShower.cpu_time = float(CPUTime)
+
+  # from zhaires converter:
+  # RawShower.relative_thinning = RelativeThinning
+  # RawShower.weight_factor = WeightFactor  
+  # change to:
+  RawShower.thinning = ThinLimit # list of floats
+  RawShower.weight_factor = ThinWeight # list of floats
+  RawShower.thin_Rmax = ThinRmax # float
+
+  RawShower.gamma_energy_cut = GammaEnergyCut
+  RawShower.electron_energy_cut = ElectronEnergyCut
+  RawShower.muon_energy_cut = MuonEnergyCut
+  RawShower.meson_energy_cut = MesonEnergyCut # and hadrons
+  RawShower.nucleon_energy_cut = NucleonEnergyCut # same as meson and hadron cut
+
+  RawShower.shower_core_pos = np.array(CorePosition) #do we want np.array(list)?
+  #TODO ASAP: ArrayName
+  RawShower.array_name = ArrayName
+  #TODO ASAP: EventWeight
+  #TODO ASAP: TestedCores
+
+####**********************
+  # get all info from the long file
+
+
 
   RawShower.fill()
   RawShower.write()
+
+
+  #########################################################################################################################
+  # Part B.II.i: get the information from Coreas output files (i.e. the traces and some extra info)
+  #########################################################################################################################   
+  
+  #****** info from input files: ******
+
+  # placeholders
+  # TODO: find these values
+  RefractionIndexModel = "model"
+  RefractionIndexParameters = [1,2,3] # ? 
+  
+  TimeWindowMin = TimeLowerBoundary # from reas
+  TimeWindowMax = TimeUpperBoundary # from reas
+  TimeBinSize   = TimeResolution    # from reas
+
+
+  #****** load traces ******
+  tracefiles = available_traces # from initial file checks
+
+  # get antenna positions from list file (later)
+  # get efield for each antenna (later)
+
+  ############################################################################################################################
+  # Part B.II.ii: Create and fill the RawEfield Tree
+  ############################################################################################################################
+ 
+  #****** fill shower info ******
+  RawEfield = RawTrees.RawEfieldTree(OutputFileName)
+
+  RawEfield.run_number = RunID
+  RawEfield.event_number = EventID
+
+  RawEfield.efield_sim = "Coreas" # TODO: unhardcode this
+
+  RawEfield.refractivity_model = RefractionIndexModel                                       
+  RawEfield.refractivity_model_parameters = RefractionIndexParameters                       
+        
+  #TODO ASAP: Find how to do this
+  #RawEfield.refractivity_profile=Atmostable.T[0].tolist() 
+  #RawEfield.refractivity_profile.append(RefrIndex.tolist())
+  RawEfield.t_pre = TimeWindowMin
+  RawEfield.t_post = TimeWindowMax
+  RawEfield.t_bin_size = TimeBinSize
+
+  #****** fill traces ******
+ 
+  RawEfield.du_count = len(tracefiles)
+
+
+  for antenna in ant_IDs:
+    tracefile = glob.glob(path + "SIM??????_coreas/raw_" + str(antenna) + ".dat")
+
+    # load the efield traces for this antenna
+    # the files are setup like [timestamp, x polarization, y polarization, z polarization]
+    efield = np.loadtxt(tracefile, dtype='f4')
+    
+    t_0 = np.array(efield[:,0], dtype = np.float32)
+    x_polarization = np.array(efield[:,1], dtype = np.float32)
+    y_polarization = np.array(efield[:,2], dtype = np.float32)
+    z_polarization = np.array(efield[:,3], dtype = np.float32)
+    
+
+    # DetectorID = IDs[ant_ID] 
+    # is this supposed to be antenna name vs antenna ID?
+    
+    # TODO: check this
+    # in Zhaires converter: AntennaN[ant_ID]
+    RawEfield.du_id.append(int(antenna)) 
+
+    RawEfield.t_0.append(t_0)
+
+    # Traces
+    RawEfield.trace_x.append(x_polarization)
+    RawEfield.trace_y.append(y_polarization)
+    RawEfield.trace_z.append(z_polarization)
+
+    # Antenna positions in showers's referential in [m]
+    
+    pathAntennaList = glob.glob(path + "*.list")[0]
+    # TODO: read only the line with the antenna ID
+
+    RawEfield.pos_x.append(ant_position[0])
+    RawEfield.pos_y.append(ant_position[1])
+    RawEfield.pos_z.append(ant_position[2])
+
+
+                 
+    RawEfield.fill()
+    RawEfield.write()
+
+
 
   print("### The event written was " + EventName)
 
