@@ -132,7 +132,8 @@ def CoreasRawToRawROOT(path):
   NucleonEnergyCut  = ecuts[0]
   MesonEnergyCut    = HadronEnergyCut # mesons are hadronic, so this should be fine
 
-  parallel = [1,2] # COREAS-only
+  # parallel = [1,2] # COREAS-only
+  # also: I might not be using parallel anyway, so leave this out for now
   # PARALLEL = [ECTCUT, ECTMAX, MPIID, FECTOUT]
   # ECTCUT: limit for subshowers
   # ECTMAX: maximum energy for complete shower
@@ -162,8 +163,44 @@ def CoreasRawToRawROOT(path):
   # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-  # from long file
-  # TODO: add params from long file
+  ##########################################
+  # get all info from the long file
+  pathLongFile = glob.glob(path + "DAT??????.long")[0]
+
+  # the long file has an annoying setup, which I (very inelegantly) circumvent with this function:
+  read_long(pathLongFile)
+
+  #**** particle distribution
+  particle_dist = np.genfromtxt(pathLongFile + "_particledist.txt", skip_header = 2)
+  # DEPTH, GAMMAS, POSITRONS, ELECTRONS, MU+, MU-, HADRONS, CHARGED, NUCLEI, CHERENKOV
+  pd_depth = particle_dist[:,0]
+  pd_gammas = particle_dist[:,1]
+  pd_positrons = particle_dist[:,2]
+  pd_electrons = particle_dist[:,3]
+  pd_muP = particle_dist[:,4]
+  pd_muN = particle_dist[:,5]
+  pd_hadrons = particle_dist[:,6]
+  pd_charged = particle_dist[:,7]
+  pd_nuclei = particle_dist[:,8]
+  pd_cherenkov = particle_dist[:,9]
+
+  #**** energy deposit
+  energy_dep = np.genfromtxt(pathLongFile + "_energydep.txt", skip_header = 2, skip_footer = 2)
+  # the depth here is not the same as for the particle dist, because that would be too easy
+  # DEPTH, GAMMA, EM IONIZ, EM CUT, MU IONIZ, MU CUT, HADR IONIZ, HADR CUT, NEUTRINO, SUM
+  ed_depth = particle_dist[:,0]
+  ed_gamma = particle_dist[:,1]
+  ed_em_ioniz = particle_dist[:,2]
+  ed_em_cut = particle_dist[:,3]
+  ed_mu_ioniz = particle_dist[:,4]
+  ed_mu_cut = particle_dist[:,5]
+  ed_hadron_ioniz = particle_dist[:,6]
+  ed_hadron_cut = particle_dist[:,7]
+  ed_neutrino = particle_dist[:,8]
+  ed_sum = particle_dist[:,9]
+
+
+  ##############################################
 
   EnergyInNeutrinos = 1. # placeholder
   # + energy in all other particles
@@ -253,14 +290,41 @@ def CoreasRawToRawROOT(path):
   #TODO ASAP: EventWeight
   #TODO ASAP: TestedCores
 
-####**********************
-  # get all info from the long file
 
+  # fill the longitudinal profile, i.e. the particle distribution and energy deposit
 
+  RawShower.long_depth.append(pd_depth)  
+  RawShower.long_gammas.append(pd_gammas) 
+
+  # ? RawShower.long_slantdepth.append()  
+  RawShower.long_eminus.append(pd_electrons)
+
+  RawShower.long_eplus.append(pd_positrons)
+
+  RawShower.long_muminus.append(muN)
+  RawShower.long_muplus.append(muP)
+
+  # ? RawShower.long_allch.append()
+
+  RawShower.long_nuclei.append(pd_nuclei)
+
+  RawShower.long_neutrino.append(ed_neutrino)
+
+  # ? RawShower.long_gamma_cut.append()
+
+  RawShower.long_e_cut.append(ed_em_cut)
+
+  RawShower.long_mu_cut.append(ed_mu_cut)
+
+  # ? RawShower.long_gamma_ioniz.append()
+
+  RawShower.long_e_ioniz.append(ed_em_ioniz)
+
+  RawShower.long_mu_ioniz.append(ed_mu_ioniz)
+  
 
   RawShower.fill()
   RawShower.write()
-
 
   #########################################################################################################################
   # Part B.II.i: get the information from Coreas output files (i.e. the traces and some extra info)
@@ -281,8 +345,12 @@ def CoreasRawToRawROOT(path):
   #****** load traces ******
   tracefiles = available_traces # from initial file checks
 
-  # get antenna positions from list file (later)
-  # get efield for each antenna (later)
+  #****** load positions ******
+  # the list file contains all antenna positions for each antenna ID
+  pathAntennaList = glob.glob(path + "*.list")[0]
+  # store all antenna IDs in ant_IDs
+  ant_IDs = antenna_positions_dict(pathAntennaList)["ID"]
+
 
   ############################################################################################################################
   # Part B.II.ii: Create and fill the RawEfield Tree
@@ -310,7 +378,7 @@ def CoreasRawToRawROOT(path):
  
   RawEfield.du_count = len(tracefiles)
 
-
+  # loop through polarizations and positions for each antenna
   for antenna in ant_IDs:
     tracefile = glob.glob(path + "SIM??????_coreas/raw_" + str(antenna) + ".dat")
 
@@ -329,7 +397,7 @@ def CoreasRawToRawROOT(path):
     
     # TODO: check this
     # in Zhaires converter: AntennaN[ant_ID]
-    RawEfield.du_id.append(int(antenna)) 
+    RawEfield.du_id.append(int(antenna)) # this does not work if ID is a string
 
     RawEfield.t_0.append(t_0)
 
@@ -339,9 +407,7 @@ def CoreasRawToRawROOT(path):
     RawEfield.trace_z.append(z_polarization)
 
     # Antenna positions in showers's referential in [m]
-    
-    pathAntennaList = glob.glob(path + "*.list")[0]
-    # TODO: read only the line with the antenna ID
+    ant_position = get_antenna_position(pathAntennaList, antenna)
 
     RawEfield.pos_x.append(ant_position[0])
     RawEfield.pos_y.append(ant_position[1])
