@@ -9,23 +9,14 @@ import time #to get the unix timestamp
 
 
 logging.basicConfig(level=logging.INFO)
-#
-#you can get ZHAIRES python from https://github.com/mjtueros/ZHAireS-Python (checkout the Development or DevelopmentLeia branch)
-#I use this environment variable to let python know where to find it, but alternatively you just copy the AiresInfoFunctionsGRANDROOT.py file on the same dir you are using this.
-#ZHAIRESPYTHON=os.environ["ZHAIRESPYTHON"]
-#sys.path.append(ZHAIRESPYTHON)
-#sys.path.append("/home/mjtueros/GRAND/ROOTFileFormat/DataChallenge/grandgithub/grand/grand/io")
+sys.path.append("../Common")
 import AiresInfoFunctionsGRANDROOT as AiresInfo
-import ZHAireSInputGenerator as ZHAireSGen #the functions i use from this file should be moved to root_trees_raw, so that we dont need an additional new file. It will be common to Coreas and ZhAireS.
-
-
+import EventParametersGenerator as EParGen #the functions i use from this file should be moved to root_trees_raw, so that we dont need an additional new file. It will be common to Coreas and ZhAireS.
 import raw_root_trees as RawTrees
-
-logging.basicConfig(level=logging.INFO)	
-logging.getLogger('matplotlib').setLevel(logging.ERROR)
+logging.getLogger('matplotlib').setLevel(logging.ERROR) #this is to shut-up matplotlib
 
 
-
+#Author: Matias Tueros, it was Mar 24th 2023 in Barracas, Buenos Aires, Argentina
 def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="LookForIt", EventName="UseTaskName", NLongitudinal=False, ELongitudinal=False, NlowLongitudinal=False, ElowLongitudinal=False, EdepLongitudinal=False, LateralDistribution=False, EnergyDistribution=False):
     '''
     This routine will read a ZHAireS simulation located in InputFolder and put it in the Desired OutputFileName. 
@@ -104,11 +95,9 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         # return i will not return, in order to be able to handle old sims. I will asign default or dummy values to the required variables
         ArrayName="Unknown"  
     else:        
-        ArrayName=ZHAireSGen.GetArrayNameFromParametersFile(EventParametersFile[0])    
+        ArrayName=EParGen.GetArrayNameFromParametersFile(EventParametersFile[0])    
 
-
-
-    #TODO:idf file is optional in principle, so i dont check for it for now. I should check for the existance of the table files and if anyone fails, check for the existance of the idf file
+    #TODO:idf file is optional in principle, so i dont check for it for now. I should check for the existance of all the required table files and if anyone is missing, check for the existance of the idf file
     idffile=[InputFolder+"/"+EventName+".idf"]
 
     #provide the advertised functionality for TaskName
@@ -127,7 +116,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 	#TODO: Handle when EventID is invalid: it must be unique at least inside the run, (and probabbly unique among all runs in file, depending on conventions)
     	    
     #############################################################################################################################
-    # ShowerSimInfo (deals with the details for the simulation). This might be simulator-dependent (CoREAS has different parameters)
+    # SimShowerInfo (deals with the details for the simulation that are common between ZHAireS and CoREAS
     #############################################################################################################################
     if(SimShowerInfo):
 
@@ -156,8 +145,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         FieldIntensity,FieldInclination,FieldDeclination=AiresInfo.GetMagneticFieldFromSry(sryfile[0]) #Used
         AtmosphericModel=AiresInfo.GetAtmosphericModelFromSry(sryfile[0])                              #Used
         HadronicModel=AiresInfo.GetHadronicModelFromSry(sryfile[0])                                    #Used
-        LowEnergyModel="Aires-Geisha"		                                                           #Used
-        print("Warning, hard-coded LowEnergyModel",LowEnergyModel) 
+        LowEnergyModel="Aires-Geisha"		                                                           #Used  #TODO eventualy: Unhardcode This
         EnergyInNeutrinos=AiresInfo.GetEnergyFractionInNeutrinosFromSry(sryfile[0])                    #Used
         EnergyInNeutrinos=EnergyInNeutrinos*Energy #to Convert to GeV
         RandomSeed=AiresInfo.GetRandomSeedFromSry(sryfile[0])                                          #Used
@@ -169,8 +157,6 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         Site=AiresInfo.GetSiteFromSry(sryfile[0])                                                      #   
         ShowerSimulator=AiresInfo.GetAiresVersionFromSry(sryfile[0])                                   # 
         ShowerSimulator="Aires "+ShowerSimulator                                                       #
-        FieldSimulator=AiresInfo.GetZHAireSVersionFromSry(sryfile[0])                                  #
- 
   
         RelativeThinning=AiresInfo.GetThinningRelativeEnergyFromSry(sryfile[0])                        #Used
         GammaEnergyCut=AiresInfo.GetGammaEnergyCutFromSry(sryfile[0])                                  #Used
@@ -182,16 +168,36 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         #These are ZHAireS specific parameters. Other simulators wont have these parameters, and might have others
         WeightFactor=AiresInfo.GetWeightFactorFromSry(sryfile[0])                                      #Used
  
- 
+        #Get the atmospheric density profile
+        Atmostable=AiresInfo.GetLongitudinalTable(InputFolder,100,Slant=True,Precision="Simple",TaskName=TaskName)   
+        Atmosaltitude=np.array(Atmostable.T[0],dtype=np.float32) #its important to make it float32 or it will complain
+        Atmosdepth=np.array(Atmostable.T[1],dtype=np.float32)
+        Atmosdensity=np.array(Atmostable.T[2],dtype=np.float32)
+                                         
         #MetaZHAires       		        
         #TODO: Document how the core position needs to be stored in the EventParametersFile. 
-        #We expet an .EventParameters File that has inside the line:  Core Position: Xcore Ycore Zcore in meters, eg: "Core Position: 2468.927 -4323.117 1998.000" 
+        # We expet an .EventParameters File that has inside the line:  Core Position: Xcore Ycore Zcore in meters, eg: "Core Position: 2468.927 -4323.117 1998.000" 
  
         if os.path.isfile(EventParametersFile[0]) :
-          CorePosition=ZHAireSGen.GetCorePositionFromParametersFile(EventParametersFile[0])
+          CorePosition=EParGen.GetCorePositionFromParametersFile(EventParametersFile[0])          
+          UnixTime,UnixNano=EParGen.GetEventUnixTimeFromParametersFile(EventParametersFile[0])
+          ArrayName=EParGen.GetArrayNameFromParametersFile(EventParametersFile[0])
+          EventWeight=EParGen.GetEventWeightFromParametersFile(EventParametersFile[0])
+          TestedPositions=EParGen.GetTestedPositionsFromParametersFile(EventParametersFile[0])
+ 
         else:
-          CorePosition=(0.0,0.0,0.0)
-        #TBD:ASAP should this be removed from the SimData tree? Should the EventParametersFile be included in the root file for future parsing? How are we going to handle this?
+          logging.info("EventParameters File not found, using default values")
+          
+       
+        print("CorePosition")
+        print(CorePosition)
+        print("UnixTime")
+        print(UnixTime,UnixNano)
+        print("EventWeight")
+        print(EventWeight)
+        print("TestedCores")
+        print(TestedPositions)  
+            
    
 
         ############################################################################################################################# 
@@ -199,7 +205,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         ############################################################################################################################
 
         RawShower.run_number = RunID
-        RawShower.shower_sim = "Aires"  #TODO:Unhardcode this, add version, etc
+        RawShower.shower_sim = ShowerSimulator  
         RawShower.event_number = EventID
         RawShower.event_name = EventName
         RawShower.event_date = Date
@@ -210,12 +216,27 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.shower_azimuth = Azimuth
         RawShower.shower_zenith = Zenith
         RawShower.prim_type = [str(Primary)]  #TODO: test multiple primaries
-        #TODO ASAP: Add Injection Postion. On neutrino showers this is important (and there can be no Core position)	
-        #TODO ASAP prim_injpoint_shc
-        RawShower.prim_inj_alt_shc = [InjectionAltitude]
-        #TODO ASAP:prim_inj_dir_shc
+        RawShower.prim_inj_alt_shc = [InjectionAltitude] #TODO: test multiple primaries
+        RawShower.prim_inj_dir_shc=[(-np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),-np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),-np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries
+        #using the sine thorem for a triangle with vertices at the earth center, the injection point and the core position (located at groundlitutde)
+        rearth=6370949
+        logging.info("warning, using round earth with hard coded radius: 6370949m")  #TODO eventualy: Unhardcode This
+        sidea=rearth+InjectionAltitude
+        sidec=rearth+GroundAltitude
+        AngleA=np.deg2rad(180-Zenith)
+        AngleC=np.arcsin((sidec/sidea)*np.sin(AngleA))
+        AngleB=np.deg2rad(180-np.rad2deg(AngleA)-np.rad2deg(AngleC))
+        sideb=sidec*np.sin(AngleB)/np.sin(AngleC)
+        #print("SideA ",sidea,"SideC ",sidec,"SideB ",sideb)
+        #print("AngleA",np.rad2deg(AngleA),"AngleC",np.rad2deg(AngleC),"AngleB",np.rad2deg(AngleB))
+        
+        RawShower.prim_injpoint_shc = [(sideb*np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),sideb*np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),sideb*np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries        
         RawShower.atmos_model = str(AtmosphericModel) #TODO: Standarize
         #TODO:atmos_model_param  # Atmospheric model parameters: TODO: Think about this. Different models and softwares can have different parameters
+        RawShower.atmos_altitude.append(Atmosaltitude) 
+        RawShower.atmos_density.append(Atmosdensity)
+        RawShower.atmos_depth.append(Atmosdepth)
+        
         RawShower.magnetic_field = np.array([FieldInclination,FieldDeclination,FieldIntensity])
         RawShower.xmax_grams = SlantXmax
         RawShower.xmax_pos_shc = XmaxPosition
@@ -235,7 +256,8 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.nucleon_energy_cut = NucleonEnergyCut              
         
         #METAZHAireS
-        RawShower.shower_core_pos=np.array(CorePosition) # shower core position TODO: Coordinates?. Undefined for neutrinos.)
+        RawShower.shower_core_pos=np.array(CorePosition) # shower core position 
+        
         #TODO ASAP: ArrayName
         #TODO ASAP: EventWeight
         #TODO ASAP: TestedCores
@@ -291,12 +313,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         
         #TODO: long_hadr_ioniz is left empty for now, as in zhaires is a combination of several tables...and its rarely used.        
 
-        '''
-        Atmostable=AiresInfo.GetLongitudinalTable(InputFolder,100,Slant=True,Precision="Simple",TaskName=TaskName)                             
-        #RawShower.atmospheric_profile=Atmostable.T[0:3].tolist()
-        #TODO:Solve how to store a bidimesional array
-        #RawShower.atmospheric_profile.append(np.array(Atmostable.T[0:3],dtype=np.float32))
-        '''
+        
         RawShower.fill()
         RawShower.write()
 
@@ -318,6 +335,9 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 	    #########################################################################################################################
         # Part I: get the information
         #########################################################################################################################  	
+        FieldSimulator=AiresInfo.GetZHAireSVersionFromSry(sryfile[0])                                  #
+        FieldSimulator="ZHAireS "+FieldSimulator 
+        
         #Getting all the information i need for	RawEfield
         #
         TimeBinSize=AiresInfo.GetTimeBinFromSry(sryfile[0])
@@ -325,17 +345,15 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         TimeWindowMax=AiresInfo.GetTimeWindowMaxFromSry(sryfile[0])
 
         #make an index of refraction table
-        #TODO: Get Refractivity Model parameters from the sry
-        RefractionIndexModel="Exponential" #TODO soon: UNHARDCODE THIS
-        RefractionIndexParameters=[1.0003250,-0.1218] #TODO soon: UNHARDCODE THIS
-        
-        print("Warning, hard coded RefractionIndexModel",RefractionIndexModel,RefractionIndexParameters)        
+        #TODO ASAP: Get Refractivity Model parameters from the sry
+        RefractionIndexModel="Exponential" #TODO ASPAP: UNHARDCODE THIS
+        RefractionIndexParameters=[1.0003250,-0.1218] #TODO ASAP: UNHARDCODE THIS        
+        logging.info("Danger!!, hard coded RefractionIndexModel "+str(RefractionIndexModel) + " " + str(RefractionIndexParameters))        
         R0=(RefractionIndexParameters[0]-1.0)*1E6
         #RefrIndex=R0*np.exp(Atmostable.T[0]*RefractionIndexParameters[1]/1000)        
-              
+        Atmosrefractivity=R0*np.exp(Atmosaltitude*RefractionIndexParameters[1]/1000.0)
+
         AntennaN,IDs,antx,anty,antz,antt=AiresInfo.GetAntennaInfoFromSry(sryfile[0])
-
-
         ############################################################################################################################# 
         # Fill RawEfield part
         ############################################################################################################################ 
@@ -343,25 +361,23 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawEfield.run_number = RunID
         RawEfield.event_number = EventID
         
-        
         ############################################################################################################################ 
         # Part II.1: Fill Raw Efield per Event values
         ############################################################################################################################ 
         #Populate what we can
-        
-        RawEfield.efield_sim="ZHAires"  #TODO: unhardcode this  
-        
-#       #TODO: Pass this to the event structure 
 
+        RawEfield.efield_sim=FieldSimulator
+              
         RawEfield.refractivity_model = RefractionIndexModel                                       
         RawEfield.refractivity_model_parameters = RefractionIndexParameters                       
          
-        #TODO ASAP: Find how to do this
-        #RawEfield.refractivity_profile=Atmostable.T[0].tolist() #Atmostable.T[0].tolist()               
-        #RawEfield.refractivity_profile.append(RefrIndex.tolist())                                 
+        RawEfield.atmos_refractivity.append(Atmosrefractivity)                                 
+        
         RawEfield.t_pre = TimeWindowMin                                                           
         RawEfield.t_post = TimeWindowMax                                                          
         RawEfield.t_bin_size = TimeBinSize                                                              
+
+        
 
         
         ############################################################################################################################ 
@@ -369,7 +385,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         ############################################################################################################################        
 
         if(IDs[0]==-1 and antx[0]==-1 and anty[0]==-1 and antz[0]==-1 and antt[0]==-1):
-	         logging.critical("hey, no antennas found in event sry "+ str(EventID)+" SimEfield not produced")         #TODO: handle this exeption more elegantly
+	         logging.critical("hey, no antennas found in event sry "+ str(EventID)+" SimEfield not produced")       
 
         else:		
 
@@ -379,7 +395,6 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
             antz=np.array(antz, dtype=np.float32)
             antt=np.array(antt, dtype=np.float32)
    
-            #Important remark. If we need to take into account round earth, then we will need to rotate the electric field components to go to a cartesian frame centered in the array                
             #TODO: check that the number of trace files found is coincidient with the number of antennas found from the sry  
             logging.info("found "+str(len(tracefiles))+" antenna trace files")
 
@@ -405,18 +420,12 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
                 if(int(AntennaN[ant_number])!=ant_number+1):
                   logging.critical("Warning, check antenna numbers and ids, it seems there is a problem "+str(AntennaN)+" "+str(ant_number+1))
                 
-                ##########################################################################################################################
-                # Part I.1: Convert to GP300 coordinates (here is where customization comes, input specific conventions) (TBD) 
-                ##########################################################################################################################
-                #TODO: Important remark. If we need to take into account round earth, then we will need to rotate the electric field components to go to a cartesian frame centered in the array
-                #this is another reason to have shower coordinates.
 
                 ############################################################################################################################# 
                 # Part II: Fill RawEfield	 
                 ############################################################################################################################ 
-                RawEfield.du_id.append(int(AntennaN[ant_number]))
-                #TODO: Save name                
-                #RawEfield.du_name.append(DetectorID)
+                RawEfield.du_id.append(int(AntennaN[ant_number]))          
+                RawEfield.du_name.append(DetectorID)
                 RawEfield.t_0.append(t_0)            
 
                 # Traces
@@ -429,8 +438,6 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
                 RawEfield.pos_y.append(ant_position[1])
                 RawEfield.pos_z.append(ant_position[2])
 
-                #TODO: Fill p2p and hilbert amplitudes
-
                          
             #print("Filling RawEfield")
             RawEfield.fill()
@@ -441,7 +448,11 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         logging.critical("no trace files found in "+InputFolder+"Skipping SimEfield") #TODO: handle this exeption more elegantly
 
 
-
+    #
+    #
+    #  FROM HERE ITS LEGACY FROM HDF5 THAT I WILL IMPLEMENT IN A "PROPIETARY" CLASS OF ZHAIRES-ONLY INFORMATION
+    #
+    #
 	##############################################################################################################################
 	# LONGITUDINAL TABLES (not implemented yet, will need to have ZHAIRES installed on your system and the Official version of AiresInfoFunctions).
 	##############################################################################################################################
@@ -673,20 +684,12 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
     return EventName
 
 
-#def ZHAiresRawToSimShowerRun(OutputFileName, RunID, EventID, InputFolder):
-
-
-# TODO: This should probably be part of GRANDRoot.py.?
-# Check if the EventID does not already exist in the TTrees
-# TODO: Which TTree has all the IDs? Now checking just 2 of them
-
 def CheckIfEventIDIsUnique(EventID, f):
     # Try to get the tree from the file
     try:
         SimShower_tree = f.rawshower
         # This readout should be done with RDataFrame, but it crashes on evt_id :/
         # So doing it the old, ugly way
-        # TODO: Ask why it crashes on the ROOT forum and switch to RDataFrame!
         SimShower_tree.Draw("evt_id", "", "goff")
         EventIDs = np.frombuffer(SimShower_tree.GetV1(), dtype=np.float64, count=SimShower_tree.GetSelectedRows()).astype(int)
 
@@ -708,11 +711,18 @@ def CheckIfEventIDIsUnique(EventID, f):
     return True
 
 
+
+
+
+
+
+
 if __name__ == '__main__':
 
 	if (len(sys.argv)>6 or len(sys.argv)<6) :
-		print("Please point me to a directory with some ZHAires output, and indicate the mode RunID, EventID, EventName and output filename...nothing more, nothing less!")
-		print("i.e ZHAiresRawToRawROOT ./MyshowerDir full RunID EventID MyFile.root")
+		print("Please point me to a directory with some ZHAires output, and indicate the mode RunID, EventID and output filename...nothing more, nothing less!")
+		print("i.e ZHAiresRawToRawROOT ./MyshowerDir standard RunID EventID MyFile.root")
+		print("i.e. python3 ZHAireSRawToRawROOT.py ./GP10_192745211400_SD075V standard 0 3  GP10_192745211400_SD075V.root)
 		mode="exit"
 
 	elif len(sys.argv)==6 :
@@ -736,11 +746,6 @@ if __name__ == '__main__':
 	else:
 
 		print("please enter one of these modes: standard, full or minimal")
-		
-		
-"""
-Notes:
-	1) Not all SimShower_EventInfo are initialised, for example atmos_model_param
-"""
+	
  
 

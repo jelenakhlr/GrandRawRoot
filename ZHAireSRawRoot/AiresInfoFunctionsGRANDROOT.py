@@ -1,10 +1,10 @@
 ##
 ## WARNING WARNING WARNING
 ##
-#this file is a local copy of AiresInfoFunctions from https://github.com/mjtueros/ZHAireS-Python  (on Jun 25 2021)so that 
-#you dont have to setup that repository, that requires ZHAireS to be installed. (since we dont use it for now). Will update it manually if needed
-#table exporting will not be available!!
+## this file is a local copy of AiresInfoFunctions from https://github.com/mjtueros/ZHAireS-Python  (on Jun 25 2021)so that 
+## you dont have to setup that repository, that requires ZHAireS to be installed. (since we dont use it for now).
 ##
+## Will update it manually if needed. Table exporting will not be available!!
 ## WARNING WARNING WARNING
 ##
 
@@ -43,7 +43,7 @@ import logging
 #but it adds modularity, and closes the files when it does not use it any more.
 #If at some point we need speed, then we could input datafile, and make a wraper for opening the file
 
-#AiresPath="/home/mjtueros/aires/bin"
+AiresPath="/home/mjtueros/aires/bin"
 #AiresPath=os.environ["AIRESBINDIR"]
 #AiresPath="/home/mjtueros/AiresRepository/Dropbox/AiresBzr/Aires.19-04-04-ZHAireS-development/zhadl/bin"
 
@@ -171,8 +171,6 @@ def GetCorePositionFromInp(inp_file,outmode="N/A"):
     logging.error("GetCorePositionFromInp:file not found or invalid:"+inp_file)
     raise
     return -1
-
-
 
 def GetThinningRelativeEnergyFromSry(sry_file,outmode="N/A"):
   try:
@@ -798,6 +796,7 @@ def GetTotalCPUTimeFromSry(sry_file,outmode="N/A"):
             if(stripedline[-5]=="hr"):
               time=time + 60.0*60.0*int(stripedline[-6])
           CPUtime=time
+          #print("CPUTime:",CPUtime)
           return CPUtime
       try:
         CPUtime
@@ -1086,7 +1085,7 @@ def get_antenna_t0(xant,yant,hant, azimuthdeg, zenithdeg):
     return dtna*1.0e9
 
 def GetAntennaInfoFromSry(sry_file,outmode="N/A"):
-  
+  AntennaOrder=[]
   AntennaID=[]
   AntennaX=[]
   AntennaY=[]
@@ -1102,6 +1101,7 @@ def GetAntennaInfoFromSry(sry_file,outmode="N/A"):
         if(Read):
           stripedline=line.split()
           if(len(stripedline)==6):
+            AntennaOrder.append(stripedline[0])
             AntennaID.append(stripedline[1])
             AntennaX.append(stripedline[2])
             AntennaY.append(stripedline[3])
@@ -1142,7 +1142,7 @@ def GetAntennaInfoFromSry(sry_file,outmode="N/A"):
                     # Use stored occurrence value
                     AntennaID[i] += str(dups[val][1])
                     
-            return AntennaID,AntennaX,AntennaY,AntennaZ,AntennaT
+            return AntennaOrder,AntennaID,AntennaX,AntennaY,AntennaZ,AntennaT
 
         if(ReadLegacy):
           stripedline=line.split()
@@ -1167,37 +1167,52 @@ def GetAntennaInfoFromSry(sry_file,outmode="N/A"):
     raise
     return -1,-1,-1,-1,-1
 
-def GetLongitudinalTable(Path,TableNumber,Slant=True,Precision="Double"):
+def GetLongitudinalTable(Path,TableNumber,Slant=True,Precision="Double",TaskName="Unknown"):
     #todo: check against a list of valid tables
     deletefile=False
-    sryfile=glob.glob(Path+"/*.sry")
-    idffile=glob.glob(Path+"/*.idf")
-    inpfile=glob.glob(Path+"/*.inp")
-    tablefile=glob.glob(Path+"/*.t"+str(TableNumber))
+    
+    if(TableNumber<1000):
+      TableNumber="0"+str(TableNumber)
+    else:
+      TableNumber=str(TableNumber)
+      
+      
+    
+    if(TaskName=="Unknown"):
+      sryfile=glob.glob(Path+"/*.sry")
+      idffile=glob.glob(Path+"/*.idf")
+      inpfile=glob.glob(Path+"/*.inp")
+      tablefile=glob.glob(Path+"/*.t"+TableNumber)
 
-    if(len(tablefile)==0 and len(idffile)==0):
-      logging.error("The requested table was not found, and the idf file is not present. Cannot get the table")
-      return -1
+      if(len(tablefile)==0 and len(idffile)==0):
+        logging.error("The requested table was not found, and the idf file is not present. Cannot get the table "+str(TableNumber))
+        return -1
+    else :
+      sryfile=[Path+"/"+TaskName+".sry"]
+      idffile=[Path+"/"+TaskName+".idf"]
+      inpfile=[Path+"/"+TaskName+".inp"]
+      tablefile=glob.glob(Path+"/"+TaskName+".t"+TableNumber)      
+          
 
     if(len(idffile)==1 and len(tablefile)==0):
-      logging.info("could not find the table, trying to get it from the idf")
+      logging.info("GetLongitudinalTable could not find the "+str(TableNumber)+" table, trying to get it from the idf")
       base=os.path.basename(idffile[0])
       taskname=os.path.splitext(base)[0]
 
       if(len(Path)+len(taskname)<60 and len(taskname)<60):
         if(Slant==True):
-            cmd=AiresPath+"/AiresExport -O a "+Path+"/"+taskname+" "+str(TableNumber)
+            cmd=AiresPath+"/AiresExport -O a "+Path+"/"+taskname+" "+TableNumber + " >/dev/null"
         elif(Slant==False):
-            cmd=AiresPath+"/AiresExport "+Path+"/"+taskname+" "+str(TableNumber)
+            cmd=AiresPath+"/AiresExport "+Path+"/"+taskname+" "+TableNumber + " >/dev/null"
         else:
             logging.error("unrecognized Slant value, please state either True/False")
             return -1
         logging.debug("abut to run "+ cmd)         
         os.system(cmd)
-        tablefile=glob.glob(Path+"/*.t"+str(TableNumber))
+        tablefile=glob.glob(Path+"/*.t"+TableNumber)
 
         if(len(tablefile)==1):
-            logging.debug("Table exported successfully")
+            logging.info("Table exported successfully")
             deletefile=True
 
       elif(len(taskname)<60):
@@ -1206,26 +1221,26 @@ def GetLongitudinalTable(Path,TableNumber,Slant=True,Precision="Double"):
         os.system(cmd)
 
         if(Slant==True):
-            cmd=AiresPath+"/AiresExport -O a "+taskname+" "+str(TableNumber)
+            cmd=AiresPath+"/AiresExport -O a "+taskname+" "+TableNumber + " >/dev/null"
         elif(Slant==False):
-            cmd=AiresPath+"/AiresExport "+taskname+" "+str(TableNumber)
+            cmd=AiresPath+"/AiresExport "+taskname+" "+TableNumber + " >/dev/null"
         else:
             logging.error("unrecognized Slant value, please state either True/False")
             return -1
 
         os.system(cmd)
-        tablefile=glob.glob("*.t"+str(TableNumber))
+        tablefile=glob.glob("*.t"+TableNumber)
         logging.debug(tablefile)
 
         if(len(tablefile)==1):#this means we are not wo
-            logging.debug("Table exported successfully")
+            logging.info("Table exported successfully")
             deletefile=True
             cmd="rm "+taskname+".idf"
             os.system(cmd)
             cmd="rm "+taskname+".lgf"
             os.system(cmd)
       else:
-       logging.debug("task name is to long, AIRES does not support that!")
+       logging.error("task name is to long, AIRES does not support that!")
 
     if(len(tablefile)==1):
       logging.debug("reading file")
@@ -1233,9 +1248,15 @@ def GetLongitudinalTable(Path,TableNumber,Slant=True,Precision="Double"):
       from numpy import loadtxt
 
       if(Precision=="Double"):
-        numpyarray=loadtxt(tablefile[0],usecols=(1,2),dtype='f8')
+        if(TableNumber!="0100"):
+          numpyarray=loadtxt(tablefile[0],usecols=(1,2),dtype='f8')
+        else:
+          numpyarray=loadtxt(tablefile[0],usecols=(1,2,3),dtype='f8')           
       elif(Precision=="Simple"):
-        numpyarray=loadtxt(tablefile[0],usecols=(1,2),dtype='f4')
+        if(TableNumber!="0100"):
+          numpyarray=loadtxt(tablefile[0],usecols=(1,2),dtype='f4')
+        else:
+          numpyarray=loadtxt(tablefile[0],usecols=(1,2,3),dtype='f4')        
       else:
         logging.error("unrecognized precison, please state either Double or Simple")
         return -1
@@ -1318,9 +1339,9 @@ def GetLateralTable(Path,TableNumber,Density=True,Precision="Double"):
       from numpy import loadtxt
 
       if(Precision=="Double"):
-        numpyarray=loadtxt(tablefile[0],usecols=(1,2),dtype='f8')
+          numpyarray=loadtxt(tablefile[0],usecols=(1,2),dtype='f8')  
       elif(Precision=="Simple"):
-        numpyarray=loadtxt(tablefile[0],usecols=(1,2),dtype='f4')
+          numpyarray=loadtxt(tablefile[0],usecols=(1,2),dtype='f4')
       else:
         logging.error("LDF.unrecognized precison, please state either Double or Simple")
         return -1
