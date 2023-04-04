@@ -722,7 +722,7 @@ if __name__ == '__main__':
 	if (len(sys.argv)>6 or len(sys.argv)<6) :
 		print("Please point me to a directory with some ZHAires output, and indicate the mode RunID, EventID and output filename...nothing more, nothing less!")
 		print("i.e ZHAiresRawToRawROOT ./MyshowerDir standard RunID EventID MyFile.root")
-		print("i.e. python3 ZHAireSRawToRawROOT.py ./GP10_192745211400_SD075V standard 0 3  GP10_192745211400_SD075V.root)
+		print("i.e. python3 ZHAireSRawToRawROOT.py ./GP10_192745211400_SD075V standard 0 3  GP10_192745211400_SD075V.root")
 		mode="exit"
 
 	elif len(sys.argv)==6 :

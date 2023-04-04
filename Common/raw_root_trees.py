@@ -1125,6 +1125,10 @@ class RawEfieldTree(MotherEventTree):
     #Per antenna things
     _du_id: StdVectorList = field(default_factory=lambda: StdVectorList("int"))  # Detector ID
     _du_name: StdVectorList = field(default_factory=lambda: StdVectorList("string"))  # Detector Name
+    ## Number of detector units in the event - basically the antennas count
+    _du_count: np.ndarray = field(default_factory=lambda: np.zeros(1, np.uint32))
+
+
         
     _t_0: StdVectorList = field(default_factory=lambda: StdVectorList("float"))  # Time window t0
     _p2p: StdVectorList = field(default_factory=lambda: StdVectorList("float"))  # peak 2 peak amplitudes (x,y,z,modulus)
@@ -1143,6 +1147,16 @@ class RawEfieldTree(MotherEventTree):
     ## Efield trace in Z direction
     _trace_z: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
+
+
+    @property
+    def du_count(self):
+        """Number of detector units in the event - basically the antennas count"""
+        return self._du_count[0]
+
+    @du_count.setter
+    def du_count(self, value: np.uint32) -> None:
+        self._du_count[0] = value
 
     @property
     def efield_sim(self):
