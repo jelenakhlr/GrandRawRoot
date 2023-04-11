@@ -1504,3 +1504,47 @@ class RawZHAireSTree(MotherEventTree):
             )
 
         self._other_parameters.string.assign(value)        
+
+
+
+#############################################################################################################################################################################################################################
+#
+#   RawCoreasTree
+#
+#############################################################################################################################################################################################################################
+       
+@dataclass
+## The class for storing shower data for each event specific to Coreas only
+class RawCoreasTree(MotherEventTree):
+    """The class for storing shower data for each event specific to Coreas only"""
+
+    _type: str = "eventshowercoreas"
+
+    _tree_name: str = "teventshowercoreas"
+
+
+    _relative_thining: StdString = StdString("")
+    _weight_factor: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+    _gamma_energy_cut: StdString = StdString("")
+    _electron_energy_cut: StdString = StdString("")
+    _muon_energy_cut: StdString = StdString("")
+    _meson_energy_cut: StdString = StdString("")
+    _nucleon_energy_cut: StdString = StdString("")
+    _other_parameters: StdString = StdString("")
+
+
+    @property
+    def other_parameters(self):
+        """Other parameters"""
+        return str(self._other_parameters)
+
+    @other_parameters.setter
+    def other_parameters(self, value):
+        # Not a string was given
+        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
+            raise ValueError(
+                f"Incorrect type for other_parameters {type(value)}. Either a string or a ROOT.std.string is required."
+            )
+
+        self._other_parameters.string.assign(value)        
+

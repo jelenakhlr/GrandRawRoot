@@ -14,6 +14,9 @@ def CoreasRawToRawROOT(path):
   """
   # output file name hardcoded in the root tree section
 
+  print("-----------------------------------------")
+  print("------ COREAS to RAWROOT converter ------")
+  print("-----------------------------------------")
   ###############################
   # Part A: load Corsika files  #
   ###############################
@@ -97,7 +100,7 @@ def CoreasRawToRawROOT(path):
   EventID = read_params(reas_input, "EventNumber")
   GPSSecs = read_params(reas_input, "GPSSecs")
   GPSNanoSecs = read_params(reas_input, "GPSNanoSecs")
-  RotationAngleForMagfieldDeclination = read_params(reas_input, "RotationAngleForMagfieldDeclination") # in degrees
+  FieldDeclination = read_params(reas_input, "RotationAngleForMagfieldDeclination") # in degrees
 
   Zenith = read_params(reas_input, "ShowerZenithAngle")
   Azimuth = read_params(reas_input, "ShowerAzimuthAngle")
@@ -106,8 +109,8 @@ def CoreasRawToRawROOT(path):
   Primary = read_params(reas_input, "PrimaryParticleType") # as defined in CORSIKA -> TODO: change to PDG system
   DepthOfShowerMaximum = read_params(reas_input, "DepthOfShowerMaximum") # slant depth in g/cm^2
   DistanceOfShowerMaximum = read_params(reas_input, "DistanceOfShowerMaximum") # geometrical distance of shower maximum from core in cm
-  MagneticFieldStrength = read_params(reas_input, "MagneticFieldStrength") # in Gauss
-  MagneticFieldInclinationAngle = read_params(reas_input, "MagneticFieldInclinationAngle") # in degrees, >0: in northern hemisphere, <0: in southern hemisphere
+  FieldIntensity = read_params(reas_input, "MagneticFieldStrength") # in Gauss
+  FieldInclination = read_params(reas_input, "MagneticFieldInclinationAngle") # in degrees, >0: in northern hemisphere, <0: in southern hemisphere
   GeomagneticAngle = read_params(reas_input, "GeomagneticAngle") # in degrees
 
 
@@ -116,6 +119,7 @@ def CoreasRawToRawROOT(path):
   ectmap = read_params(inp_input, "ECTMAP")
   maxprt = read_params(inp_input, "MAXPRT")
   radnkg = read_params(inp_input, "RADNKG")
+  print("*****************************************")
 
   # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   # fix these values! for now: placeholders
@@ -168,10 +172,11 @@ def CoreasRawToRawROOT(path):
   pathLongFile = glob.glob(path + "DAT??????.long")[0]
 
   # the long file has an annoying setup, which I (very inelegantly) circumvent with this function:
-  read_long(pathLongFile)
+  n_data, dE_data, hillas_parameter = read_long(pathLongFile)
+  # TODO: there's still an issue with the hillas_parameter in read_long
 
   #**** particle distribution
-  particle_dist = np.genfromtxt(pathLongFile + "_particledist.txt", skip_header = 2)
+  particle_dist = n_data
   # DEPTH, GAMMAS, POSITRONS, ELECTRONS, MU+, MU-, HADRONS, CHARGED, NUCLEI, CHERENKOV
   pd_depth = particle_dist[:,0]
   pd_gammas = particle_dist[:,1]
@@ -185,7 +190,7 @@ def CoreasRawToRawROOT(path):
   pd_cherenkov = particle_dist[:,9]
 
   #**** energy deposit
-  energy_dep = np.genfromtxt(pathLongFile + "_energydep.txt", skip_header = 2, skip_footer = 2)
+  energy_dep = dE_data
   # the depth here is not the same as for the particle dist, because that would be too easy
   # DEPTH, GAMMA, EM IONIZ, EM CUT, MU IONIZ, MU CUT, HADR IONIZ, HADR CUT, NEUTRINO, SUM
   ed_depth = particle_dist[:,0]
@@ -210,13 +215,16 @@ def CoreasRawToRawROOT(path):
 
   AtmosphericModel = read_atmos(inp_input)
   Date = "2017-04-01" # from ATM file. TODO: unhardcode this
-  t1 = time.strptime(Date.strip(),"%d %B, %Y")
+  t1 = time.strptime(Date.strip(),"%Y-%m-%d")
   UnixDate = int(time.mktime(t1))
 
+
+  print("*****************************************")
   HadronicModel = "sibyll" #TODO:Unhardcode this
-  print("Warning, hard-coded HadronicModel", HadronicModel) 
+  print("[WARNING] hard-coded HadronicModel", HadronicModel) 
   LowEnergyModel = "urqmd" #TODO:Unhardcode this
-  print("Warning, hard-coded LowEnergyModel", LowEnergyModel)
+  print("[WARNING] hard-coded LowEnergyModel", LowEnergyModel)
+  print("*****************************************")
 
   # TODO: add function for reading logs
   # TODO: add CPU time
@@ -251,7 +259,8 @@ def CoreasRawToRawROOT(path):
   RawShower.event_date = Date
   RawShower.unix_date = UnixDate
 
-  RawShower.rnd_seed = RandomSeed
+  RawShower.rnd_seed = RandomSeed[0] # TODO: figure out how to put the whole list here
+  # right now I get this error "ValueError: setting an array element with a sequence." if I try to pass just "RandomSeed"
 
   RawShower.energy_in_neutrinos = EnergyInNeutrinos
   RawShower.prim_energy = [Energy]
@@ -274,8 +283,8 @@ def CoreasRawToRawROOT(path):
   # RawShower.relative_thinning = RelativeThinning
   # RawShower.weight_factor = WeightFactor  
   # change to:
-  RawShower.thinning = ThinLimit # list of floats
-  RawShower.weight_factor = ThinWeight # list of floats
+  RawShower.thinning = ThinLimit # list of floats 
+  RawShower.weight_factor = ThinWeight[0] # list of floats # TODO: figure out how to put the whole list here as well
   RawShower.thin_Rmax = ThinRmax # float
 
   RawShower.gamma_energy_cut = GammaEnergyCut
@@ -292,6 +301,8 @@ def CoreasRawToRawROOT(path):
 
 
   # fill the longitudinal profile, i.e. the particle distribution and energy deposit
+
+  # TODO: figure out how to add numpy arrays - it complains here
 
   RawShower.long_depth.append(pd_depth)  
   RawShower.long_gammas.append(pd_gammas) 
@@ -380,16 +391,16 @@ def CoreasRawToRawROOT(path):
 
   # loop through polarizations and positions for each antenna
   for antenna in ant_IDs:
-    tracefile = glob.glob(path + "SIM??????_coreas/raw_" + str(antenna) + ".dat")
+    tracefile = glob.glob(path + "SIM??????_coreas/raw_" + str(antenna) + ".dat")[0]
 
     # load the efield traces for this antenna
     # the files are setup like [timestamp, x polarization, y polarization, z polarization]
-    efield = np.loadtxt(tracefile, dtype='f4')
+    efield = np.loadtxt(tracefile)
     
-    t_0 = np.array(efield[:,0], dtype = np.float32)
-    x_polarization = np.array(efield[:,1], dtype = np.float32)
-    y_polarization = np.array(efield[:,2], dtype = np.float32)
-    z_polarization = np.array(efield[:,3], dtype = np.float32)
+    t_0 = efield[:,0]
+    x_polarization = efield[:,1]
+    y_polarization = efield[:,2]
+    z_polarization = efield[:,3]
     
 
     # DetectorID = IDs[ant_ID] 
@@ -397,8 +408,7 @@ def CoreasRawToRawROOT(path):
     
     # TODO: check this
     # in Zhaires converter: AntennaN[ant_ID]
-    RawEfield.du_id.append(int(antenna)) # this does not work if ID is a string
-
+    RawEfield.du_id.append(int(antenna))
     RawEfield.t_0.append(t_0)
 
     # Traces
@@ -420,8 +430,8 @@ def CoreasRawToRawROOT(path):
 
 
 
-  print("### The event written was " + EventName)
-
+  print("### The event written was ", EventName, "###")
+  print("### The name of the file is ", OutputFileName, "###")
   return EventName
 
 
