@@ -52,7 +52,8 @@ def GenerateEventParametersFile(EventName, Primary, Energy, Zenith, Azimuth, Cor
         if(TestedPositions!="None"):
             fout.write('#Core positions tested before generating the event ###########################################\n')
             for a in TestedPositions:
-                fout.write(str(a)+"\n")  
+                #fout.write(str(a)+"\n")  
+                fout.write('({0:.3f} {1:.3f} {2:.3f})\n'.format(a[0],a[1],a[2]))
       
         fout.write('#End of EventParameters####################################################################\n')     
         fout.close()
