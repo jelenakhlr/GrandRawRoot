@@ -9,6 +9,10 @@ Here we have the files that are common to both simulators
 ## CoREASRawRoot
 Here we have the scripts to produce RawRoot files from CoREAS simulations
 
+To run the script on the provided example event just go to this directory and do
+
+python3 CoreasRawToRawROOT.py 000004/
+
 ## ZHAireSRawRoot
 Here we have the scripts to produce RawRoot files from ZHAireS simulations
 
