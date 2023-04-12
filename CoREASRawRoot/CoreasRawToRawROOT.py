@@ -304,34 +304,34 @@ def CoreasRawToRawROOT(path):
 
   # TODO: figure out how to add numpy arrays - it complains here
 
-  RawShower.long_depth.append(pd_depth)  
-  RawShower.long_gammas.append(pd_gammas) 
+  RawShower.long_depth.append(pd_depth.astype(np.float32))  
+  RawShower.long_gammas.append(pd_gammas.astype(np.float32)) 
 
   # ? RawShower.long_slantdepth.append()  
-  RawShower.long_eminus.append(pd_electrons)
+  RawShower.long_eminus.append(pd_electrons.astype(np.float32))
 
-  RawShower.long_eplus.append(pd_positrons)
+  RawShower.long_eplus.append(pd_positrons.astype(np.float32))
 
-  RawShower.long_muminus.append(muN)
-  RawShower.long_muplus.append(muP)
+  RawShower.long_muminus.append(pd_muN.astype(np.float32))
+  RawShower.long_muplus.append(pd_muP.astype(np.float32))
 
   # ? RawShower.long_allch.append()
 
-  RawShower.long_nuclei.append(pd_nuclei)
+  RawShower.long_nuclei.append(pd_nuclei.astype(np.float32))
 
-  RawShower.long_neutrino.append(ed_neutrino)
+  RawShower.long_neutrino.append(ed_neutrino.astype(np.float32))
 
   # ? RawShower.long_gamma_cut.append()
 
-  RawShower.long_e_cut.append(ed_em_cut)
+  RawShower.long_e_cut.append(ed_em_cut.astype(np.float32))
 
-  RawShower.long_mu_cut.append(ed_mu_cut)
+  RawShower.long_mu_cut.append(ed_mu_cut.astype(np.float32))
 
   # ? RawShower.long_gamma_ioniz.append()
 
-  RawShower.long_e_ioniz.append(ed_em_ioniz)
+  RawShower.long_e_ioniz.append(ed_em_ioniz.astype(np.float32))
 
-  RawShower.long_mu_ioniz.append(ed_mu_ioniz)
+  RawShower.long_mu_ioniz.append(ed_mu_ioniz.astype(np.float32))
   
 
   RawShower.fill()
@@ -397,7 +397,7 @@ def CoreasRawToRawROOT(path):
     # the files are setup like [timestamp, x polarization, y polarization, z polarization]
     efield = np.loadtxt(tracefile)
     
-    t_0 = efield[:,0]
+    timestamp = efield[:,0]
     x_polarization = efield[:,1]
     y_polarization = efield[:,2]
     z_polarization = efield[:,3]
@@ -409,19 +409,19 @@ def CoreasRawToRawROOT(path):
     # TODO: check this
     # in Zhaires converter: AntennaN[ant_ID]
     RawEfield.du_id.append(int(antenna))
-    RawEfield.t_0.append(t_0)
+    RawEfield.t_0.append(timestamp[0].astype(np.float32))
 
     # Traces
-    RawEfield.trace_x.append(x_polarization)
-    RawEfield.trace_y.append(y_polarization)
-    RawEfield.trace_z.append(z_polarization)
+    RawEfield.trace_x.append(x_polarization.astype(np.float32))
+    RawEfield.trace_y.append(y_polarization.astype(np.float32))
+    RawEfield.trace_z.append(z_polarization.astype(np.float32))
 
     # Antenna positions in showers's referential in [m]
     ant_position = get_antenna_position(pathAntennaList, antenna)
-
-    RawEfield.pos_x.append(ant_position[0])
-    RawEfield.pos_y.append(ant_position[1])
-    RawEfield.pos_z.append(ant_position[2])
+    print(ant_position)
+    RawEfield.pos_x.append(ant_position[0].astype(np.float32))
+    RawEfield.pos_y.append(ant_position[1].astype(np.float32))
+    RawEfield.pos_z.append(ant_position[2].astype(np.float32))
 
 
                  

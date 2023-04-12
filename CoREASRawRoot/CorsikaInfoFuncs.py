@@ -80,9 +80,9 @@ def get_antenna_position(pathAntennaList, antenna):
     >>> positions.split(" ")
     ['AntennaPosition', '=', '39.0', '39.0', '1000', '16\n']
     """
-    x = positions.split(" ")[2] * 100 # convert to m
-    y = positions.split(" ")[3] * 100 # convert to m
-    z = positions.split(" ")[4] * 100 # convert to m
+    x = np.float32(positions.split(" ")[2]) * 100 # convert to m
+    y = np.float32(positions.split(" ")[3]) * 100 # convert to m
+    z = np.float32(positions.split(" ")[4]) * 100 # convert to m
 
     return x, y, z
 
