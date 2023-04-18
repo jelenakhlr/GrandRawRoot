@@ -425,8 +425,8 @@ def CoreasRawToRawROOT(path):
 
 
                  
-    RawEfield.fill()
-    RawEfield.write()
+  RawEfield.fill()
+  RawEfield.write()
 
 
 
