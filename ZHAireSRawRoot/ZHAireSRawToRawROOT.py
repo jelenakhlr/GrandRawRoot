@@ -58,9 +58,14 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
     
     #We will start by storing the tables Coreas and Zhaires have in common.
     #In the future, i might store additional tables (or other sim info) in a separate tree)
-    
+    #this is all false becouse is not implemented yet
     NLongitudinal=False
-    
+    ELongitudinal=False
+    NlowLongitudinal=False
+    ElowLongitudinal=False
+    EdepLongitudinal=False
+    LateralDistribution=False
+    EnergyDistribution=False
     #########################################################################################################
     #ZHAIRES Sanity Checks
     #########################################################################################################
