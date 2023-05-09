@@ -20,10 +20,13 @@ logging.getLogger('matplotlib').setLevel(logging.ERROR) #this is to shut-up matp
 def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="LookForIt", EventName="UseTaskName", NLongitudinal=False, ELongitudinal=False, NlowLongitudinal=False, ElowLongitudinal=False, EdepLongitudinal=False, LateralDistribution=False, EnergyDistribution=False):
     '''
     This routine will read a ZHAireS simulation located in InputFolder and put it in the Desired OutputFileName. 
+    
     RunID is the ID of the run the event is going to be associated with.
+    
     EventID is the ID of the Event is going to be associated with.
+    
     TaskName is what ZHAireS uses to name all the output files. And it generally the same as the "EventName". If you want to change the Name of the event when you store it, you can use the "EventName" optional parameter
-    If you dont specify a TaskName, it will look for any .sry file in the directory. There should be only one.
+    If you dont specify a TaskName, it will look for any .sry file in the directory. There should be only one .sry file on the folder for the script to work correctly
     
     The routine is designed for events simulated with ZHAireS 1.0.30a or later.
     
@@ -58,9 +61,14 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
     
     #We will start by storing the tables Coreas and Zhaires have in common.
     #In the future, i might store additional tables (or other sim info) in a separate tree)
-    
+    #this is all false becouse is not implemented yet
     NLongitudinal=False
-    
+    ELongitudinal=False
+    NlowLongitudinal=False
+    ElowLongitudinal=False
+    EdepLongitudinal=False
+    LateralDistribution=False
+    EnergyDistribution=False
     #########################################################################################################
     #ZHAIRES Sanity Checks
     #########################################################################################################
