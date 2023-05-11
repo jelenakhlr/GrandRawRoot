@@ -1134,11 +1134,11 @@ class RawEfieldTree(MotherEventTree):
     _p2p: StdVectorList = field(default_factory=lambda: StdVectorList("float"))  # peak 2 peak amplitudes (x,y,z,modulus)
 
     ## X position in shower referential
-    _pos_x: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _du_x: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Y position in shower referential
-    _pos_y: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _du_y: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Z position in shower referential
-    _pos_z: StdVectorList = field(default_factory=lambda: StdVectorList("float"))    
+    _du_z: StdVectorList = field(default_factory=lambda: StdVectorList("float"))    
     
     ## Efield trace in X direction
     _trace_x: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
@@ -1432,14 +1432,19 @@ class RawEfieldTree(MotherEventTree):
             raise ValueError(
                 f"Incorrect type for trace_z {type(value)}. Either a list, an array or a ROOT.vector of float required."
             )
+        
+    @property
+    def trace(self):
+        """trace info with du_id, traces in all three directions, and time bin stored in one array"""
+        return np.concatenate((self._du_id, self._trace_x, self._trace_y, self._trace_z, self.t_bin_size))
 
     @property
-    def pos_x(self):
+    def du_x(self):
         """X position in site's referential"""
-        return self._pos_x
+        return self._du_x
 
-    @pos_x.setter
-    def pos_x(self, value) -> None:
+    @du_x.setter
+    def du_x(self, value) -> None:
         # A list of strings was given
         if (
             isinstance(value, list)
@@ -1447,23 +1452,23 @@ class RawEfieldTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._pos_x.clear()
-            self._pos_x += value
+            self._du_x.clear()
+            self._du_x += value
         # A vector was given
         elif isinstance(value, ROOT.vector("float")):
-            self._pos_x._vector = value
+            self._du_x._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for pos_x {type(value)}. Either a list, an array or a ROOT.vector of floats required."
+                f"Incorrect type for du_x {type(value)}. Either a list, an array or a ROOT.vector of floats required."
             )
 
     @property
-    def pos_y(self):
+    def du_y(self):
         """Y position in site's referential"""
-        return self._pos_y
+        return self._du_y
 
-    @pos_y.setter
-    def pos_y(self, value) -> None:
+    @du_y.setter
+    def du_y(self, value) -> None:
         # A list of strings was given
         if (
             isinstance(value, list)
@@ -1471,23 +1476,23 @@ class RawEfieldTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._pos_y.clear()
-            self._pos_y += value
+            self._du_y.clear()
+            self._du_y += value
         # A vector was given
         elif isinstance(value, ROOT.vector("float")):
-            self._pos_y._vector = value
+            self._du_y._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for pos_y {type(value)}. Either a list, an array or a ROOT.vector of floats required."
+                f"Incorrect type for du_y {type(value)}. Either a list, an array or a ROOT.vector of floats required."
             )
 
     @property
-    def pos_z(self):
+    def du_z(self):
         """Z position in site's referential"""
-        return self._pos_z
+        return self._du_z
 
-    @pos_z.setter
-    def pos_z(self, value) -> None:
+    @du_z.setter
+    def du_z(self, value) -> None:
         # A list of strings was given
         if (
             isinstance(value, list)
@@ -1495,14 +1500,14 @@ class RawEfieldTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._pos_z.clear()
-            self._pos_z += value
+            self._du_z.clear()
+            self._du_z += value
         # A vector was given
         elif isinstance(value, ROOT.vector("float")):
-            self._pos_z._vector = value
+            self._du_z._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for pos_z {type(value)}. Either a list, an array or a ROOT.vector of floats required."
+                f"Incorrect type for du_z {type(value)}. Either a list, an array or a ROOT.vector of floats required."
             )
 
 

@@ -442,9 +442,9 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
                 RawEfield.trace_z.append(np.array(efield[:,3], dtype=np.float32))
 
                 # Antenna positions in showers's referential in [m]
-                RawEfield.pos_x.append(ant_position[0])
-                RawEfield.pos_y.append(ant_position[1])
-                RawEfield.pos_z.append(ant_position[2])
+                RawEfield.du_x.append(ant_position[0])
+                RawEfield.du_y.append(ant_position[1])
+                RawEfield.du_z.append(ant_position[2])
 
                          
             #print("Filling RawEfield")

@@ -75,9 +75,9 @@
     * [trace\_x](#raw_root_trees.RawEfieldTree.trace_x)
     * [trace\_y](#raw_root_trees.RawEfieldTree.trace_y)
     * [trace\_z](#raw_root_trees.RawEfieldTree.trace_z)
-    * [pos\_x](#raw_root_trees.RawEfieldTree.pos_x)
-    * [pos\_y](#raw_root_trees.RawEfieldTree.pos_y)
-    * [pos\_z](#raw_root_trees.RawEfieldTree.pos_z)
+    * [pos\_x](#raw_root_trees.RawEfieldTree.du_x)
+    * [pos\_y](#raw_root_trees.RawEfieldTree.du_y)
+    * [pos\_z](#raw_root_trees.RawEfieldTree.du_z)
   * [RawZHAireSTree](#raw_root_trees.RawZHAireSTree)
     * [relative\_thining](#raw_root_trees.RawZHAireSTree.relative_thining)
     * [weight\_factor](#raw_root_trees.RawZHAireSTree.weight_factor)
@@ -987,35 +987,35 @@ def trace_z()
 
 Efield trace in Z direction
 
-<a id="raw_root_trees.RawEfieldTree.pos_x"></a>
+<a id="raw_root_trees.RawEfieldTree.du_x"></a>
 
 #### pos\_x
 
 ```python
 @property
-def pos_x()
+def du_x()
 ```
 
 X position in site's referential
 
-<a id="raw_root_trees.RawEfieldTree.pos_y"></a>
+<a id="raw_root_trees.RawEfieldTree.du_y"></a>
 
 #### pos\_y
 
 ```python
 @property
-def pos_y()
+def du_y()
 ```
 
 Y position in site's referential
 
-<a id="raw_root_trees.RawEfieldTree.pos_z"></a>
+<a id="raw_root_trees.RawEfieldTree.du_z"></a>
 
 #### pos\_z
 
 ```python
 @property
-def pos_z()
+def du_z()
 ```
 
 Z position in site's referential
