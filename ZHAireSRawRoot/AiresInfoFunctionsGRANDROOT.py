@@ -1368,7 +1368,7 @@ import numpy as np
 # ns= refractivity at sea levele
 # kr= scale height
 
-def GetEffectiveRefractionIndex(x0,y0,z0,ns=325,kr=-0.128,zant=0,xant=0,yant=0,stepsize = 20000): #NOTE THAT THE ORDER OF ANTENNA POSITIONS IS ZANT,XANT,YANT (historic compatibility reasons)
+def GetEffectiveRefractionIndex(x0,y0,z0,ns=325,kr=-0.128,zant=0,xant=0,yant=0,stepsize = 1000): #NOTE THAT THE ORDER OF ANTENNA POSITIONS IS ZANT,XANT,YANT (historic compatibility reasons)
         rearth=6370949.0
         R02=x0*x0+y0*y0  #notar que se usa R02, se puede ahorrar el producto y la raiz cuadrada
         h0=(np.sqrt((z0+rearth)*(z0+rearth) + R02 ) - rearth)/1.E3 #altitude of emission, in km
