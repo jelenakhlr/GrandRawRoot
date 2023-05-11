@@ -58,20 +58,20 @@ class RawShowerTree(MotherEventTree):
     ### Random seed
     _rnd_seed: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
     
-    ### Energy in neutrinos generated in the shower (GeV). Usefull for invisible energy computation
+    ### Energy in neutrinos generated in the shower (GeV). Useful for invisible energy computation
     _energy_in_neutrinos: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary energy (GeV) 
-    _prim_energy: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _energy_primary: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     
     ### Shower azimuth (deg, CR convention)
-    _shower_azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    _azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
 
     ### Shower zenith  (deg, CR convention)
     _shower_zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary particle type (PDG)
-    _prim_type: StdVectorList = field(default_factory=lambda: StdVectorList("string"))
+    _primary_type: StdVectorList = field(default_factory=lambda: StdVectorList("string"))
 
     # Primary injection point [m] in Shower coordinates
     _prim_injpoint_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
@@ -82,7 +82,7 @@ class RawShowerTree(MotherEventTree):
     # primary injection direction in Shower Coordinates
     _prim_inj_dir_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
-    ### Atmospheric model name TODO:standarize
+    ### Atmospheric model name TODO:standardize
     _atmos_model: StdString = StdString("")
 
     # Atmospheric model parameters: TODO: Think about this. Different models and softwares can have different parameters
@@ -153,30 +153,30 @@ class RawShowerTree(MotherEventTree):
     _shower_core_pos: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float32))
     
  
-    ### Lonfitudinal Pofiles (those compatible between Coreas/ZHAires)
+    ### Longitudinal Pofiles (those compatible between Coreas/ZHAires)
     
-    ## Longituginal Profile of vertical depth (g/cm2)
+    ## Longitudinal Profile of vertical depth (g/cm2)
     _long_depth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    ## Longituginal Profile of slant depth (g/cm2)
+    ## Longitudinal Profile of slant depth (g/cm2)
     _long_slantdepth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    ## Longituginal Profile of Number of Gammas      
+    ## Longitudinal Profile of Number of Gammas      
     _long_gammas: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    ## Longituginal Profile of Number of e+
+    ## Longitudinal Profile of Number of e+
     _long_eplus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    ## Longituginal Profile of Number of e-
+    ## Longitudinal Profile of Number of e-
     _long_eminus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>")) 
-    ## Longituginal Profile of Number of mu+
+    ## Longitudinal Profile of Number of mu+
     _long_muplus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    ## Longituginal Profile of Number of mu-
+    ## Longitudinal Profile of Number of mu-
     _long_muminus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))      
-    ## Longituginal Profile of Number of All charged particles
+    ## Longitudinal Profile of Number of All charged particles
     _long_allch: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))   
-    ## Longituginal Profile of Number of Nuclei
+    ## Longitudinal Profile of Number of Nuclei
     _long_nuclei: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    ## Longituginal Profile of Number of Hadrons
+    ## Longitudinal Profile of Number of Hadrons
     _long_hadr:StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
-    ## Longituginal Profile of Energy of created neutrinos (GeV)
+    ## Longitudinal Profile of Energy of created neutrinos (GeV)
     _long_neutrino: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
 
 
@@ -782,33 +782,33 @@ class RawShowerTree(MotherEventTree):
         self._energy_in_neutrinos[0] = value
 
     @property
-    def prim_energy(self):
+    def energy_primary(self):
         """Primary energy (GeV) TODO: Check unit conventions. # LWP: Multiple primaries? I guess, variable count. Thus variable size array or a std::vector"""
-        return self._prim_energy
+        return self._energy_primary
 
-    @prim_energy.setter
-    def prim_energy(self, value):
+    @energy_primary.setter
+    def energy_primary(self, value):
         # A list of strings was given
         if isinstance(value, list):
             # Clear the vector before setting
-            self._prim_energy.clear()
-            self._prim_energy += value
+            self._energy_primary.clear()
+            self._energy_primary += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("float")):
-            self._prim_energy._vector = value
+            self._energy_primary._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for prim_energy {type(value)}. Either a list or a ROOT.vector of floats required."
+                f"Incorrect type for energy_primary {type(value)}. Either a list or a ROOT.vector of floats required."
             )
 
     @property
-    def shower_azimuth(self):
+    def azimuth(self):
         """Shower azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem"""
-        return self._shower_azimuth[0]
+        return self._azimuth[0]
 
-    @shower_azimuth.setter
-    def shower_azimuth(self, value):
-        self._shower_azimuth[0] = value
+    @azimuth.setter
+    def azimuth(self, value):
+        self._azimuth[0] = value
 
     @property
     def shower_zenith(self):
@@ -820,23 +820,23 @@ class RawShowerTree(MotherEventTree):
         self._shower_zenith[0] = value
 
     @property
-    def prim_type(self):
+    def primary_type(self):
         """Primary particle type TODO: standarize (PDG?)"""
-        return self._prim_type
+        return self._primary_type
 
-    @prim_type.setter
-    def prim_type(self, value):
+    @primary_type.setter
+    def primary_type(self, value):
         # A list of strings was given
         if isinstance(value, list):
             # Clear the vector before setting
-            self._prim_type.clear()
-            self._prim_type += value
+            self._primary_type.clear()
+            self._primary_type += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("string")):
-            self._prim_type._vector = value
+            self._primary_type._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for prim_type {type(value)}. Either a list or a ROOT.vector of strings required."
+                f"Incorrect type for primary_type {type(value)}. Either a list or a ROOT.vector of strings required."
             )
 
     @property
@@ -1117,7 +1117,7 @@ class RawEfieldTree(MotherEventTree):
     _atmos_refractivity: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
     
     
-    ## The antenna time window is defined arround a t0 that changes with the antenna, starts on t0+t_pre (thus t_pre is usually negative) and ends on t0+post
+    ## The antenna time window is defined around a t0 that changes with the antenna, starts on t0+t_pre (thus t_pre is usually negative) and ends on t0+post
     _t_pre: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     _t_post: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     _t_bin_size: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))    

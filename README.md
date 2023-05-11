@@ -5,13 +5,14 @@ The idea is for it to be the starting point for the generation of GRANDRoot file
 
 ## Common
 Here we have the files that are common to both simulators
+TODO: root_trees.py should be imported from grandlib
 
 ## CoREASRawRoot
 Here we have the scripts to produce RawRoot files from CoREAS simulations
 
 To run the script on the provided example event just go to this directory and do
 
-python3 CoreasRawToRawROOT.py 000004/
+python3 CoreasToRawROOT.py 000004/
 
 The output file will automatically be named "Coreas_" + < EventName > + ".root"
 

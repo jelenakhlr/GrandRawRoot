@@ -38,10 +38,10 @@
     * [event\_date](#raw_root_trees.RawShowerTree.event_date)
     * [rnd\_seed](#raw_root_trees.RawShowerTree.rnd_seed)
     * [energy\_in\_neutrinos](#raw_root_trees.RawShowerTree.energy_in_neutrinos)
-    * [prim\_energy](#raw_root_trees.RawShowerTree.prim_energy)
-    * [shower\_azimuth](#raw_root_trees.RawShowerTree.shower_azimuth)
+    * [prim\_energy](#raw_root_trees.RawShowerTree.energy_primary)
+    * [shower\_azimuth](#raw_root_trees.RawShowerTree.azimuth)
     * [shower\_zenith](#raw_root_trees.RawShowerTree.shower_zenith)
-    * [prim\_type](#raw_root_trees.RawShowerTree.prim_type)
+    * [prim\_type](#raw_root_trees.RawShowerTree.primary_type)
     * [prim\_injpoint\_shc](#raw_root_trees.RawShowerTree.prim_injpoint_shc)
     * [prim\_inj\_alt\_shc](#raw_root_trees.RawShowerTree.prim_inj_alt_shc)
     * [prim\_inj\_dir\_shc](#raw_root_trees.RawShowerTree.prim_inj_dir_shc)
@@ -580,24 +580,24 @@ def energy_in_neutrinos()
 
 Energy in neutrinos generated in the shower (GeV). Usefull for invisible energy
 
-<a id="raw_root_trees.RawShowerTree.prim_energy"></a>
+<a id="raw_root_trees.RawShowerTree.energy_primary"></a>
 
 #### prim\_energy
 
 ```python
 @property
-def prim_energy()
+def energy_primary()
 ```
 
 Primary energy (GeV) TODO: Check unit conventions. # LWP: Multiple primaries? I guess, variable count. Thus variable size array or a std::vector
 
-<a id="raw_root_trees.RawShowerTree.shower_azimuth"></a>
+<a id="raw_root_trees.RawShowerTree.azimuth"></a>
 
 #### shower\_azimuth
 
 ```python
 @property
-def shower_azimuth()
+def azimuth()
 ```
 
 Shower azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem
@@ -613,13 +613,13 @@ def shower_zenith()
 
 Shower zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth
 
-<a id="raw_root_trees.RawShowerTree.prim_type"></a>
+<a id="raw_root_trees.RawShowerTree.primary_type"></a>
 
 #### prim\_type
 
 ```python
 @property
-def prim_type()
+def primary_type()
 ```
 
 Primary particle type TODO: standarize (PDG?)

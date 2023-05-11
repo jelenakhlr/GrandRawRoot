@@ -2,17 +2,16 @@ import glob
 import datetime #to get the unix timestamp
 import time #to get the unix timestamp
 from grand.io.root_trees import *
-import raw_root_trees as RawTrees
 from CorsikaInfoFuncs import *
+sys.path.append("../Common")
+import raw_root_trees as RawTrees
 
-
-
-def CoreasRawToRawROOT(path):
+def CoreasToRawRoot(path):
   """
-  put meaningful comments here
+  put meaningful comments here - maybe after I clean up the structure of this file
 
   """
-  # output file name hardcoded in the root tree section
+  #WARNING: output file name hardcoded in the root tree section
 
   print("-----------------------------------------")
   print("------ COREAS to RAWROOT converter ------")
@@ -28,7 +27,7 @@ def CoreasRawToRawROOT(path):
   # ********** load SIM.reas **********
   # find reas files
   if glob.glob(path + "SIM??????-*.reas"):
-      available_reas_files = glob.glob(path + "SIM??????-*.reas") # these are from parallel runs
+      available_reas_files = glob.glob(path + "SIM??????-*.reas") # these are from parallel runs - I will mostly have these
   else:
       available_reas_files = glob.glob(path + "SIM??????.reas") # these are from normal runs
 
@@ -263,10 +262,10 @@ def CoreasRawToRawROOT(path):
   # right now I get this error "ValueError: setting an array element with a sequence." if I try to pass just "RandomSeed"
 
   RawShower.energy_in_neutrinos = EnergyInNeutrinos
-  RawShower.prim_energy = [Energy]
-  RawShower.shower_azimuth = Azimuth
+  RawShower.energy_primary = [Energy]
+  RawShower.azimuth = Azimuth
   RawShower.shower_zenith = Zenith
-  RawShower.prim_type = [str(Primary)]
+  RawShower.primary_type = [str(Primary)]
   RawShower.prim_inj_alt_shc = [InjectionAltitude]
   RawShower.atmos_model = str(AtmosphericModel)
 
@@ -444,4 +443,4 @@ if __name__ == "__main__":
     if (path[-1]!="/"):
         path = path + "/"
 
-    CoreasRawToRawROOT(path)
+    CoreasToRawRoot(path)

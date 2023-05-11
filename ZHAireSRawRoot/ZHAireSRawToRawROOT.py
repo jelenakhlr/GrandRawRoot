@@ -220,10 +220,10 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.unix_date = UnixDate
         RawShower.rnd_seed = RandomSeed
         RawShower.energy_in_neutrinos = EnergyInNeutrinos    
-        RawShower.prim_energy = [Energy] #TODO: test multiple primaries
-        RawShower.shower_azimuth = Azimuth
+        RawShower.energy_primary = [Energy] #TODO: test multiple primaries
+        RawShower.azimuth = Azimuth
         RawShower.shower_zenith = Zenith
-        RawShower.prim_type = [str(Primary)]  #TODO: test multiple primaries
+        RawShower.primary_type = [str(Primary)]  #TODO: test multiple primaries
         RawShower.prim_inj_alt_shc = [InjectionAltitude] #TODO: test multiple primaries
         RawShower.prim_inj_dir_shc=[(-np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),-np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),-np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries
         #using the sine thorem for a triangle with vertices at the earth center, the injection point and the core position (located at groundlitutde)
