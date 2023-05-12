@@ -40,7 +40,7 @@
     * [energy\_in\_neutrinos](#raw_root_trees.RawShowerTree.energy_in_neutrinos)
     * [prim\_energy](#raw_root_trees.RawShowerTree.energy_primary)
     * [shower\_azimuth](#raw_root_trees.RawShowerTree.azimuth)
-    * [shower\_zenith](#raw_root_trees.RawShowerTree.shower_zenith)
+    * [shower\_zenith](#raw_root_trees.RawShowerTree.zenith)
     * [prim\_type](#raw_root_trees.RawShowerTree.primary_type)
     * [prim\_injpoint\_shc](#raw_root_trees.RawShowerTree.prim_injpoint_shc)
     * [prim\_inj\_alt\_shc](#raw_root_trees.RawShowerTree.prim_inj_alt_shc)
@@ -602,13 +602,13 @@ def azimuth()
 
 Shower azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem
 
-<a id="raw_root_trees.RawShowerTree.shower_zenith"></a>
+<a id="raw_root_trees.RawShowerTree.zenith"></a>
 
 #### shower\_zenith
 
 ```python
 @property
-def shower_zenith()
+def zenith()
 ```
 
 Shower zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth

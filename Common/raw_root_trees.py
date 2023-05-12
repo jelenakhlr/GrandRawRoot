@@ -68,7 +68,7 @@ class RawShowerTree(MotherEventTree):
     _azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
 
     ### Shower zenith  (deg, CR convention)
-    _shower_zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    _zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary particle type (PDG)
     _primary_type: StdVectorList = field(default_factory=lambda: StdVectorList("string"))
@@ -811,13 +811,13 @@ class RawShowerTree(MotherEventTree):
         self._azimuth[0] = value
 
     @property
-    def shower_zenith(self):
+    def zenith(self):
         """Shower zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth"""
-        return self._shower_zenith[0]
+        return self._zenith[0]
 
-    @shower_zenith.setter
-    def shower_zenith(self, value):
-        self._shower_zenith[0] = value
+    @zenith.setter
+    def zenith(self, value):
+        self._zenith[0] = value
 
     @property
     def primary_type(self):

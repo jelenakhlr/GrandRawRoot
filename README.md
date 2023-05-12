@@ -5,6 +5,7 @@ The idea is for it to be the starting point for the generation of GRANDRoot file
 
 ## Common
 Here we have the files that are common to both simulators
+
 TODO: root_trees.py should be imported from grandlib
 
 ## CoREASRawRoot

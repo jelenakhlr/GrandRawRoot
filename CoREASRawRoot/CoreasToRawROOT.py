@@ -135,15 +135,14 @@ def CoreasToRawRoot(path):
   NucleonEnergyCut  = ecuts[0]
   MesonEnergyCut    = HadronEnergyCut # mesons are hadronic, so this should be fine
 
-  # parallel = [1,2] # COREAS-only
-  # also: I might not be using parallel anyway, so leave this out for now
+  parallel = [1,2] # COREAS-only
   # PARALLEL = [ECTCUT, ECTMAX, MPIID, FECTOUT]
-  # ECTCUT: limit for subshowers
-  # ECTMAX: maximum energy for complete shower
+  # ECTCUT: limit for subshowers GeV
+  # ECTMAX: maximum energy for complete shower GeV
   # MPIID: ID for mpi run (ignore for now)
   # T/F flag for extra output file (ignore for now)
 
-  elmflg = [1,2,3] # COREAS-only
+  # elmflg = ["T", "T"] # COREAS-only (ignore for now)
 
   # In Zhaires converter: RelativeThinning, WeightFactor
   # I have:
@@ -264,7 +263,7 @@ def CoreasToRawRoot(path):
   RawShower.energy_in_neutrinos = EnergyInNeutrinos
   RawShower.energy_primary = [Energy]
   RawShower.azimuth = Azimuth
-  RawShower.shower_zenith = Zenith
+  RawShower.zenith = Zenith
   RawShower.primary_type = [str(Primary)]
   RawShower.prim_inj_alt_shc = [InjectionAltitude]
   RawShower.atmos_model = str(AtmosphericModel)
@@ -303,10 +302,11 @@ def CoreasToRawRoot(path):
 
   # TODO: figure out how to add numpy arrays - it complains here
 
-  RawShower.long_depth.append(pd_depth.astype(np.float32))  
+  # RawShower.long_depth.append(pd_depth.astype(np.float32)) 
+  # this is the vertical depth - not sure this can directly be found in Corsika
   RawShower.long_gammas.append(pd_gammas.astype(np.float32)) 
 
-  # ? RawShower.long_slantdepth.append()  
+  RawShower.long_slantdepth.append(pd_depth.astype(np.float32))
   RawShower.long_eminus.append(pd_electrons.astype(np.float32))
 
   RawShower.long_eplus.append(pd_positrons.astype(np.float32))
@@ -314,19 +314,20 @@ def CoreasToRawRoot(path):
   RawShower.long_muminus.append(pd_muN.astype(np.float32))
   RawShower.long_muplus.append(pd_muP.astype(np.float32))
 
-  # ? RawShower.long_allch.append()
+  RawShower.long_allch.append(pd_charged.astype(np.float32))
 
   RawShower.long_nuclei.append(pd_nuclei.astype(np.float32))
 
   RawShower.long_neutrino.append(ed_neutrino.astype(np.float32))
 
-  # ? RawShower.long_gamma_cut.append()
+  # TODO: figure out which gamma needs to be stored how
+  # RawShower.long_gamma_cut.append(ed_gamma.astype(np.float32))
 
   RawShower.long_e_cut.append(ed_em_cut.astype(np.float32))
 
   RawShower.long_mu_cut.append(ed_mu_cut.astype(np.float32))
 
-  # ? RawShower.long_gamma_ioniz.append()
+  # RawShower.long_gamma_ioniz.append(ed_gamma.astype(np.float32))
 
   RawShower.long_e_ioniz.append(ed_em_ioniz.astype(np.float32))
 
@@ -372,7 +373,7 @@ def CoreasToRawRoot(path):
   RawEfield.run_number = RunID
   RawEfield.event_number = EventID
 
-  RawEfield.efield_sim = "Coreas" # TODO: unhardcode this
+  RawEfield.efield_sim = "Coreas" # TODO: unhardcode this and add versions
 
   RawEfield.refractivity_model = RefractionIndexModel                                       
   RawEfield.refractivity_model_parameters = RefractionIndexParameters                       
@@ -401,9 +402,6 @@ def CoreasToRawRoot(path):
     y_polarization = efield[:,2]
     z_polarization = efield[:,3]
     
-
-    # DetectorID = IDs[ant_ID] 
-    # is this supposed to be antenna name vs antenna ID?
     
     # TODO: check this
     # in Zhaires converter: AntennaN[ant_ID]
@@ -411,9 +409,10 @@ def CoreasToRawRoot(path):
     RawEfield.t_0.append(timestamp[0].astype(np.float32))
 
     # Traces
-    RawEfield.trace_x.append(x_polarization.astype(np.float32))
-    RawEfield.trace_y.append(y_polarization.astype(np.float32))
-    RawEfield.trace_z.append(z_polarization.astype(np.float32))
+    # RawEfield.trace_x.append(x_polarization.astype(np.float32))
+    # RawEfield.trace_y.append(y_polarization.astype(np.float32))
+    # RawEfield.trace_z.append(z_polarization.astype(np.float32))
+    RawEfield.trace.append()
 
     # Antenna positions in showers's referential in [m]
     ant_position = get_antenna_position(pathAntennaList, antenna)
