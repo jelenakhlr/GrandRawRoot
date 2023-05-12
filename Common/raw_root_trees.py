@@ -1147,7 +1147,9 @@ class RawEfieldTree(MotherEventTree):
     ## Efield trace in Z direction
     _trace_z: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
-
+    ## Efield trace in X,Y,Z direction
+    # value = np.concatenate((self._du_id, self._trace_x, self._trace_y, self._trace_z, self.t_bin_size))
+    _trace: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
     @property
     def du_count(self):
@@ -1435,8 +1437,28 @@ class RawEfieldTree(MotherEventTree):
         
     @property
     def trace(self):
-        """trace info with du_id, traces in all three directions, and time bin stored in one array"""
-        return np.concatenate((self._du_id, self._trace_x, self._trace_y, self._trace_z, self.t_bin_size))
+        return self._trace
+    
+    @trace.setter
+    def trace(self, value):
+        # value = np.concatenate((self._du_id, self._trace_x, self._trace_y, self._trace_z, self.t_bin_size))
+        # A list was given
+        if (
+            isinstance(value, list)
+            or isinstance(value, np.ndarray)
+            or isinstance(value, StdVectorList)
+        ):
+            # Clear the vector before setting
+            self._trace.clear()
+            self._trace += value
+        # A vector of strings was given
+        elif isinstance(value, ROOT.vector("vector<float>")):
+            self._trace._vector = value
+        else:
+            raise ValueError(
+                f"Incorrect type for trace {type(value)}. Either a list, an array or a ROOT.vector of float required."
+            )
+                
 
     @property
     def du_x(self):

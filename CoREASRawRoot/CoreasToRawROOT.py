@@ -291,19 +291,17 @@ def CoreasToRawRoot(path):
   RawShower.meson_energy_cut = MesonEnergyCut # and hadrons
   RawShower.nucleon_energy_cut = NucleonEnergyCut # same as meson and hadron cut
 
-  RawShower.shower_core_pos = np.array(CorePosition) #do we want np.array(list)?
+  RawShower.shower_core_pos = np.array(CorePosition)
   #TODO ASAP: ArrayName
   RawShower.array_name = ArrayName
-  #TODO ASAP: EventWeight
-  #TODO ASAP: TestedCores
+  #TODO: EventWeight ?
+  #TODO: TestedCores ?
 
 
-  # fill the longitudinal profile, i.e. the particle distribution and energy deposit
-
-  # TODO: figure out how to add numpy arrays - it complains here
+  ## fill the longitudinal profile, i.e. the particle distribution and energy deposit
 
   # RawShower.long_depth.append(pd_depth.astype(np.float32)) 
-  # this is the vertical depth - not sure this can directly be found in Corsika
+  # this is the vertical depth in Zhaires - not sure this can directly be found in Corsika
   RawShower.long_gammas.append(pd_gammas.astype(np.float32)) 
 
   RawShower.long_slantdepth.append(pd_depth.astype(np.float32))
@@ -320,13 +318,14 @@ def CoreasToRawRoot(path):
 
   RawShower.long_neutrino.append(ed_neutrino.astype(np.float32))
 
-  # TODO: figure out which gamma needs to be stored how
+  # TODO: figure out which gamma needs to be stored how PT1
   # RawShower.long_gamma_cut.append(ed_gamma.astype(np.float32))
 
   RawShower.long_e_cut.append(ed_em_cut.astype(np.float32))
 
   RawShower.long_mu_cut.append(ed_mu_cut.astype(np.float32))
 
+  # TODO: figure out which gamma PT2
   # RawShower.long_gamma_ioniz.append(ed_gamma.astype(np.float32))
 
   RawShower.long_e_ioniz.append(ed_em_ioniz.astype(np.float32))
@@ -343,8 +342,7 @@ def CoreasToRawRoot(path):
   
   #****** info from input files: ******
 
-  # placeholders
-  # TODO: find these values
+  # TODO ASAP: find these values
   RefractionIndexModel = "model"
   RefractionIndexParameters = [1,2,3] # ? 
   
@@ -398,9 +396,9 @@ def CoreasToRawRoot(path):
     efield = np.loadtxt(tracefile)
     
     timestamp = efield[:,0]
-    x_polarization = efield[:,1]
-    y_polarization = efield[:,2]
-    z_polarization = efield[:,3]
+    trace_x = efield[:,1]
+    trace_y = efield[:,2]
+    trace_z = efield[:,3]
     
     
     # TODO: check this
@@ -409,10 +407,11 @@ def CoreasToRawRoot(path):
     RawEfield.t_0.append(timestamp[0].astype(np.float32))
 
     # Traces
-    # RawEfield.trace_x.append(x_polarization.astype(np.float32))
-    # RawEfield.trace_y.append(y_polarization.astype(np.float32))
-    # RawEfield.trace_z.append(z_polarization.astype(np.float32))
-    RawEfield.trace.append()
+    # RawEfield.trace_x.append(trace_x.astype(np.float32))
+    # RawEfield.trace_y.append(trace_y.astype(np.float32))
+    # RawEfield.trace_z.append(trace_z.astype(np.float32))
+    trace_vals = np.concatenate((int(antenna), trace_x, trace_y, trace_z, TimeBinSize))
+    RawEfield.trace.append(trace_vals.astype(np.float32))
 
     # Antenna positions in showers's referential in [m]
     ant_position = get_antenna_position(pathAntennaList, antenna)
@@ -425,8 +424,56 @@ def CoreasToRawRoot(path):
                  
   RawEfield.fill()
   RawEfield.write()
+  #############################################################
+  # fill SimCoreasShower with all leftover info               #
+  #############################################################
+  
+  # store all leftover information here
+
+  SimCoreasShower.AutomaticTimeBoundaries = AutomaticTimeBoundaries
+  SimCoreasShower.ResolutionReductionScale = ResolutionReductionScale
+  SimCoreasShower.GroundLevelRefractiveIndex = GroundLevelRefractiveIndex
+  SimCoreasShower.GPSSecs = GPSSecs
+  SimCoreasShower.GPSNanoSecs = GPSNanoSecs
+  SimCoreasShower.DepthOfShowerMaximum = DepthOfShowerMaximum
+  SimCoreasShower.DistanceOfShowerMaximum = DistanceOfShowerMaximum
+  SimCoreasShower.GeomagneticAngle = GeomagneticAngle
+  
+  SimCoreasShower.nshow  = nshow # number of showers
+  SimCoreasShower.ectmap = ectmap
+  SimCoreasShower.maxprt = maxprt
+  SimCoreasShower.radnkg = radnkg
+
+  SimCoreasShower.parallel = parallel # = [ECTCUT, ECTMAX]
+
+  # these values are just placeholders for now - not sure if we will actually need them
+  SimCoreasShower.mumult = mumult
+  SimCoreasShower.muaddi = muaddi
+  SimCoreasShower.parout = parout
+  SimCoreasShower.longi  = longi
+
+  # TODO: decide on this 
+  """"
+  I would like these to be in RawEfield and then later in TShowerSim
+
+  Especially important: pd_depth is different from ed_depth!
+  
+  Both need to be stored, but all of the info on particle distribution 
+  and energy deposit should be together
+  """
+  SimCoreasShower.pd_hadrons = pd_hadrons
+  SimCoreasShower.pd_cherenkov = pd_cherenkov
+  SimCoreasShower.energy_dep = energy_dep
+  SimCoreasShower.ed_depth = ed_depth
+  SimCoreasShower.ed_gamma = ed_gamma
+  SimCoreasShower.ed_hadron_ioniz = ed_hadron_ioniz
+  SimCoreasShower.ed_hadron_cut = ed_hadron_cut
+  SimCoreasShower.ed_sum = ed_sum
 
 
+  SimCoreasShower.fill()
+  SimCoreasShower.write()
+  #############################################################
 
   print("### The event written was ", EventName, "###")
   print("### The name of the file is ", OutputFileName, "###")
