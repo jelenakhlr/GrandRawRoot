@@ -1,6 +1,6 @@
 from re import search
 import io
-from grand.io.root_trees import *
+# from grand.io.root_trees import *
 
 # read values from SIM.reas or RUN.inp
 def find_input_vals(line):
@@ -43,6 +43,23 @@ def read_site(input_file):
         site = atmos
     return site
 
+
+
+def read_first_interaction(log_file):
+    """
+    For now, get this from the log.
+    (Yes, this is ugly and unreliable, but it's good enough for now)
+    I want to change the Coreas output so this is included in the reas file instead.
+    """
+    with open(log_file, mode="r") as datafile:
+        for line in datafile:
+            if "height of first interaction" in line:
+                val = line.split("interaction")[-1]
+                first_interaction = find_input_vals(val)
+    return first_interaction
+
+
+
 def antenna_positions_dict(pathAntennaList):
     """
     get antenna positions from SIM??????.list and store in a dictionary
@@ -63,6 +80,8 @@ def antenna_positions_dict(pathAntennaList):
     antennaInfo["ID"] = file[:,5]
 
     return antennaInfo
+
+
 
 def get_antenna_position(pathAntennaList, antenna):
     """
@@ -85,6 +104,7 @@ def get_antenna_position(pathAntennaList, antenna):
     z = np.float32(positions.split(" ")[4]) * 100 # convert to m
 
     return x, y, z
+
 
 
 def read_long(pathLongFile):
@@ -116,6 +136,7 @@ def read_long(pathLongFile):
         lines = temp_file.readlines()
 
 
+
     n_steps = int(lines[0].rstrip().split()[3])
 
     # store n table
@@ -137,6 +158,7 @@ def read_long(pathLongFile):
     #         hillas_parameter = [float(x) for x in line.split()[2:]]
     #     if bool(search("CHI", line)):
     #         hillas_parameter.append(float(line.split()[2]))
+
 
     print("The file", pathLongFile, "has been separated into energy deposit and particle distribution.")
     return n_data, dE_data, hillas_parameter

@@ -273,53 +273,53 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         #Fill the tables
         table=AiresInfo.GetLongitudinalTable(InputFolder,1001,Slant=False,Precision="Simple",TaskName=TaskName)               
         RawShower.long_depth.append(np.array(table.T[0], dtype=np.float32))  
-        RawShower.long_gammas.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_pd_gammas.append(np.array(table.T[1], dtype=np.float32)) 
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1005,Slant=True,Precision="Simple",TaskName=TaskName)                      
         RawShower.long_slantdepth.append(np.array(table.T[0], dtype=np.float32))  
-        RawShower.long_eminus.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_eminus.append(np.array(table.T[1], dtype=np.float32))
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1006,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_eplus.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_eplus.append(np.array(table.T[1], dtype=np.float32))
         
         table=AiresInfo.GetLongitudinalTable(InputFolder,1008,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_muminus.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_muminus.append(np.array(table.T[1], dtype=np.float32))
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1007,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_muplus.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_muplus.append(np.array(table.T[1], dtype=np.float32))
         
         table=AiresInfo.GetLongitudinalTable(InputFolder,1291,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_allch.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_allch.append(np.array(table.T[1], dtype=np.float32))
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1041,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_nuclei.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_nuclei.append(np.array(table.T[1], dtype=np.float32))
  
-        #TODO: long_hadr is left empty for now, as in zhaires is a combination of several tables...and its rarely used.
+        #TODO: long_pd_hadr is left empty for now, as in zhaires is a combination of several tables...and its rarely used.
         
         table=AiresInfo.GetLongitudinalTable(InputFolder,6796,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_neutrino.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_ed_neutrino.append(np.array(table.T[1], dtype=np.float32))
         
         table=AiresInfo.GetLongitudinalTable(InputFolder,7501,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_gamma_cut.append(np.array(table.T[1], dtype=np.float32))        
+        RawShower.long_ed_gamma_cut.append(np.array(table.T[1], dtype=np.float32))        
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,7705,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_e_cut.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_ed_e_cut.append(np.array(table.T[1], dtype=np.float32)) 
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,7707,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_mu_cut.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_ed_mu_cut.append(np.array(table.T[1], dtype=np.float32)) 
          
-        #TODO: long_hadr_cut is left empty for now, as in zhaires is a combination of several tables...and its rarely used.
+        #TODO: long_ed_hadr_cut is left empty for now, as in zhaires is a combination of several tables...and its rarely used.
                          
         table=AiresInfo.GetLongitudinalTable(InputFolder,7801,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_gamma_ioniz.append(np.array(table.T[1], dtype=np.float32))        
+        RawShower.long_ed_gamma_ioniz.append(np.array(table.T[1], dtype=np.float32))        
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,7905,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_e_ioniz.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_ed_e_ioniz.append(np.array(table.T[1], dtype=np.float32)) 
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,7907,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_mu_ioniz.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_ed_mu_ioniz.append(np.array(table.T[1], dtype=np.float32)) 
         
-        #TODO: long_hadr_ioniz is left empty for now, as in zhaires is a combination of several tables...and its rarely used.        
+        #TODO: long_ed_hadr_ioniz is left empty for now, as in zhaires is a combination of several tables...and its rarely used.        
 
         
         RawShower.fill()

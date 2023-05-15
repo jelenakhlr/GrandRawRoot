@@ -73,6 +73,29 @@ def CoreasToRawRoot(path):
   # in each dat file:
   # time stamp and the north-, west-, and vertical component of the electric field
 
+  # ********** load log file **********
+  """
+  This is just until I have a chance to change the Coreas output so that the
+  reas file includes the first interaction as an output parameter.
+
+  For now, we just want this for the height the of first interaction.
+  """
+  log_file = glob.glob(path + "*.log")
+
+  if len(log_file) == 0:
+    print("[ERROR] No log file found in this directory. Please check directory and try again.")
+    quit()
+  elif len(log_file) > 1:
+    print("Found", available_inp_files)
+    print("[WARNING] More than one log file found in directory. Only log file", log_file[0], "will be used.")
+    log_file = log_file[0]
+  else:
+    print("Found", log_file)
+    log_file = log_file[0]
+    print("Extracting info from log file", log_file, "for GRANDroot.")
+  print("*****************************************")
+
+  first_interaction = read_first_interaction(log_file) # height of first interaction
 
   ###############################
   # Part B: Generate ROOT Trees #
@@ -297,41 +320,47 @@ def CoreasToRawRoot(path):
   #TODO: EventWeight ?
   #TODO: TestedCores ?
 
-
-  ## fill the longitudinal profile, i.e. the particle distribution and energy deposit
-
-  # RawShower.long_depth.append(pd_depth.astype(np.float32)) 
-  # this is the vertical depth in Zhaires - not sure this can directly be found in Corsika
-  RawShower.long_gammas.append(pd_gammas.astype(np.float32)) 
-
-  RawShower.long_slantdepth.append(pd_depth.astype(np.float32))
-  RawShower.long_eminus.append(pd_electrons.astype(np.float32))
-
-  RawShower.long_eplus.append(pd_positrons.astype(np.float32))
-
-  RawShower.long_muminus.append(pd_muN.astype(np.float32))
-  RawShower.long_muplus.append(pd_muP.astype(np.float32))
-
-  RawShower.long_allch.append(pd_charged.astype(np.float32))
-
-  RawShower.long_nuclei.append(pd_nuclei.astype(np.float32))
-
-  RawShower.long_neutrino.append(ed_neutrino.astype(np.float32))
-
-  # TODO: figure out which gamma needs to be stored how PT1
-  # RawShower.long_gamma_cut.append(ed_gamma.astype(np.float32))
-
-  RawShower.long_e_cut.append(ed_em_cut.astype(np.float32))
-
-  RawShower.long_mu_cut.append(ed_mu_cut.astype(np.float32))
-
-  # TODO: figure out which gamma PT2
-  # RawShower.long_gamma_ioniz.append(ed_gamma.astype(np.float32))
-
-  RawShower.long_e_ioniz.append(ed_em_ioniz.astype(np.float32))
-
-  RawShower.long_mu_ioniz.append(ed_mu_ioniz.astype(np.float32))
+  """
+  In the next steps, fill the longitudinal profile, 
+  i.e. the particle distribution ("pd") and energy deposit ("ed").
   
+  These are matched with ZhaireS as good as possible. 
+  Some fields will be missing here and some fields will be missing for ZhaireS.
+  
+  """
+
+  RawShower.long_pd_gammas = pd_gammas.astype(np.float32)
+  RawShower.long_pd_eminus = pd_electrons.astype(np.float32)
+  RawShower.long_pd_eplus = pd_positrons.astype(np.float32)
+  RawShower.long_pd_muminus = pd_muN.astype(np.float32)
+  RawShower.long_pd_muplus = pd_muP.astype(np.float32)
+  RawShower.long_pd_allch = pd_charged.astype(np.float32)
+  RawShower.long_pd_nuclei = pd_nuclei.astype(np.float32)
+  RawShower.long_pd_hadr = pd_hadrons.astype(np.float32)
+
+  RawShower.long_ed_neutrino = ed_neutrino.astype(np.float32)
+  RawShower.long_ed_e_cut = ed_em_cut.astype(np.float32)
+  RawShower.long_ed_mu_cut = ed_mu_cut.astype(np.float32)
+  RawShower.long_ed_hadr_cut = ed_hadron_cut.astype(np.float32)
+  
+  # gamma cut - I believe this was the same value as for another particle
+  # for now: use hadron cut as placeholder
+  # TODO ASAP: check this
+  RawShower.long_ed_gamma_cut = ed_hadron_cut.astype(np.float32)
+  
+  RawShower.long_ed_gamma_ioniz = ed_gamma.astype(np.float32)
+  RawShower.long_ed_e_ioniz = ed_em_ioniz.astype(np.float32)
+  RawShower.long_ed_mu_ioniz = ed_mu_ioniz.astype(np.float32)
+  RawShower.long_ed_hadr_ioniz = ed_hadron_ioniz.astype(np.float32)
+  
+  # The next values are "leftover" from the comparison with ZhaireS.
+  # They should go in TShowerSim along with the values above.
+  RawShower.long_ed_depth = ed_depth.astype(np.float32)
+  RawShower.long_pd_depth = pd_depth.astype(np.float32)
+  RawShower.long_pd_cherenkov = pd_cherenkov.astype(np.float32)
+  RawShower.long_ed_sum = ed_sum.astype(np.float32)
+
+  RawShower.first_interaction = first_interaction
 
   RawShower.fill()
   RawShower.write()
@@ -376,9 +405,6 @@ def CoreasToRawRoot(path):
   RawEfield.refractivity_model = RefractionIndexModel                                       
   RawEfield.refractivity_model_parameters = RefractionIndexParameters                       
         
-  #TODO ASAP: Find how to do this
-  #RawEfield.refractivity_profile=Atmostable.T[0].tolist() 
-  #RawEfield.refractivity_profile.append(RefrIndex.tolist())
   RawEfield.t_pre = TimeWindowMin
   RawEfield.t_post = TimeWindowMax
   RawEfield.t_bin_size = TimeBinSize
@@ -401,7 +427,6 @@ def CoreasToRawRoot(path):
     trace_z = efield[:,3]
     
     
-    # TODO: check this
     # in Zhaires converter: AntennaN[ant_ID]
     RawEfield.du_id.append(int(antenna))
     RawEfield.t_0.append(timestamp[0].astype(np.float32))
@@ -421,7 +446,6 @@ def CoreasToRawRoot(path):
     RawEfield.du_z.append(ant_position[2].astype(np.float32))
 
 
-                 
   RawEfield.fill()
   RawEfield.write()
   #############################################################
@@ -461,14 +485,7 @@ def CoreasToRawRoot(path):
   Both need to be stored, but all of the info on particle distribution 
   and energy deposit should be together
   """
-  SimCoreasShower.pd_hadrons = pd_hadrons
-  SimCoreasShower.pd_cherenkov = pd_cherenkov
-  SimCoreasShower.energy_dep = energy_dep
-  SimCoreasShower.ed_depth = ed_depth
-  SimCoreasShower.ed_gamma = ed_gamma
-  SimCoreasShower.ed_hadron_ioniz = ed_hadron_ioniz
-  SimCoreasShower.ed_hadron_cut = ed_hadron_cut
-  SimCoreasShower.ed_sum = ed_sum
+  
 
 
   SimCoreasShower.fill()

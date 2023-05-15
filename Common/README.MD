@@ -10,23 +10,23 @@
   * [RawShowerTree](#raw_root_trees.RawShowerTree)
     * [long\_depth](#raw_root_trees.RawShowerTree.long_depth)
     * [long\_slantdepth](#raw_root_trees.RawShowerTree.long_slantdepth)
-    * [long\_gammas](#raw_root_trees.RawShowerTree.long_gammas)
-    * [long\_eplus](#raw_root_trees.RawShowerTree.long_eplus)
-    * [long\_eminus](#raw_root_trees.RawShowerTree.long_eminus)
-    * [long\_muplus](#raw_root_trees.RawShowerTree.long_muplus)
-    * [long\_muminus](#raw_root_trees.RawShowerTree.long_muminus)
-    * [long\_allch](#raw_root_trees.RawShowerTree.long_allch)
-    * [long\_nuclei](#raw_root_trees.RawShowerTree.long_nuclei)
-    * [long\_hadr](#raw_root_trees.RawShowerTree.long_hadr)
-    * [long\_neutrino](#raw_root_trees.RawShowerTree.long_neutrino)
-    * [long\_gamma\_cut](#raw_root_trees.RawShowerTree.long_gamma_cut)
-    * [long\_gamma\_ioniz](#raw_root_trees.RawShowerTree.long_gamma_ioniz)
-    * [long\_e\_cut](#raw_root_trees.RawShowerTree.long_e_cut)
-    * [long\_e\_ioniz](#raw_root_trees.RawShowerTree.long_e_ioniz)
-    * [long\_mu\_cut](#raw_root_trees.RawShowerTree.long_mu_cut)
-    * [long\_mu\_ioniz](#raw_root_trees.RawShowerTree.long_mu_ioniz)
-    * [long\_hadr\_cut](#raw_root_trees.RawShowerTree.long_hadr_cut)
-    * [long\_hadr\_ioniz](#raw_root_trees.RawShowerTree.long_hadr_ioniz)
+    * [long\_gammas](#raw_root_trees.RawShowerTree.long_pd_gammas)
+    * [long\_eplus](#raw_root_trees.RawShowerTree.long_pd_eplus)
+    * [long\_eminus](#raw_root_trees.RawShowerTree.long_pd_eminus)
+    * [long\_muplus](#raw_root_trees.RawShowerTree.long_pd_muplus)
+    * [long\_muminus](#raw_root_trees.RawShowerTree.long_pd_muminus)
+    * [long\_allch](#raw_root_trees.RawShowerTree.long_pd_allch)
+    * [long\_nuclei](#raw_root_trees.RawShowerTree.long_pd_nuclei)
+    * [long\_hadr](#raw_root_trees.RawShowerTree.long_pd_hadr)
+    * [long\_neutrino](#raw_root_trees.RawShowerTree.long_ed_neutrino)
+    * [long\_gamma\_cut](#raw_root_trees.RawShowerTree.long_ed_gamma_cut)
+    * [long\_gamma\_ioniz](#raw_root_trees.RawShowerTree.long_ed_gamma_ioniz)
+    * [long\_e\_cut](#raw_root_trees.RawShowerTree.long_ed_e_cut)
+    * [long\_e\_ioniz](#raw_root_trees.RawShowerTree.long_ed_e_ioniz)
+    * [long\_mu\_cut](#raw_root_trees.RawShowerTree.long_ed_mu_cut)
+    * [long\_mu\_ioniz](#raw_root_trees.RawShowerTree.long_ed_mu_ioniz)
+    * [long\_hadr\_cut](#raw_root_trees.RawShowerTree.long_ed_hadr_cut)
+    * [long\_hadr\_ioniz](#raw_root_trees.RawShowerTree.long_ed_hadr_ioniz)
     * [relative\_thinning](#raw_root_trees.RawShowerTree.relative_thinning)
     * [weight\_factor](#raw_root_trees.RawShowerTree.weight_factor)
     * [gamma\_energy\_cut](#raw_root_trees.RawShowerTree.gamma_energy_cut)
@@ -272,189 +272,189 @@ def long_slantdepth()
 
 Longitudinal profile of slant depth (g/cm2)
 
-<a id="raw_root_trees.RawShowerTree.long_gammas"></a>
+<a id="raw_root_trees.RawShowerTree.long_pd_gammas"></a>
 
 #### long\_gammas
 
 ```python
 @property
-def long_gammas()
+def long_pd_gammas()
 ```
 
 Longitudinal profile of gammas
 
-<a id="raw_root_trees.RawShowerTree.long_eplus"></a>
+<a id="raw_root_trees.RawShowerTree.long_pd_eplus"></a>
 
 #### long\_eplus
 
 ```python
 @property
-def long_eplus()
+def long_pd_eplus()
 ```
 
 Longitudinal profile of positrons
 
-<a id="raw_root_trees.RawShowerTree.long_eminus"></a>
+<a id="raw_root_trees.RawShowerTree.long_pd_eminus"></a>
 
 #### long\_eminus
 
 ```python
 @property
-def long_eminus()
+def long_pd_eminus()
 ```
 
 Longitudinal profile of electrons
 
-<a id="raw_root_trees.RawShowerTree.long_muplus"></a>
+<a id="raw_root_trees.RawShowerTree.long_pd_muplus"></a>
 
 #### long\_muplus
 
 ```python
 @property
-def long_muplus()
+def long_pd_muplus()
 ```
 
 Longitudinal profile of positrons
 
-<a id="raw_root_trees.RawShowerTree.long_muminus"></a>
+<a id="raw_root_trees.RawShowerTree.long_pd_muminus"></a>
 
 #### long\_muminus
 
 ```python
 @property
-def long_muminus()
+def long_pd_muminus()
 ```
 
 Longitudinal profile of electrons
 
-<a id="raw_root_trees.RawShowerTree.long_allch"></a>
+<a id="raw_root_trees.RawShowerTree.long_pd_allch"></a>
 
 #### long\_allch
 
 ```python
 @property
-def long_allch()
+def long_pd_allch()
 ```
 
 Longitudinal profile of all charged particles
 
-<a id="raw_root_trees.RawShowerTree.long_nuclei"></a>
+<a id="raw_root_trees.RawShowerTree.long_pd_nuclei"></a>
 
 #### long\_nuclei
 
 ```python
 @property
-def long_nuclei()
+def long_pd_nuclei()
 ```
 
 Longitudinal profile of nuclei
 
-<a id="raw_root_trees.RawShowerTree.long_hadr"></a>
+<a id="raw_root_trees.RawShowerTree.long_pd_hadr"></a>
 
 #### long\_hadr
 
 ```python
 @property
-def long_hadr()
+def long_pd_hadr()
 ```
 
 Longitudinal profile of hadrons
 
-<a id="raw_root_trees.RawShowerTree.long_neutrino"></a>
+<a id="raw_root_trees.RawShowerTree.long_ed_neutrino"></a>
 
 #### long\_neutrino
 
 ```python
 @property
-def long_neutrino()
+def long_ed_neutrino()
 ```
 
 Longitudinal profile of created neutrinos
 
-<a id="raw_root_trees.RawShowerTree.long_gamma_cut"></a>
+<a id="raw_root_trees.RawShowerTree.long_ed_gamma_cut"></a>
 
 #### long\_gamma\_cut
 
 ```python
 @property
-def long_gamma_cut()
+def long_ed_gamma_cut()
 ```
 
 Longitudinal profile of low energy gammas
 
-<a id="raw_root_trees.RawShowerTree.long_gamma_ioniz"></a>
+<a id="raw_root_trees.RawShowerTree.long_ed_gamma_ioniz"></a>
 
 #### long\_gamma\_ioniz
 
 ```python
 @property
-def long_gamma_ioniz()
+def long_ed_gamma_ioniz()
 ```
 
 Longitudinal profile of gamma energy deposit
 
-<a id="raw_root_trees.RawShowerTree.long_e_cut"></a>
+<a id="raw_root_trees.RawShowerTree.long_ed_e_cut"></a>
 
 #### long\_e\_cut
 
 ```python
 @property
-def long_e_cut()
+def long_ed_e_cut()
 ```
 
 Longitudinal profile of low energy e+/e-
 
-<a id="raw_root_trees.RawShowerTree.long_e_ioniz"></a>
+<a id="raw_root_trees.RawShowerTree.long_ed_e_ioniz"></a>
 
 #### long\_e\_ioniz
 
 ```python
 @property
-def long_e_ioniz()
+def long_ed_e_ioniz()
 ```
 
 Longitudinal profile of energy deposit by e+/e-
 
-<a id="raw_root_trees.RawShowerTree.long_mu_cut"></a>
+<a id="raw_root_trees.RawShowerTree.long_ed_mu_cut"></a>
 
 #### long\_mu\_cut
 
 ```python
 @property
-def long_mu_cut()
+def long_ed_mu_cut()
 ```
 
 Longitudinal profile of low energy muons
 
-<a id="raw_root_trees.RawShowerTree.long_mu_ioniz"></a>
+<a id="raw_root_trees.RawShowerTree.long_ed_mu_ioniz"></a>
 
 #### long\_mu\_ioniz
 
 ```python
 @property
-def long_mu_ioniz()
+def long_ed_mu_ioniz()
 ```
 
 Longitudinal profile of muon energy deposit
 
-<a id="raw_root_trees.RawShowerTree.long_hadr_cut"></a>
+<a id="raw_root_trees.RawShowerTree.long_ed_hadr_cut"></a>
 
 #### long\_hadr\_cut
 
 ```python
 @property
-def long_hadr_cut()
+def long_ed_hadr_cut()
 ```
 
 Longitudinal profile of low energy hadrons
 
-<a id="raw_root_trees.RawShowerTree.long_hadr_ioniz"></a>
+<a id="raw_root_trees.RawShowerTree.long_ed_hadr_ioniz"></a>
 
 #### long\_hadr\_ioniz
 
 ```python
 @property
-def long_hadr_ioniz()
+def long_ed_hadr_ioniz()
 ```
 
 Longitudinal profile of hadrons energy deposit

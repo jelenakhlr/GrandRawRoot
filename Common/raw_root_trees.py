@@ -160,43 +160,43 @@ class RawShowerTree(MotherEventTree):
     ## Longitudinal Profile of slant depth (g/cm2)
     _long_slantdepth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
     ## Longitudinal Profile of Number of Gammas      
-    _long_gammas: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_gammas: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
     ## Longitudinal Profile of Number of e+
-    _long_eplus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_eplus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
     ## Longitudinal Profile of Number of e-
-    _long_eminus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>")) 
+    _long_pd_eminus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>")) 
     ## Longitudinal Profile of Number of mu+
-    _long_muplus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_muplus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
     ## Longitudinal Profile of Number of mu-
-    _long_muminus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))      
+    _long_pd_muminus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))      
     ## Longitudinal Profile of Number of All charged particles
-    _long_allch: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))   
+    _long_pd_allch: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))   
     ## Longitudinal Profile of Number of Nuclei
-    _long_nuclei: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_nuclei: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
     ## Longitudinal Profile of Number of Hadrons
-    _long_hadr:StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_hadr:StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
     ## Longitudinal Profile of Energy of created neutrinos (GeV)
-    _long_neutrino: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_neutrino: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
 
 
     ## Longitudinal Profile of low energy gammas (GeV)
-    _long_gamma_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_gamma_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
     ## Longitudinal Profile of low energy e+/e- (GeV)
-    _long_e_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_e_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
     ## Longitudinal Profile of low energy mu+/mu- (GeV)
-    _long_mu_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_mu_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
     ## Longitudinal Profile of low energy hadrons (GeV)
-    _long_hadr_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_ed_hadr_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
     
     ## Longitudinal Profile of energy deposit by gammas (GeV)
-    _long_gamma_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))                          
+    _long_ed_gamma_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))                          
     ## Longitudinal Profile of energy deposit by e+/e-  (GeV)
-    _long_e_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_e_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
     ## Longitudinal Profile of energy deposit by muons  (GeV)
-    _long_mu_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_mu_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
     ## Longitudinal Profile of energy deposit by hadrons (GeV)
-    _long_hadr_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))     
+    _long_ed_hadr_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))     
  
 
     @property
@@ -261,12 +261,12 @@ class RawShowerTree(MotherEventTree):
             )
  
     @property
-    def long_gammas(self):
+    def long_pd_gammas(self):
         """Longitudinal profile of gammas"""
-        return self._long_gammas
+        return self._long_pd_gammas
 
-    @long_gammas.setter
-    def long_gammas(self, value):
+    @long_pd_gammas.setter
+    def long_pd_gammas(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -274,23 +274,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_gammas.clear()
-            self._long_gammas += value
+            self._long_pd_gammas.clear()
+            self._long_pd_gammas += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_gammas._vector = value
+            self._long_pd_gammas._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_gammas {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_pd_gammas {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
 
     @property
-    def long_eplus(self):
+    def long_pd_eplus(self):
         """Longitudinal profile of positrons"""
-        return self._long_eplus
+        return self._long_pd_eplus
 
-    @long_eplus.setter
-    def long_eplus(self, value):
+    @long_pd_eplus.setter
+    def long_pd_eplus(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -298,23 +298,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_eplus.clear()
-            self._long_eplus += value
+            self._long_pd_eplus.clear()
+            self._long_pd_eplus += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_eplus._vector = value
+            self._long_pd_eplus._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_eplus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_pd_eplus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
 
     @property
-    def long_eminus(self):
+    def long_pd_eminus(self):
         """Longitudinal profile of electrons"""
-        return self._long_eminus
+        return self._long_pd_eminus
 
-    @long_eminus.setter
-    def long_eminus(self, value):
+    @long_pd_eminus.setter
+    def long_pd_eminus(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -322,23 +322,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_eminus.clear()
-            self._long_eminus += value
+            self._long_pd_eminus.clear()
+            self._long_pd_eminus += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_eminus._vector = value
+            self._long_pd_eminus._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_eminus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_pd_eminus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
 
     @property
-    def long_muplus(self):
+    def long_pd_muplus(self):
         """Longitudinal profile of positrons"""
-        return self._long_muplus
+        return self._long_pd_muplus
 
-    @long_muplus.setter
-    def long_muplus(self, value):
+    @long_pd_muplus.setter
+    def long_pd_muplus(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -346,23 +346,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_muplus.clear()
-            self._long_muplus += value
+            self._long_pd_muplus.clear()
+            self._long_pd_muplus += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_muplus._vector = value
+            self._long_pd_muplus._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_muplus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_pd_muplus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
 
     @property
-    def long_muminus(self):
+    def long_pd_muminus(self):
         """Longitudinal profile of electrons"""
-        return self._long_muminus
+        return self._long_pd_muminus
 
-    @long_muminus.setter
-    def long_muminus(self, value):
+    @long_pd_muminus.setter
+    def long_pd_muminus(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -370,23 +370,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_muminus.clear()
-            self._long_muminus += value
+            self._long_pd_muminus.clear()
+            self._long_pd_muminus += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_muminus._vector = value
+            self._long_pd_muminus._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_muminus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_pd_muminus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
 
     @property
-    def long_allch(self):
+    def long_pd_allch(self):
         """Longitudinal profile of all charged particles"""
-        return self._long_allch
+        return self._long_pd_allch
 
-    @long_allch.setter
-    def long_allch(self, value):
+    @long_pd_allch.setter
+    def long_pd_allch(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -394,23 +394,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_allch.clear()
-            self._long_allch += value
+            self._long_pd_allch.clear()
+            self._long_pd_allch += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_allch._vector = value
+            self._long_pd_allch._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_allch {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_pd_allch {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
 
     @property
-    def long_nuclei(self):
+    def long_pd_nuclei(self):
         """Longitudinal profile of nuclei"""
-        return self._long_nuclei
+        return self._long_pd_nuclei
         
-    @long_nuclei.setter
-    def long_nuclei(self, value):
+    @long_pd_nuclei.setter
+    def long_pd_nuclei(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -418,24 +418,24 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_nuclei.clear()
-            self._long_nuclei += value
+            self._long_pd_nuclei.clear()
+            self._long_pd_nuclei += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_nuclei._vector = value
+            self._long_pd_nuclei._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_nuclei {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_pd_nuclei {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
 
 
     @property
-    def long_hadr(self):
+    def long_pd_hadr(self):
         """Longitudinal profile of hadrons"""
-        return self._long_hadr
+        return self._long_pd_hadr
         
-    @long_hadr.setter
-    def long_hadr(self, value):
+    @long_pd_hadr.setter
+    def long_pd_hadr(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -443,23 +443,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_hadr.clear()
-            self._long_hadr += value
+            self._long_pd_hadr.clear()
+            self._long_pd_hadr += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_hadr._vector = value
+            self._long_pd_hadr._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_hadr {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_pd_hadr {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
 
     @property
-    def long_neutrino(self):
+    def long_ed_neutrino(self):
         """Longitudinal profile of created neutrinos"""
-        return self._long_neutrino
+        return self._long_ed_neutrino
         
-    @long_neutrino.setter
-    def long_neutrino(self, value):
+    @long_ed_neutrino.setter
+    def long_ed_neutrino(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -467,23 +467,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_neutrino.clear()
-            self._long_neutrino += value
+            self._long_ed_neutrino.clear()
+            self._long_ed_neutrino += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_neutrino._vector = value
+            self._long_ed_neutrino._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_neutrino {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_ed_neutrino {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
 
     @property
-    def long_gamma_cut(self):
+    def long_ed_gamma_cut(self):
         """Longitudinal profile of low energy gammas"""
-        return self._long_gamma_cut
+        return self._long_ed_gamma_cut
 
-    @long_gamma_cut.setter
-    def long_gamma_cut(self, value):
+    @long_ed_gamma_cut.setter
+    def long_ed_gamma_cut(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -491,23 +491,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_gamma_cut.clear()
-            self._long_gamma_cut += value
+            self._long_ed_gamma_cut.clear()
+            self._long_ed_gamma_cut += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_gamma_cut._vector = value
+            self._long_ed_gamma_cut._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_gamma_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_ed_gamma_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
                 
     @property
-    def long_gamma_ioniz(self):
+    def long_ed_gamma_ioniz(self):
         """Longitudinal profile of gamma energy deposit"""
-        return self._long_gamma_ioniz
+        return self._long_ed_gamma_ioniz
 
-    @long_gamma_ioniz.setter
-    def long_gamma_ioniz(self, value):
+    @long_ed_gamma_ioniz.setter
+    def long_ed_gamma_ioniz(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -515,23 +515,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_gamma_ioniz.clear()
-            self._long_gamma_ioniz += value
+            self._long_ed_gamma_ioniz.clear()
+            self._long_ed_gamma_ioniz += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_gamma_ioniz._vector = value
+            self._long_ed_gamma_ioniz._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_gamma_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_ed_gamma_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
             
     @property
-    def long_e_cut(self):
+    def long_ed_e_cut(self):
         """Longitudinal profile of low energy e+/e-"""
-        return self._long_e_cut
+        return self._long_ed_e_cut
 
-    @long_e_cut.setter
-    def long_e_cut(self, value):
+    @long_ed_e_cut.setter
+    def long_ed_e_cut(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -539,23 +539,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_e_cut.clear()
-            self._long_e_cut += value
+            self._long_ed_e_cut.clear()
+            self._long_ed_e_cut += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_e_cut._vector = value
+            self._long_ed_e_cut._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_e_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_ed_e_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
                 
     @property
-    def long_e_ioniz(self):
+    def long_ed_e_ioniz(self):
         """Longitudinal profile of energy deposit by e+/e-"""
-        return self._long_e_ioniz
+        return self._long_ed_e_ioniz
 
-    @long_e_ioniz.setter
-    def long_e_ioniz(self, value):
+    @long_ed_e_ioniz.setter
+    def long_ed_e_ioniz(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -563,23 +563,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_e_ioniz.clear()
-            self._long_e_ioniz += value
+            self._long_ed_e_ioniz.clear()
+            self._long_ed_e_ioniz += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_e_ioniz._vector = value
+            self._long_ed_e_ioniz._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_e_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_ed_e_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
 
     @property
-    def long_mu_cut(self):
+    def long_ed_mu_cut(self):
         """Longitudinal profile of low energy muons"""
-        return self._long_mu_cut
+        return self._long_ed_mu_cut
 
-    @long_mu_cut.setter
-    def long_mu_cut(self, value):
+    @long_ed_mu_cut.setter
+    def long_ed_mu_cut(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -587,23 +587,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_mu_cut.clear()
-            self._long_mu_cut += value
+            self._long_ed_mu_cut.clear()
+            self._long_ed_mu_cut += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_mu_cut._vector = value
+            self._long_ed_mu_cut._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_mu_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_ed_mu_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
                 
     @property
-    def long_mu_ioniz(self):
+    def long_ed_mu_ioniz(self):
         """Longitudinal profile of muon energy deposit"""
-        return self._long_mu_ioniz
+        return self._long_ed_mu_ioniz
 
-    @long_mu_ioniz.setter
-    def long_mu_ioniz(self, value):
+    @long_ed_mu_ioniz.setter
+    def long_ed_mu_ioniz(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -611,23 +611,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_mu_ioniz.clear()
-            self._long_mu_ioniz += value
+            self._long_ed_mu_ioniz.clear()
+            self._long_ed_mu_ioniz += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_mu_ioniz._vector = value
+            self._long_ed_mu_ioniz._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_mu_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_ed_mu_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
             
     @property
-    def long_hadr_cut(self):
+    def long_ed_hadr_cut(self):
         """Longitudinal profile of low energy hadrons"""
-        return self._long_hadr_cut
+        return self._long_ed_hadr_cut
 
-    @long_hadr_cut.setter
-    def long_hadr_cut(self, value):
+    @long_ed_hadr_cut.setter
+    def long_ed_hadr_cut(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -635,23 +635,23 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_hadr_cut.clear()
-            self._long_hadr_cut += value
+            self._long_ed_hadr_cut.clear()
+            self._long_ed_hadr_cut += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_hadr_cut._vector = value
+            self._long_ed_hadr_cut._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_hadr_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_ed_hadr_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
                 
     @property
-    def long_hadr_ioniz(self):
+    def long_ed_hadr_ioniz(self):
         """Longitudinal profile of hadrons energy deposit"""
-        return self._long_hadr_ioniz
+        return self._long_ed_hadr_ioniz
 
-    @long_hadr_ioniz.setter
-    def long_hadr_ioniz(self, value):
+    @long_ed_hadr_ioniz.setter
+    def long_ed_hadr_ioniz(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -659,14 +659,14 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._long_hadr_ioniz.clear()
-            self._long_hadr_ioniz += value
+            self._long_ed_hadr_ioniz.clear()
+            self._long_ed_hadr_ioniz += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_hadr_ioniz._vector = value
+            self._long_ed_hadr_ioniz._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for _long_hadr_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+                f"Incorrect type for _long_ed_hadr_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )         
   
     @property
