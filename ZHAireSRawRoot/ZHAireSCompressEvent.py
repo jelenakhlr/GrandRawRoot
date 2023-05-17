@@ -49,7 +49,7 @@ def ZHAireSCompressEvent(eventdir, action):
         JobName = name
       else:
         logging.critical("Error: No idf file or more than one idf file found. Cannot continue")
-        sys.exit(-1)
+        return -1
         
       #we compress and save the .idf stores all the tables, and the sry can be regenerated from it if needed 
       # we compress and save the .inp, .lgf, .py, .stdout (for future reference)
@@ -82,7 +82,7 @@ def ZHAireSCompressEvent(eventdir, action):
         #if the file exist, then we dont continue
         if os.path.isfile(tarfilename) :
           logging.critical("Error: tgz file already exists, will not modify to play it safe: %s" % tarfilename)
-          sys.exit(-1)    
+          return -1    
       
         tar = tarfile.open(tarfilename,"w:gz")
       
@@ -92,7 +92,7 @@ def ZHAireSCompressEvent(eventdir, action):
             name = os.path.basename(filename)      
             tar.add(filename,arcname=name)
           else:
-            logging.debug("Could not include %s in the tar file" % filename)
+            logging.info("Could not include %s in the tar file. this might be normal if this is an Aires shower instead of a ZHAireS one. Check it up" % filename)
 
         tar.close()
       
@@ -101,12 +101,15 @@ def ZHAireSCompressEvent(eventdir, action):
          tarfilename=eventdir+ "/" + JobName +".tgz"
          #if the file exist, then we continue
          if os.path.isfile(tarfilename) :
-           for filename in filenames:    
-             os.remove(filename)
-           logging.info("%s files from event %s" % (action,JobName))    
+           logging.info("%s files from event %s" % (action,JobName))
+           for filename in filenames:
+             try:    
+               os.remove(filename)
+             except:
+               logging.info("notice: file %s do not exists, or could not be deleted. This might be ok if this is an Aires shower instead of a ZHAireS one. Check it up." % filename)                 
          else:
            logging.critical("Error: tgz file do not exists, will not delete things to play it safe: %s" % tarfilename)
-           sys.exit(-1)   
+           return -1   
 
     elif(action=="uncompress"):
       
@@ -121,7 +124,7 @@ def ZHAireSCompressEvent(eventdir, action):
         logging.info("uncompressing event %s" % JobName)
       else:
         logging.critical("Error: No tgz file or more than one tgz file found. Cannot continue")
-        sys.exit(-1)
+        return -1
         
       #here gos the compess things
       tarfilename=eventdir+ "/" + JobName +".tgz"
@@ -138,9 +141,10 @@ def ZHAireSCompressEvent(eventdir, action):
           
       else:
         logging.critical("Error: tgz file not found or something" % tarfilename)
-        sys.exit(-1)    
+        return -1    
 
     elif(action=="clean"):
+      logging.info("cleaning event in %s" % eventdir)
       #once the event status is "RunOK", we not longer need the JobId
       try:
         os.remove(eventdir+"/JobId")

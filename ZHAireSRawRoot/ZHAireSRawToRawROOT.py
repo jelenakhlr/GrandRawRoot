@@ -11,6 +11,7 @@ import time #to get the unix timestamp
 logging.basicConfig(level=logging.INFO)
 sys.path.append("../Common")
 import AiresInfoFunctionsGRANDROOT as AiresInfo
+import ZHAireSCompressEvent  as ZC
 import EventParametersGenerator as EParGen #the functions i use from this file should be moved to root_trees_raw, so that we dont need an additional new file. It will be common to Coreas and ZhAireS.
 import raw_root_trees as RawTrees
 logging.getLogger('matplotlib').setLevel(logging.ERROR) #this is to shut-up matplotlib
@@ -72,8 +73,8 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
     #########################################################################################################
     #ZHAIRES Sanity Checks
     #########################################################################################################
-    #TODO: Handle when InputFolder Does not exist
-
+    #TODO: Handl when InputFolder Does not exist
+    CompressedInput=False
     #Provide the advertised functionality for sry file
     if TaskName=="LookForIt":
       sryfile=glob.glob(InputFolder+"/*.sry")
@@ -83,8 +84,21 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         return -1
 
       if(len(sryfile)==0):
-        logging.critical("there should be one and only one sry file in the input directory!. cannot continue!")
-        return -1
+        #no sry file found. look to see if the event is compressed. If it is, expand it 
+        tgzfile=glob.glob(InputFolder+"/*.tgz")
+        if(len(tgzfile)>1):
+          logging.critical("no sry file found, at it appears that there are more than one tgz file. cannot continue")
+          return -1        
+        elif(len(tgzfile)==1): 
+          logging.info("no sry file found, but you appear to have one tgz file. attempting to uncompress")
+          ZC.ZHAireSCompressEvent(InputFolder,"expand")
+          sryfile=glob.glob(InputFolder+"/*.sry")
+          if(len(sryfile)==1):
+            logging.info("successfully retrieved a sry file from the tgz, lets hope what i uncompressed is the event and not something else")      
+            CompressedInput=True
+        else:
+          logging.critical("there should be one and only one sry file in the input directory!. cannot continue!")
+          return -1
     
     else:     
       sryfile=[InputFolder+"/"+TaskName+".sry"]
@@ -455,7 +469,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
     else:
         logging.critical("no trace files found in "+InputFolder+"Skipping SimEfield") #TODO: handle this exeption more elegantly
 
-
+   
     #
     #
     #  FROM HERE ITS LEGACY FROM HDF5 THAT I WILL IMPLEMENT IN A "PROPIETARY" CLASS OF ZHAIRES-ONLY INFORMATION
@@ -688,6 +702,10 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 
     # f.Close()
     # print("****************CLOSED!")
+    
+    if(CompressedInput==True):
+      logging.info("Hopefully deleting the uncompressed files " + EventName)
+      ZC.ZHAireSCompressEvent(InputFolder,"delete")
     
     return EventName
 
