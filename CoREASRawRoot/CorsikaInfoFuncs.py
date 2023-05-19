@@ -1,5 +1,6 @@
 from re import search
-from grand.io.root_trees import *
+import io
+# from grand.io.root_trees import *
 
 # read values from SIM.reas or RUN.inp
 def find_input_vals(line):
@@ -42,6 +43,23 @@ def read_site(input_file):
         site = atmos
     return site
 
+
+
+def read_first_interaction(log_file):
+    """
+    For now, get this from the log.
+    (Yes, this is ugly and unreliable, but it's good enough for now)
+    I want to change the Coreas output so this is included in the reas file instead.
+    """
+    with open(log_file, mode="r") as datafile:
+        for line in datafile:
+            if "height of first interaction" in line:
+                val = line.split("interaction")[-1]
+                first_interaction = find_input_vals(val)
+    return first_interaction
+
+
+
 def antenna_positions_dict(pathAntennaList):
     """
     get antenna positions from SIM??????.list and store in a dictionary
@@ -63,6 +81,8 @@ def antenna_positions_dict(pathAntennaList):
 
     return antennaInfo
 
+
+
 def get_antenna_position(pathAntennaList, antenna):
     """
     get the position for one antenna from SIM??????.list
@@ -79,11 +99,12 @@ def get_antenna_position(pathAntennaList, antenna):
     >>> positions.split(" ")
     ['AntennaPosition', '=', '39.0', '39.0', '1000', '16\n']
     """
-    x = positions.split(" ")[2] * 100 # convert to m
-    y = positions.split(" ")[3] * 100 # convert to m
-    z = positions.split(" ")[4] * 100 # convert to m
+    x = np.float32(positions.split(" ")[2]) * 100 # convert to m
+    y = np.float32(positions.split(" ")[3]) * 100 # convert to m
+    z = np.float32(positions.split(" ")[4]) * 100 # convert to m
 
     return x, y, z
+
 
 
 def read_long(pathLongFile):
@@ -92,58 +113,52 @@ def read_long(pathLongFile):
     more specifically, it contains the energy deposit and particle numbers for different particles
     since the files are set up in two blocks, this function helps read the data from it
     
-    WARNING: this reader only works for long files which were NOT created with mpi!
+    this function is mostly taken from corsika_long_parser.py in the coreasutilities module by Felix Schlüter
 
+    TODO: fix hillas_parameter - something's not working yet
     """
-    # get the DAT?????? name of the file
-    longName = pathLongFile.split("/")[-1].split(".")[0]
-
-    # open the file
     with open(pathLongFile, mode="r") as file:
-        """
-        this is most likely the ugliest function i have ever written, but as long
-        as it works, i guess it's okay
+        # create a temporary file to write the corrected contents
+        temp_file = io.StringIO()
 
-        there's one space between the columns, but if there's a negative value
-        the minus sign is put in the place of the space, which can cause problems
-        
-        so just to be safe, add spaces before negative signs like this:
-        (but not before the minus in e.g. e-02)
-        """
         for line in file:
+            # use a regex to search for a minus sign that is not part of an exponent
             if search(r"(?<!e)(-)(?=\d)", line):
-                # if the minus is actually a negative sign, replace:
-                line.replace("-", " -")
+                # if the minus sign is not part of an exponent, replace it with a space and a minus sign
+                line = line.replace("-", " -")
+            # write the corrected line to the temporary file
+            temp_file.write(line)
 
-        # now read the blocks from the file and save to new separate files
-        reader = file.read()
-        for i, block in enumerate(reader.split(' LONGITUDINAL')):
+        # set the file pointer to the beginning of the temporary file
+        temp_file.seek(0)
 
-            # the block for i=0 is empty, so skip that
-            if i == 0:
-                pass
+        # read the contents of the temporary file into a list of strings
+        lines = temp_file.readlines()
 
-            # block 1 will be the particle distribution
-            elif i== 1:
-                with open(longName + "_particledist.txt", "w") as newfile:
-                    newfile.write(block)
-                
-            # block 2 will be the energy deposit
-            elif i==2:
-                with open(longName + "_energydep.txt", "w") as newfile:
-                    newfile.write(block)
 
-            # block 3 will be parameters for the hillas curve
-            elif i==3:
-                with open(longName + "_hillasparams.txt", "w") as newfile:
-                    newfile.write(block)
 
-            # there should not be any more blocks, but if they are, print them out here
-            else:
-                print(i, block)
+    n_steps = int(lines[0].rstrip().split()[3])
 
-    # read the separate files using numpy, because numpy makes life easier
-    # particle dist and energy deposit have columns, the hillas file is different
-    # TODO: the hillas params file is not setup with columns, so do this later
-    
-    return print("The file", longName, "has been separated into energy deposit and particle distribution.")
+    # store n table
+    n_data_str = io.StringIO()
+    n_data_str.writelines(lines[2:(n_steps + 2)])
+    n_data_str.seek(0)
+    n_data = np.genfromtxt(n_data_str)
+
+    # store dE table
+    dE_data_str = io.StringIO()
+    dE_data_str.writelines(lines[(n_steps + 4):(2 * n_steps + 4)])
+    dE_data_str.seek(0)
+    dE_data = np.genfromtxt(dE_data_str)
+
+    # read out hillas fit
+    hillas_parameter = []
+    # for line in lines:
+    #     if bool(search("PARAMETERS", line)):
+    #         hillas_parameter = [float(x) for x in line.split()[2:]]
+    #     if bool(search("CHI", line)):
+    #         hillas_parameter.append(float(line.split()[2]))
+
+
+    print("The file", pathLongFile, "has been separated into energy deposit and particle distribution.")
+    return n_data, dE_data, hillas_parameter

@@ -2,18 +2,20 @@ import glob
 import datetime #to get the unix timestamp
 import time #to get the unix timestamp
 from grand.io.root_trees import *
-import raw_root_trees as RawTrees
 from CorsikaInfoFuncs import *
+sys.path.append("../Common")
+import raw_root_trees as RawTrees
 
-
-
-def CoreasRawToRawROOT(path):
+def CoreasToRawRoot(path):
   """
-  put meaningful comments here
+  put meaningful comments here - maybe after I clean up the structure of this file
 
   """
-  # output file name hardcoded in the root tree section
+  #WARNING: output file name hardcoded in the root tree section
 
+  print("-----------------------------------------")
+  print("------ COREAS to RAWROOT converter ------")
+  print("-----------------------------------------")
   ###############################
   # Part A: load Corsika files  #
   ###############################
@@ -25,7 +27,7 @@ def CoreasRawToRawROOT(path):
   # ********** load SIM.reas **********
   # find reas files
   if glob.glob(path + "SIM??????-*.reas"):
-      available_reas_files = glob.glob(path + "SIM??????-*.reas") # these are from parallel runs
+      available_reas_files = glob.glob(path + "SIM??????-*.reas") # these are from parallel runs - I will mostly have these
   else:
       available_reas_files = glob.glob(path + "SIM??????.reas") # these are from normal runs
 
@@ -71,6 +73,29 @@ def CoreasRawToRawROOT(path):
   # in each dat file:
   # time stamp and the north-, west-, and vertical component of the electric field
 
+  # ********** load log file **********
+  """
+  This is just until I have a chance to change the Coreas output so that the
+  reas file includes the first interaction as an output parameter.
+
+  For now, we just want this for the height the of first interaction.
+  """
+  log_file = glob.glob(path + "*.log")
+
+  if len(log_file) == 0:
+    print("[ERROR] No log file found in this directory. Please check directory and try again.")
+    quit()
+  elif len(log_file) > 1:
+    print("Found", available_inp_files)
+    print("[WARNING] More than one log file found in directory. Only log file", log_file[0], "will be used.")
+    log_file = log_file[0]
+  else:
+    print("Found", log_file)
+    log_file = log_file[0]
+    print("Extracting info from log file", log_file, "for GRANDroot.")
+  print("*****************************************")
+
+  first_interaction = read_first_interaction(log_file) # height of first interaction
 
   ###############################
   # Part B: Generate ROOT Trees #
@@ -97,7 +122,7 @@ def CoreasRawToRawROOT(path):
   EventID = read_params(reas_input, "EventNumber")
   GPSSecs = read_params(reas_input, "GPSSecs")
   GPSNanoSecs = read_params(reas_input, "GPSNanoSecs")
-  RotationAngleForMagfieldDeclination = read_params(reas_input, "RotationAngleForMagfieldDeclination") # in degrees
+  FieldDeclination = read_params(reas_input, "RotationAngleForMagfieldDeclination") # in degrees
 
   Zenith = read_params(reas_input, "ShowerZenithAngle")
   Azimuth = read_params(reas_input, "ShowerAzimuthAngle")
@@ -106,8 +131,8 @@ def CoreasRawToRawROOT(path):
   Primary = read_params(reas_input, "PrimaryParticleType") # as defined in CORSIKA -> TODO: change to PDG system
   DepthOfShowerMaximum = read_params(reas_input, "DepthOfShowerMaximum") # slant depth in g/cm^2
   DistanceOfShowerMaximum = read_params(reas_input, "DistanceOfShowerMaximum") # geometrical distance of shower maximum from core in cm
-  MagneticFieldStrength = read_params(reas_input, "MagneticFieldStrength") # in Gauss
-  MagneticFieldInclinationAngle = read_params(reas_input, "MagneticFieldInclinationAngle") # in degrees, >0: in northern hemisphere, <0: in southern hemisphere
+  FieldIntensity = read_params(reas_input, "MagneticFieldStrength") # in Gauss
+  FieldInclination = read_params(reas_input, "MagneticFieldInclinationAngle") # in degrees, >0: in northern hemisphere, <0: in southern hemisphere
   GeomagneticAngle = read_params(reas_input, "GeomagneticAngle") # in degrees
 
 
@@ -116,6 +141,7 @@ def CoreasRawToRawROOT(path):
   ectmap = read_params(inp_input, "ECTMAP")
   maxprt = read_params(inp_input, "MAXPRT")
   radnkg = read_params(inp_input, "RADNKG")
+  print("*****************************************")
 
   # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   # fix these values! for now: placeholders
@@ -132,15 +158,14 @@ def CoreasRawToRawROOT(path):
   NucleonEnergyCut  = ecuts[0]
   MesonEnergyCut    = HadronEnergyCut # mesons are hadronic, so this should be fine
 
-  # parallel = [1,2] # COREAS-only
-  # also: I might not be using parallel anyway, so leave this out for now
+  parallel = [1,2] # COREAS-only
   # PARALLEL = [ECTCUT, ECTMAX, MPIID, FECTOUT]
-  # ECTCUT: limit for subshowers
-  # ECTMAX: maximum energy for complete shower
+  # ECTCUT: limit for subshowers GeV
+  # ECTMAX: maximum energy for complete shower GeV
   # MPIID: ID for mpi run (ignore for now)
   # T/F flag for extra output file (ignore for now)
 
-  elmflg = [1,2,3] # COREAS-only
+  # elmflg = ["T", "T"] # COREAS-only (ignore for now)
 
   # In Zhaires converter: RelativeThinning, WeightFactor
   # I have:
@@ -168,10 +193,11 @@ def CoreasRawToRawROOT(path):
   pathLongFile = glob.glob(path + "DAT??????.long")[0]
 
   # the long file has an annoying setup, which I (very inelegantly) circumvent with this function:
-  read_long(pathLongFile)
+  n_data, dE_data, hillas_parameter = read_long(pathLongFile)
+  # TODO: there's still an issue with the hillas_parameter in read_long
 
   #**** particle distribution
-  particle_dist = np.genfromtxt(pathLongFile + "_particledist.txt", skip_header = 2)
+  particle_dist = n_data
   # DEPTH, GAMMAS, POSITRONS, ELECTRONS, MU+, MU-, HADRONS, CHARGED, NUCLEI, CHERENKOV
   pd_depth = particle_dist[:,0]
   pd_gammas = particle_dist[:,1]
@@ -185,7 +211,7 @@ def CoreasRawToRawROOT(path):
   pd_cherenkov = particle_dist[:,9]
 
   #**** energy deposit
-  energy_dep = np.genfromtxt(pathLongFile + "_energydep.txt", skip_header = 2, skip_footer = 2)
+  energy_dep = dE_data
   # the depth here is not the same as for the particle dist, because that would be too easy
   # DEPTH, GAMMA, EM IONIZ, EM CUT, MU IONIZ, MU CUT, HADR IONIZ, HADR CUT, NEUTRINO, SUM
   ed_depth = particle_dist[:,0]
@@ -210,13 +236,16 @@ def CoreasRawToRawROOT(path):
 
   AtmosphericModel = read_atmos(inp_input)
   Date = "2017-04-01" # from ATM file. TODO: unhardcode this
-  t1 = time.strptime(Date.strip(),"%d %B, %Y")
+  t1 = time.strptime(Date.strip(),"%Y-%m-%d")
   UnixDate = int(time.mktime(t1))
 
+
+  print("*****************************************")
   HadronicModel = "sibyll" #TODO:Unhardcode this
-  print("Warning, hard-coded HadronicModel", HadronicModel) 
+  print("[WARNING] hard-coded HadronicModel", HadronicModel) 
   LowEnergyModel = "urqmd" #TODO:Unhardcode this
-  print("Warning, hard-coded LowEnergyModel", LowEnergyModel)
+  print("[WARNING] hard-coded LowEnergyModel", LowEnergyModel)
+  print("*****************************************")
 
   # TODO: add function for reading logs
   # TODO: add CPU time
@@ -251,13 +280,14 @@ def CoreasRawToRawROOT(path):
   RawShower.event_date = Date
   RawShower.unix_date = UnixDate
 
-  RawShower.rnd_seed = RandomSeed
+  RawShower.rnd_seed = RandomSeed[0] # TODO: figure out how to put the whole list here
+  # right now I get this error "ValueError: setting an array element with a sequence." if I try to pass just "RandomSeed"
 
   RawShower.energy_in_neutrinos = EnergyInNeutrinos
-  RawShower.prim_energy = [Energy]
-  RawShower.shower_azimuth = Azimuth
-  RawShower.shower_zenith = Zenith
-  RawShower.prim_type = [str(Primary)]
+  RawShower.energy_primary = [Energy]
+  RawShower.azimuth = Azimuth
+  RawShower.zenith = Zenith
+  RawShower.primary_type = [str(Primary)]
   RawShower.prim_inj_alt_shc = [InjectionAltitude]
   RawShower.atmos_model = str(AtmosphericModel)
 
@@ -274,8 +304,8 @@ def CoreasRawToRawROOT(path):
   # RawShower.relative_thinning = RelativeThinning
   # RawShower.weight_factor = WeightFactor  
   # change to:
-  RawShower.thinning = ThinLimit # list of floats
-  RawShower.weight_factor = ThinWeight # list of floats
+  RawShower.thinning = ThinLimit # list of floats 
+  RawShower.weight_factor = ThinWeight[0] # list of floats # TODO: figure out how to put the whole list here as well
   RawShower.thin_Rmax = ThinRmax # float
 
   RawShower.gamma_energy_cut = GammaEnergyCut
@@ -284,44 +314,53 @@ def CoreasRawToRawROOT(path):
   RawShower.meson_energy_cut = MesonEnergyCut # and hadrons
   RawShower.nucleon_energy_cut = NucleonEnergyCut # same as meson and hadron cut
 
-  RawShower.shower_core_pos = np.array(CorePosition) #do we want np.array(list)?
+  RawShower.shower_core_pos = np.array(CorePosition)
   #TODO ASAP: ArrayName
   RawShower.array_name = ArrayName
-  #TODO ASAP: EventWeight
-  #TODO ASAP: TestedCores
+  #TODO: EventWeight ?
+  #TODO: TestedCores ?
 
-
-  # fill the longitudinal profile, i.e. the particle distribution and energy deposit
-
-  RawShower.long_depth.append(pd_depth)  
-  RawShower.long_gammas.append(pd_gammas) 
-
-  # ? RawShower.long_slantdepth.append()  
-  RawShower.long_eminus.append(pd_electrons)
-
-  RawShower.long_eplus.append(pd_positrons)
-
-  RawShower.long_muminus.append(muN)
-  RawShower.long_muplus.append(muP)
-
-  # ? RawShower.long_allch.append()
-
-  RawShower.long_nuclei.append(pd_nuclei)
-
-  RawShower.long_neutrino.append(ed_neutrino)
-
-  # ? RawShower.long_gamma_cut.append()
-
-  RawShower.long_e_cut.append(ed_em_cut)
-
-  RawShower.long_mu_cut.append(ed_mu_cut)
-
-  # ? RawShower.long_gamma_ioniz.append()
-
-  RawShower.long_e_ioniz.append(ed_em_ioniz)
-
-  RawShower.long_mu_ioniz.append(ed_mu_ioniz)
+  """
+  In the next steps, fill the longitudinal profile, 
+  i.e. the particle distribution ("pd") and energy deposit ("ed").
   
+  These are matched with ZhaireS as good as possible. 
+  Some fields will be missing here and some fields will be missing for ZhaireS.
+  
+  """
+
+  RawShower.long_pd_gammas = pd_gammas.astype(np.float32)
+  RawShower.long_pd_eminus = pd_electrons.astype(np.float32)
+  RawShower.long_pd_eplus = pd_positrons.astype(np.float32)
+  RawShower.long_pd_muminus = pd_muN.astype(np.float32)
+  RawShower.long_pd_muplus = pd_muP.astype(np.float32)
+  RawShower.long_pd_allch = pd_charged.astype(np.float32)
+  RawShower.long_pd_nuclei = pd_nuclei.astype(np.float32)
+  RawShower.long_pd_hadr = pd_hadrons.astype(np.float32)
+
+  RawShower.long_ed_neutrino = ed_neutrino.astype(np.float32)
+  RawShower.long_ed_e_cut = ed_em_cut.astype(np.float32)
+  RawShower.long_ed_mu_cut = ed_mu_cut.astype(np.float32)
+  RawShower.long_ed_hadr_cut = ed_hadron_cut.astype(np.float32)
+  
+  # gamma cut - I believe this was the same value as for another particle
+  # for now: use hadron cut as placeholder
+  # TODO ASAP: check this
+  RawShower.long_ed_gamma_cut = ed_hadron_cut.astype(np.float32)
+  
+  RawShower.long_ed_gamma_ioniz = ed_gamma.astype(np.float32)
+  RawShower.long_ed_e_ioniz = ed_em_ioniz.astype(np.float32)
+  RawShower.long_ed_mu_ioniz = ed_mu_ioniz.astype(np.float32)
+  RawShower.long_ed_hadr_ioniz = ed_hadron_ioniz.astype(np.float32)
+  
+  # The next values are "leftover" from the comparison with ZhaireS.
+  # They should go in TShowerSim along with the values above.
+  RawShower.long_ed_depth = ed_depth.astype(np.float32)
+  RawShower.long_pd_depth = pd_depth.astype(np.float32)
+  RawShower.long_pd_cherenkov = pd_cherenkov.astype(np.float32)
+  RawShower.long_ed_sum = ed_sum.astype(np.float32)
+
+  RawShower.first_interaction = first_interaction
 
   RawShower.fill()
   RawShower.write()
@@ -332,8 +371,7 @@ def CoreasRawToRawROOT(path):
   
   #****** info from input files: ******
 
-  # placeholders
-  # TODO: find these values
+  # TODO ASAP: find these values
   RefractionIndexModel = "model"
   RefractionIndexParameters = [1,2,3] # ? 
   
@@ -362,14 +400,11 @@ def CoreasRawToRawROOT(path):
   RawEfield.run_number = RunID
   RawEfield.event_number = EventID
 
-  RawEfield.efield_sim = "Coreas" # TODO: unhardcode this
+  RawEfield.efield_sim = "Coreas" # TODO: unhardcode this and add versions
 
   RawEfield.refractivity_model = RefractionIndexModel                                       
   RawEfield.refractivity_model_parameters = RefractionIndexParameters                       
         
-  #TODO ASAP: Find how to do this
-  #RawEfield.refractivity_profile=Atmostable.T[0].tolist() 
-  #RawEfield.refractivity_profile.append(RefrIndex.tolist())
   RawEfield.t_pre = TimeWindowMin
   RawEfield.t_post = TimeWindowMax
   RawEfield.t_bin_size = TimeBinSize
@@ -380,48 +415,85 @@ def CoreasRawToRawROOT(path):
 
   # loop through polarizations and positions for each antenna
   for antenna in ant_IDs:
-    tracefile = glob.glob(path + "SIM??????_coreas/raw_" + str(antenna) + ".dat")
+    tracefile = glob.glob(path + "SIM??????_coreas/raw_" + str(antenna) + ".dat")[0]
 
     # load the efield traces for this antenna
     # the files are setup like [timestamp, x polarization, y polarization, z polarization]
-    efield = np.loadtxt(tracefile, dtype='f4')
+    efield = np.loadtxt(tracefile)
     
-    t_0 = np.array(efield[:,0], dtype = np.float32)
-    x_polarization = np.array(efield[:,1], dtype = np.float32)
-    y_polarization = np.array(efield[:,2], dtype = np.float32)
-    z_polarization = np.array(efield[:,3], dtype = np.float32)
+    timestamp = efield[:,0]
+    trace_x = efield[:,1]
+    trace_y = efield[:,2]
+    trace_z = efield[:,3]
     
-
-    # DetectorID = IDs[ant_ID] 
-    # is this supposed to be antenna name vs antenna ID?
     
-    # TODO: check this
     # in Zhaires converter: AntennaN[ant_ID]
-    RawEfield.du_id.append(int(antenna)) # this does not work if ID is a string
-
-    RawEfield.t_0.append(t_0)
+    RawEfield.du_id.append(int(antenna))
+    RawEfield.t_0.append(timestamp[0].astype(np.float32))
 
     # Traces
-    RawEfield.trace_x.append(x_polarization)
-    RawEfield.trace_y.append(y_polarization)
-    RawEfield.trace_z.append(z_polarization)
+    # RawEfield.trace_x.append(trace_x.astype(np.float32))
+    # RawEfield.trace_y.append(trace_y.astype(np.float32))
+    # RawEfield.trace_z.append(trace_z.astype(np.float32))
+    trace_vals = np.concatenate((int(antenna), trace_x, trace_y, trace_z, TimeBinSize))
+    RawEfield.trace.append(trace_vals.astype(np.float32))
 
     # Antenna positions in showers's referential in [m]
     ant_position = get_antenna_position(pathAntennaList, antenna)
-
-    RawEfield.pos_x.append(ant_position[0])
-    RawEfield.pos_y.append(ant_position[1])
-    RawEfield.pos_z.append(ant_position[2])
-
-
-                 
-    RawEfield.fill()
-    RawEfield.write()
+    print(ant_position)
+    RawEfield.du_x.append(ant_position[0].astype(np.float32))
+    RawEfield.du_y.append(ant_position[1].astype(np.float32))
+    RawEfield.du_z.append(ant_position[2].astype(np.float32))
 
 
+  RawEfield.fill()
+  RawEfield.write()
+  #############################################################
+  # fill SimCoreasShower with all leftover info               #
+  #############################################################
+  
+  # store all leftover information here
 
-  print("### The event written was " + EventName)
+  SimCoreasShower.AutomaticTimeBoundaries = AutomaticTimeBoundaries
+  SimCoreasShower.ResolutionReductionScale = ResolutionReductionScale
+  SimCoreasShower.GroundLevelRefractiveIndex = GroundLevelRefractiveIndex
+  SimCoreasShower.GPSSecs = GPSSecs
+  SimCoreasShower.GPSNanoSecs = GPSNanoSecs
+  SimCoreasShower.DepthOfShowerMaximum = DepthOfShowerMaximum
+  SimCoreasShower.DistanceOfShowerMaximum = DistanceOfShowerMaximum
+  SimCoreasShower.GeomagneticAngle = GeomagneticAngle
+  
+  SimCoreasShower.nshow  = nshow # number of showers
+  SimCoreasShower.ectmap = ectmap
+  SimCoreasShower.maxprt = maxprt
+  SimCoreasShower.radnkg = radnkg
 
+  SimCoreasShower.parallel = parallel # = [ECTCUT, ECTMAX]
+
+  # these values are just placeholders for now - not sure if we will actually need them
+  SimCoreasShower.mumult = mumult
+  SimCoreasShower.muaddi = muaddi
+  SimCoreasShower.parout = parout
+  SimCoreasShower.longi  = longi
+
+  # TODO: decide on this 
+  """"
+  I would like these to be in RawEfield and then later in TShowerSim
+
+  Especially important: pd_depth is different from ed_depth!
+  
+  Both need to be stored, but all of the info on particle distribution 
+  and energy deposit should be together
+  """
+  
+
+
+  SimCoreasShower.fill()
+  SimCoreasShower.write()
+  #############################################################
+
+  print("### The event written was ", EventName, "###")
+  print("### The name of the file is ", OutputFileName, "###")
   return EventName
 
 
@@ -434,4 +506,4 @@ if __name__ == "__main__":
     if (path[-1]!="/"):
         path = path + "/"
 
-    CoreasRawToRawROOT(path)
+    CoreasToRawRoot(path)

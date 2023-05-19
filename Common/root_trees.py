@@ -3791,11 +3791,11 @@ class TRawVoltage(MotherEventTree):
     ## GPS temperature
     _gps_temp: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     # ## X position in site's referential
-    # _pos_x: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    # _du_x: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     # ## Y position in site's referential
-    # _pos_y: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    # _du_y: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     # ## Z position in site's referential
-    # _pos_z: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    # _du_z: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     # ## Control parameters - the list of general parameters that can set the mode of operation, select trigger sources and preset the common coincidence read out time window (Digitizer mode parameters in the manual). ToDo: Decode?
     # _digi_ctrl: StdVectorList = field(
     #     default_factory=lambda: StdVectorList("vector<unsigned short>")
@@ -4888,12 +4888,12 @@ class TRawVoltage(MotherEventTree):
             )
 
     # @property
-    # def pos_x(self):
+    # def du_x(self):
     #     """X position in site's referential"""
-    #     return self._pos_x
+    #     return self._du_x
     #
-    # @pos_x.setter
-    # def pos_x(self, value) -> None:
+    # @du_x.setter
+    # def du_x(self, value) -> None:
     #     # A list of strings was given
     #     if (
     #         isinstance(value, list)
@@ -4901,23 +4901,23 @@ class TRawVoltage(MotherEventTree):
     #         or isinstance(value, StdVectorList)
     #     ):
     #         # Clear the vector before setting
-    #         self._pos_x.clear()
-    #         self._pos_x += value
+    #         self._du_x.clear()
+    #         self._du_x += value
     #     # A vector was given
     #     elif isinstance(value, ROOT.vector("float")):
-    #         self._pos_x._vector = value
+    #         self._du_x._vector = value
     #     else:
     #         raise ValueError(
-    #             f"Incorrect type for pos_x {type(value)}. Either a list, an array or a ROOT.vector of floats required."
+    #             f"Incorrect type for du_x {type(value)}. Either a list, an array or a ROOT.vector of floats required."
     #         )
     #
     # @property
-    # def pos_y(self):
+    # def du_y(self):
     #     """Y position in site's referential"""
-    #     return self._pos_y
+    #     return self._du_y
     #
-    # @pos_y.setter
-    # def pos_y(self, value) -> None:
+    # @du_y.setter
+    # def du_y(self, value) -> None:
     #     # A list of strings was given
     #     if (
     #         isinstance(value, list)
@@ -4925,23 +4925,23 @@ class TRawVoltage(MotherEventTree):
     #         or isinstance(value, StdVectorList)
     #     ):
     #         # Clear the vector before setting
-    #         self._pos_y.clear()
-    #         self._pos_y += value
+    #         self._du_y.clear()
+    #         self._du_y += value
     #     # A vector was given
     #     elif isinstance(value, ROOT.vector("float")):
-    #         self._pos_y._vector = value
+    #         self._du_y._vector = value
     #     else:
     #         raise ValueError(
-    #             f"Incorrect type for pos_y {type(value)}. Either a list, an array or a ROOT.vector of floats required."
+    #             f"Incorrect type for du_y {type(value)}. Either a list, an array or a ROOT.vector of floats required."
     #         )
     #
     # @property
-    # def pos_z(self):
+    # def du_z(self):
     #     """Z position in site's referential"""
-    #     return self._pos_z
+    #     return self._du_z
     #
-    # @pos_z.setter
-    # def pos_z(self, value) -> None:
+    # @du_z.setter
+    # def du_z(self, value) -> None:
     #     # A list of strings was given
     #     if (
     #         isinstance(value, list)
@@ -4949,14 +4949,14 @@ class TRawVoltage(MotherEventTree):
     #         or isinstance(value, StdVectorList)
     #     ):
     #         # Clear the vector before setting
-    #         self._pos_z.clear()
-    #         self._pos_z += value
+    #         self._du_z.clear()
+    #         self._du_z += value
     #     # A vector was given
     #     elif isinstance(value, ROOT.vector("float")):
-    #         self._pos_z._vector = value
+    #         self._du_z._vector = value
     #     else:
     #         raise ValueError(
-    #             f"Incorrect type for pos_z {type(value)}. Either a list, an array or a ROOT.vector of floats required."
+    #             f"Incorrect type for du_z {type(value)}. Either a list, an array or a ROOT.vector of floats required."
     #         )
     #
     # @property
@@ -7002,13 +7002,13 @@ class TShowerSim(MotherEventTree):
     ## Slant depth of the observing levels for longitudinal development tables
     _long_depth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Number of electrons
-    _long_eminus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _long_pd_eminus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Number of positrons
-    _long_eplus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _long_pd_eplus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Number of muons-
-    _long_muminus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _long_pd_muminus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Number of muons+
-    _long_muplus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _long_pd_muplus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Number of gammas
     _long_gamma: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Number of pions, kaons, etc.
@@ -7028,7 +7028,7 @@ class TShowerSim(MotherEventTree):
     ## Energy deposited by hadrons
     _long_hadron_edep: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Energy in created neutrinos
-    _long_neutrino: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _long_ed_neutrino: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Core positions tested for that shower to generate the event (effective area study)
     _tested_core_positions: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
@@ -7197,40 +7197,40 @@ class TShowerSim(MotherEventTree):
         set_vector_of_vectors(value, "float", self._long_depth, "long_depth")
 
     @property
-    def long_eminus(self):
+    def long_pd_eminus(self):
         """Number of electrons"""
-        return np.array(self._long_eminus)
+        return np.array(self._long_pd_eminus)
 
-    @long_eminus.setter
-    def long_eminus(self, value):
-        set_vector_of_vectors(value, "float", self._long_eminus, "long_eminus")
+    @long_pd_eminus.setter
+    def long_pd_eminus(self, value):
+        set_vector_of_vectors(value, "float", self._long_pd_eminus, "long_pd_eminus")
 
     @property
-    def long_eplus(self):
+    def long_pd_eplus(self):
         """Number of electrons"""
-        return np.array(self._long_eplus)
+        return np.array(self._long_pd_eplus)
 
-    @long_eplus.setter
-    def long_eplus(self, value):
-        set_vector_of_vectors(value, "float", self._long_eplus, "long_eplus")
+    @long_pd_eplus.setter
+    def long_pd_eplus(self, value):
+        set_vector_of_vectors(value, "float", self._long_pd_eplus, "long_pd_eplus")
 
     @property
-    def long_muminus(self):
+    def long_pd_muminus(self):
         """Number of electrons"""
-        return np.array(self._long_muminus)
+        return np.array(self._long_pd_muminus)
 
-    @long_muminus.setter
-    def long_muminus(self, value):
-        set_vector_of_vectors(value, "float", self._long_muminus, "long_muminus")
+    @long_pd_muminus.setter
+    def long_pd_muminus(self, value):
+        set_vector_of_vectors(value, "float", self._long_pd_muminus, "long_pd_muminus")
 
     @property
-    def long_muplus(self):
+    def long_pd_muplus(self):
         """Number of electrons"""
-        return np.array(self._long_muplus)
+        return np.array(self._long_pd_muplus)
 
-    @long_muplus.setter
-    def long_muplus(self, value):
-        set_vector_of_vectors(value, "float", self._long_muplus, "long_muplus")
+    @long_pd_muplus.setter
+    def long_pd_muplus(self, value):
+        set_vector_of_vectors(value, "float", self._long_pd_muplus, "long_pd_muplus")
 
     @property
     def long_gamma(self):
