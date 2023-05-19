@@ -250,7 +250,7 @@ def CoreasToRawRoot(path):
   # TODO: add function for reading logs
   # TODO: add CPU time
   CPUTime = 1.
-  # TODO: find injection altitude
+  # TODO: find injection altitude in TPlotter.h/cpp
   InjectionAltitude = 100.
 
   ArrayName = "GP13" # TODO: unhardcode this
