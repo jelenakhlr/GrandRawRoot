@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import raw_root_trees as RawTrees
       
 #Author: Matias Tueros, with ChatGP3 help for documentation and error handling. it was Mar 24th 2023 in Barracas, Buenos Aires, Argentina
 def GenerateEventParametersFile(EventName, Primary, Energy, Zenith, Azimuth, CorePosition, ArrayName, EventWeight=1, EventUnixTime=0, EventUnixNanosecond=0, OutMode="a", TestedPositions="None"):
@@ -234,6 +235,41 @@ def GetEventUnixTimeFromParametersFile(filename):
         return None
 
 
+def GenerateRawMetaTree(EventParametersFile,RunID,EventID,OutputFileName):
+
+    if os.path.isfile(EventParametersFile):      
+      ArrayName=GetArrayNameFromParametersFile(EventParametersFile)
+      #We expect an .EventParameters File that has inside the line:  Core Position: Xcore Ycore Zcore in meters, eg: "Core Position: 2468.927 -4323.117 1998.000"          
+      CorePosition=GetCorePositionFromParametersFile(EventParametersFile)          
+      UnixSecond,UnixNano=GetEventUnixTimeFromParametersFile(EventParametersFile)
+      EventWeight=GetEventWeightFromParametersFile(EventParametersFile)
+      TestedPositions=GetTestedPositionsFromParametersFile(EventParametersFile)
+
+    else:
+      logging.critical("Input EventParametersFile file not found, {} using default values".format(EventParametersFile))
+      # return i will not return, in order to be able to handle old sims. I will asign default or dummy values to the required variables
+      ArrayName="Unknown"  
+      CorePosition=(0,0,0)
+      UnixSecond=1
+      UnixNano=1
+      EventWeight=1
+      TestedCores=[]       
+
+    RawMeta = RawTrees.RawMetaTree(OutputFileName)
+    RawMeta.run_number = RunID
+    RawMeta.event_number = EventID
+
+    RawMeta.array_name = ArrayName
+    RawMeta.shower_core_pos=np.array(CorePosition)
+    RawMeta.unix_second=UnixSecond
+    RawMeta.unix_nanosecond=UnixNano
+    RawMeta.event_weight=EventWeight
+          
+    for positions in TestedPositions:
+      RawMeta.tested_cores.append(positions)
+      
+    RawMeta.fill()
+    RawMeta.write()  
 
     
 if __name__ == '__main__':

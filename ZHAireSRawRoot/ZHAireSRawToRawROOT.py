@@ -462,8 +462,12 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         #All this part will go in a function inside of EventParametersGenerator.py, CreateMetaTree(rootfile, eventparameterfile)
         #TODO:Document .EventParemeters file format 
         
-        EventParametersFile=[InputFolder+"/"+TaskName+".EventParameters"]
+        EventParametersFile= InputFolder+"/"+TaskName+".EventParameters"
+        
+        EParGen.GenerateRawMetaTree(EventParametersFile,RunID,EventID,OutputFileName)
     
+    
+    '''
         if os.path.isfile(EventParametersFile[0]):      
           ArrayName=EParGen.GetArrayNameFromParametersFile(EventParametersFile[0])
           #We expect an .EventParameters File that has inside the line:  Core Position: Xcore Ycore Zcore in meters, eg: "Core Position: 2468.927 -4323.117 1998.000"          
@@ -483,6 +487,8 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
           TestedCores=[]       
 
         RawMeta = RawTrees.RawMetaTree(OutputFileName)
+        RawMeta.run_number = RunID
+        RawMeta.event_number = EventID
         
         RawMeta.array_name = ArrayName
         RawMeta.shower_core_pos=np.array(CorePosition)
@@ -492,7 +498,10 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
               
         for positions in TestedPositions:
           RawMeta.tested_cores.append(positions)
-             
+          
+        RawMeta.fill()
+        RawMeta.write()   
+    '''         
     #
     #
     #  FROM HERE ITS LEGACY FROM HDF5 THAT I WILL IMPLEMENT IN A "PROPIETARY" CLASS OF ZHAIRES-ONLY INFORMATION
