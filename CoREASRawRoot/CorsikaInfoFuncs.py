@@ -1,6 +1,7 @@
 from re import search
 import io
-# from grand.io.root_trees import *
+import numpy as np
+from grand.io.root_trees import *
 
 # read values from SIM.reas or RUN.inp
 def find_input_vals(line):
