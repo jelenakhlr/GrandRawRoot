@@ -18,7 +18,17 @@ logging.getLogger('matplotlib').setLevel(logging.ERROR) #this is to shut-up matp
 
 
 #Author: Matias Tueros, it was Mar 24th 2023 in Barracas, Buenos Aires, Argentina
-def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="LookForIt", EventName="UseTaskName", NLongitudinal=False, ELongitudinal=False, NlowLongitudinal=False, ElowLongitudinal=False, EdepLongitudinal=False, LateralDistribution=False, EnergyDistribution=False):
+
+#TODO:
+# Fill ArrayName
+# Fill EventWeight
+# Fill TestedCores
+# Fill UnixTime
+#TODO ASAP: Get Refractivity Model parameters from the sry (unfortunatelly these are not reported in the sry, this will have to wait to the next version of zhaires hopefully after ICRC 2023)
+#Maybe move them to the function call for now, and remove the unused Longitudinal switches?
+   
+
+def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="LookForIt", EventName="UseTaskName"): 
     '''
     This routine will read a ZHAireS simulation located in InputFolder and put it in the Desired OutputFileName. 
     
@@ -49,20 +59,18 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
     Electric fields are output on the X,Y and Z directions in this coordinate system.
 
     '''
-   
-    #TBD: Think about RunID and EventID conventions. (data type, will it just be consecutive numbers or will they code something like the date or type of run -normal,test,calib- etc.)
-    #TBD: Do we need a RunID and an EventID at this level? Should it be in the EventParameters file?
-    
-	#Nice Feature: If EventID is decideded to be just a number, get the next correlative EventID (with respect to the last inside the file) if no EventID is specified
+    #Nice to have Feature: If EventID is decideded to be just a number, get the next correlative EventID (with respect to the last inside the file) if no EventID is specified
 	
-    #The function will write two main sections: ShowerSim and EfieldSim. 
+    #The function will write three main sections: ShowerSim, EfieldSim and MetaInfo. 
     #
     SimShowerInfo=True
     SimEfieldInfo=True 
+    SimMetaInfo=True
     
     #We will start by storing the tables Coreas and Zhaires have in common.
     #In the future, i might store additional tables (or other sim info) in a separate tree)
     #this is all false becouse is not implemented yet
+    #NLongitudinal=False, ELongitudinal=False, NlowLongitudinal=False, ElowLongitudinal=False, EdepLongitudinal=False, LateralDistribution=False, EnergyDistribution=False):
     NLongitudinal=False
     ELongitudinal=False
     NlowLongitudinal=False
@@ -110,15 +118,6 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
    
     TaskName=AiresInfo.GetTaskNameFromSry(sryfile[0])
    
-    EventParametersFile=[InputFolder+"/"+TaskName+".EventParameters"]
-    
-    if  not os.path.isfile(EventParametersFile[0]) :
-        logging.critical("Input EventParametersFile file not found, {}".format(EventParametersFile))
-        # return i will not return, in order to be able to handle old sims. I will asign default or dummy values to the required variables
-        ArrayName="Unknown"  
-    else:        
-        ArrayName=EParGen.GetArrayNameFromParametersFile(EventParametersFile[0])    
-
     #TODO:idf file is optional in principle, so i dont check for it for now. I should check for the existance of all the required table files and if anyone is missing, check for the existance of the idf file
     idffile=[InputFolder+"/"+EventName+".idf"]
 
@@ -195,33 +194,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         Atmosaltitude=np.array(Atmostable.T[0],dtype=np.float32) #its important to make it float32 or it will complain
         Atmosdepth=np.array(Atmostable.T[1],dtype=np.float32)
         Atmosdensity=np.array(Atmostable.T[2],dtype=np.float32)
-                                         
-        #MetaZHAires       		        
-        #TODO: Document how the core position needs to be stored in the EventParametersFile. 
-        # We expet an .EventParameters File that has inside the line:  Core Position: Xcore Ycore Zcore in meters, eg: "Core Position: 2468.927 -4323.117 1998.000" 
- 
-        if os.path.isfile(EventParametersFile[0]) :
-          CorePosition=EParGen.GetCorePositionFromParametersFile(EventParametersFile[0])          
-          UnixTime,UnixNano=EParGen.GetEventUnixTimeFromParametersFile(EventParametersFile[0])
-          ArrayName=EParGen.GetArrayNameFromParametersFile(EventParametersFile[0])
-          EventWeight=EParGen.GetEventWeightFromParametersFile(EventParametersFile[0])
-          TestedPositions=EParGen.GetTestedPositionsFromParametersFile(EventParametersFile[0])
- 
-        else:
-          logging.info("EventParameters File not found, using default values")
-          
-       
-        print("CorePosition")
-        print(CorePosition)
-        print("UnixTime")
-        print(UnixTime,UnixNano)
-        print("EventWeight")
-        print(EventWeight)
-        print("TestedCores")
-        print(TestedPositions)  
-            
-   
-
+                                                     
         ############################################################################################################################# 
         # Part II: Fill RawShower TTree	
         ############################################################################################################################
@@ -240,6 +213,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.primary_type = [str(Primary)]  #TODO: test multiple primaries
         RawShower.prim_inj_alt_shc = [InjectionAltitude] #TODO: test multiple primaries
         RawShower.prim_inj_dir_shc=[(-np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),-np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),-np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries
+
         #using the sine thorem for a triangle with vertices at the earth center, the injection point and the core position (located at groundlitutde)
         rearth=6370949
         logging.info("warning, using round earth with hard coded radius: 6370949m")  #TODO eventualy: Unhardcode This
@@ -279,10 +253,6 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         
         #METAZHAireS
         RawShower.shower_core_pos=np.array(CorePosition) # shower core position 
-        
-        #TODO ASAP: ArrayName
-        #TODO ASAP: EventWeight
-        #TODO ASAP: TestedCores
 
         #Fill the tables
         table=AiresInfo.GetLongitudinalTable(InputFolder,1001,Slant=False,Precision="Simple",TaskName=TaskName)               
@@ -307,8 +277,17 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1041,Slant=True,Precision="Simple",TaskName=TaskName)                      
         RawShower.long_pd_nuclei.append(np.array(table.T[1], dtype=np.float32))
- 
-        #TODO: long_pd_hadr is left empty for now, as in zhaires is a combination of several tables...and its rarely used.
+        
+        ##I will add as hadr pi,K,other cherged, other neutral, proton, antiproton, neutron
+        #This means tables: 1211,1213,1091,1092,1021,1022,1023,
+        table=AiresInfo.GetLongitudinalTable(InputFolder,1211,Slant=True,Precision="Simple",TaskName=TaskName)                      
+        table+=AiresInfo.GetLongitudinalTable(InputFolder,1213,Slant=True,Precision="Simple",TaskName=TaskName)
+        table+=AiresInfo.GetLongitudinalTable(InputFolder,1091,Slant=True,Precision="Simple",TaskName=TaskName)
+        table+=AiresInfo.GetLongitudinalTable(InputFolder,1092,Slant=True,Precision="Simple",TaskName=TaskName)
+        table+=AiresInfo.GetLongitudinalTable(InputFolder,1021,Slant=True,Precision="Simple",TaskName=TaskName)
+        table+=AiresInfo.GetLongitudinalTable(InputFolder,1022,Slant=True,Precision="Simple",TaskName=TaskName)
+        table+=AiresInfo.GetLongitudinalTable(InputFolder,1023,Slant=True,Precision="Simple",TaskName=TaskName)
+        RawShower.long_pd_hadr.append(np.array(table.T[1], dtype=np.float32))
         
         table=AiresInfo.GetLongitudinalTable(InputFolder,6796,Slant=True,Precision="Simple",TaskName=TaskName)                      
         RawShower.long_ed_neutrino.append(np.array(table.T[1], dtype=np.float32))
@@ -321,8 +300,12 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,7707,Slant=True,Precision="Simple",TaskName=TaskName)                      
         RawShower.long_ed_mu_cut.append(np.array(table.T[1], dtype=np.float32)) 
-         
-        #TODO: long_ed_hadr_cut is left empty for now, as in zhaires is a combination of several tables...and its rarely used.
+                
+        ##I will add as hadr other cherged, other neutral (becouse aires for energy cut has fewer categories)
+        #This means tables: 7591 and 7592
+        table=AiresInfo.GetLongitudinalTable(InputFolder,7591,Slant=True,Precision="Simple",TaskName=TaskName)                      
+        table+=AiresInfo.GetLongitudinalTable(InputFolder,7592,Slant=True,Precision="Simple",TaskName=TaskName)                              
+        RawShower.long_ed_hadr_cut.append(np.array(table.T[1], dtype=np.float32))      
                          
         table=AiresInfo.GetLongitudinalTable(InputFolder,7801,Slant=True,Precision="Simple",TaskName=TaskName)                      
         RawShower.long_ed_gamma_ioniz.append(np.array(table.T[1], dtype=np.float32))        
@@ -332,10 +315,13 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,7907,Slant=True,Precision="Simple",TaskName=TaskName)                      
         RawShower.long_ed_mu_ioniz.append(np.array(table.T[1], dtype=np.float32)) 
-        
-        #TODO: long_ed_hadr_ioniz is left empty for now, as in zhaires is a combination of several tables...and its rarely used.        
 
-        
+        ##I will add as hadr other cherged, other neutral (becouse aires for energy cut has fewer categories)
+        #This means tables: 7891 and 7892        
+        table=AiresInfo.GetLongitudinalTable(InputFolder,7891,Slant=True,Precision="Simple",TaskName=TaskName)                      
+        table=AiresInfo.GetLongitudinalTable(InputFolder,7892,Slant=True,Precision="Simple",TaskName=TaskName)                      
+        RawShower.long_ed_hadr_ioniz.append(np.array(table.T[1], dtype=np.float32)) 
+              
         RawShower.fill()
         RawShower.write()
 
@@ -398,9 +384,6 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawEfield.t_pre = TimeWindowMin                                                           
         RawEfield.t_post = TimeWindowMax                                                          
         RawEfield.t_bin_size = TimeBinSize                                                              
-
-        
-
         
         ############################################################################################################################ 
         # Part II.2: Fill RawEfield per Antenna
@@ -437,7 +420,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
                 
                 DetectorID = IDs[ant_number]                                                
                 
-                print("DetectorID",DetectorID,"AntennaN",AntennaN[ant_number],"ant_number",ant_number,"pos",ant_position,"t0",t_0)
+                #print("DetectorID",DetectorID,"AntennaN",AntennaN[ant_number],"ant_number",ant_number,"pos",ant_position,"t0",t_0)
 
                 if(int(AntennaN[ant_number])!=ant_number+1):
                   logging.critical("Warning, check antenna numbers and ids, it seems there is a problem "+str(AntennaN)+" "+str(ant_number+1))
@@ -468,6 +451,45 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 
     else:
         logging.critical("no trace files found in "+InputFolder+"Skipping SimEfield") #TODO: handle this exeption more elegantly
+
+
+    #############################################################################################################################
+    #	SimMetaInfo
+    #############################################################################################################################
+
+    if(SimMetaInfo):
+        #MetaZHAires       		        
+        #TODO:Document .EventParemeters file format 
+        #We expect an .EventParameters File that has inside the line:  Core Position: Xcore Ycore Zcore in meters, eg: "Core Position: 2468.927 -4323.117 1998.000"   
+    
+        EventParametersFile=[InputFolder+"/"+TaskName+".EventParameters"]
+    
+        if os.path.isfile(EventParametersFile[0]):      
+          ArrayName=EParGen.GetArrayNameFromParametersFile(EventParametersFile[0])       
+          CorePosition=EParGen.GetCorePositionFromParametersFile(EventParametersFile[0])          
+          UnixTime,UnixNano=EParGen.GetEventUnixTimeFromParametersFile(EventParametersFile[0])
+          EventWeight=EParGen.GetEventWeightFromParametersFile(EventParametersFile[0])
+          TestedPositions=EParGen.GetTestedPositionsFromParametersFile(EventParametersFile[0])
+ 
+        else:
+          logging.critical("Input EventParametersFile file not found, {} using default values".format(EventParametersFile))
+          # return i will not return, in order to be able to handle old sims. I will asign default or dummy values to the required variables
+          ArrayName="Unknown"  
+          CorePosition=(0,0,0)
+          UnixTime=1
+          UnixNano=1
+          EventWeight=1
+          TestedCores=[]       
+
+        #print("CorePosition")
+        #print(CorePosition)
+        #print("UnixTime")
+        #print(UnixTime,UnixNano)
+        #print("EventWeight")
+        #print(EventWeight)
+        #print("TestedCores")
+        #print(TestedPositions) 
+
 
    
     #
@@ -738,11 +760,6 @@ def CheckIfEventIDIsUnique(EventID, f):
 
 
 
-
-
-
-
-
 if __name__ == '__main__':
 
 	if (len(sys.argv)>6 or len(sys.argv)<6) :
@@ -761,17 +778,17 @@ if __name__ == '__main__':
 	if(mode=="standard"): 
 		ZHAiresRawToRawROOT(OutputFileName,RunID,EventID, InputFolder)
 
-	elif(mode=="full"):
+	#elif(mode=="full"):
 
-		ZHAiresRawToRawROOT(OutputFileName,RunID,EventID, InputFolder, SimEfieldInfo=True, NLongitudinal=True, ELongitudinal=True, NlowLongitudinal=True, ElowLongitudinal=True, EdepLongitudinal=True, LateralDistribution=True, EnergyDistribution=True)
+	#	ZHAiresRawToRawROOT(OutputFileName,RunID,EventID, InputFolder, SimEfieldInfo=True, NLongitudinal=True, ELongitudinal=True, NlowLongitudinal=True, ElowLongitudinal=True, EdepLongitudinal=True, LateralDistribution=True, EnergyDistribution=True)
 
-	elif(mode=="minimal"):
+	#elif(mode=="minimal"):
 	
-		ZHAiresRawToRawROOT(OutputFileName,RunID,EventID, InputFolder, SimEfieldInfo=True, NLongitudinal=False, ELongitudinal=False, NlowLongitudinal=False, ElowLongitudinal=False, EdepLongitudinal=False, LateralDistribution=False, EnergyDistribution=False)
+	#	ZHAiresRawToRawROOT(OutputFileName,RunID,EventID, InputFolder, SimEfieldInfo=True, NLongitudinal=False, ELongitudinal=False, NlowLongitudinal=False, ElowLongitudinal=False, EdepLongitudinal=False, LateralDistribution=False, EnergyDistribution=False)
 
 	else:
 
-		print("please enter one of these modes: standard, full or minimal")
+		print("please enter the mode: standard (full or minimal still not implemented")
 	
  
 

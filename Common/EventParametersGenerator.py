@@ -1,9 +1,6 @@
-
-
 import os
 import numpy as np
-    
-    
+      
 #Author: Matias Tueros, with ChatGP3 help for documentation and error handling. it was Mar 24th 2023 in Barracas, Buenos Aires, Argentina
 def GenerateEventParametersFile(EventName, Primary, Energy, Zenith, Azimuth, CorePosition, ArrayName, EventWeight=1, EventUnixTime=0, EventUnixNanosecond=0, OutMode="a", TestedPositions="None"):
     '''
@@ -164,7 +161,10 @@ def GetTestedPositionsFromParametersFile(file_path):
                 z = float(z.strip())
             except (ValueError, IndexError):
                 # Skip any lines that do not match the expected format
-                print("tested core positions do not match format, expecting (x y z)",line)
+                if "#" in line:
+                  print("found",str(len(positions)),"tested core positions")
+                else:  
+                  print("tested core positions do not match format, expecting (x y z)",line)
                 continue
             # Add the core position to the list
             positions.append((x, y, z))
