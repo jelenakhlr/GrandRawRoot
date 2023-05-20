@@ -11,24 +11,20 @@ import time #to get the unix timestamp
 logging.basicConfig(level=logging.INFO)
 sys.path.append("../Common")
 import AiresInfoFunctionsGRANDROOT as AiresInfo
-import ZHAireSCompressEvent  as ZC
+import ZHAireSCompressEvent as ZC
 import EventParametersGenerator as EParGen #the functions i use from this file should be moved to root_trees_raw, so that we dont need an additional new file. It will be common to Coreas and ZhAireS.
 import raw_root_trees as RawTrees
 logging.getLogger('matplotlib').setLevel(logging.ERROR) #this is to shut-up matplotlib
 
 
-#Author: Matias Tueros, it was Mar 24th 2023 in Barracas, Buenos Aires, Argentina
+#Author: Matias Tueros, it was Q2 2023 in Barracas, Buenos Aires, Argentina
 
 #TODO:
-# Fill ArrayName
-# Fill EventWeight
-# Fill TestedCores
-# Fill UnixTime
 #TODO ASAP: In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level. In coreas, this is stored at the last bin of the Cut tables.#
 # In aires is on separate tables (5001, 505021-5213). I will have to
+#TODO: Add energy longitudinal development tables (on zhaires own tree)   
 #TODO ASAP: Get Refractivity Model parameters from the sry (unfortunatelly these are not reported in the sry, this will have to wait to the next version of zhaires hopefully after ICRC 2023)
 #Maybe move them to the function call for now, and remove the unused Longitudinal switches?
-#TODO: Add energy longitudinal development tables (on zhaires own tree)   
 
 def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="LookForIt", EventName="UseTaskName"): 
     '''
@@ -175,6 +171,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         #These might be "run parameters"
         Lat,Long=AiresInfo.GetLatLongFromSry(sryfile[0])                                               # 
         GroundAltitude=AiresInfo.GetGroundAltitudeFromSry(sryfile[0])                                  #
+        GroundDepth=AiresInfo.GetGroundDepthFromSry(sryfile[0])
         Site=AiresInfo.GetSiteFromSry(sryfile[0])                                                      #   
         ShowerSimulator=AiresInfo.GetAiresVersionFromSry(sryfile[0])                                   # 
         ShowerSimulator="Aires "+ShowerSimulator                                                       #
@@ -291,21 +288,49 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         
         table=AiresInfo.GetLongitudinalTable(InputFolder,6796,Slant=True,Precision="Simple",TaskName=TaskName)                      
         RawShower.long_ed_neutrino.append(np.array(table.T[1], dtype=np.float32))
-        
-        table=AiresInfo.GetLongitudinalTable(InputFolder,7501,Slant=True,Precision="Simple",TaskName=TaskName)                      
+
+        #In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level.
+        #In CORSIKA, this is stored at the last bin of the Cut tables so i add it as an extra line to the table.        
+        table=AiresInfo.GetLongitudinalTable(InputFolder,7501,Slant=True,Precision="Simple",TaskName=TaskName)
+        ground=AiresInfo.GetLongitudinalTable(InputFolder,5001,Slant=True,Precision="Simple",TaskName=TaskName)
+        ground[0]=GroundDepth
+        table=np.vstack((table,ground))                            
         RawShower.long_ed_gamma_cut.append(np.array(table.T[1], dtype=np.float32))        
 
-        table=AiresInfo.GetLongitudinalTable(InputFolder,7705,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_ed_e_cut.append(np.array(table.T[1], dtype=np.float32)) 
+        #In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level.
+        #In CORSIKA, this is stored at the last bin of the Cut tables so i add it as an extra line to the table.  
+        table=AiresInfo.GetLongitudinalTable(InputFolder,7705,Slant=True,Precision="Simple",TaskName=TaskName)
+        ground=AiresInfo.GetLongitudinalTable(InputFolder,5205,Slant=True,Precision="Simple",TaskName=TaskName)
+        ground[0]=GroundDepth
+        table=np.vstack((table,ground))                                                          
+        RawShower.long_ed_e_cut.append(np.array(table.T[1], dtype=np.float32))
 
+        #In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level.
+        #In CORSIKA, this is stored at the last bin of the Cut tables so i add it as an extra line to the table.          
         table=AiresInfo.GetLongitudinalTable(InputFolder,7707,Slant=True,Precision="Simple",TaskName=TaskName)                      
+        ground=AiresInfo.GetLongitudinalTable(InputFolder,5207,Slant=True,Precision="Simple",TaskName=TaskName)
+        ground[0]=GroundDepth
+        table=np.vstack((table,ground))                            
         RawShower.long_ed_mu_cut.append(np.array(table.T[1], dtype=np.float32)) 
                 
         ##I will add as hadr other cherged, other neutral (becouse aires for energy cut has fewer categories)
         #This means tables: 7591 and 7592
         table=AiresInfo.GetLongitudinalTable(InputFolder,7591,Slant=True,Precision="Simple",TaskName=TaskName)                      
         table+=AiresInfo.GetLongitudinalTable(InputFolder,7592,Slant=True,Precision="Simple",TaskName=TaskName)                              
-        RawShower.long_ed_hadr_cut.append(np.array(table.T[1], dtype=np.float32))      
+        #In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level.
+        #In CORSIKA, this is stored at the last bin of the Cut tables so i add it as an extra line to the table.
+        #Since longitudinal energy tables are more detailed than for energy cut tables, i need to add several tables more          
+        ground=AiresInfo.GetLongitudinalTable(InputFolder,5021,Slant=True,Precision="Simple",TaskName=TaskName)  #neutrons
+        ground+=AiresInfo.GetLongitudinalTable(InputFolder,5022,Slant=True,Precision="Simple",TaskName=TaskName) #protons
+        ground+=AiresInfo.GetLongitudinalTable(InputFolder,5023,Slant=True,Precision="Simple",TaskName=TaskName) #pbar       
+        ground+=AiresInfo.GetLongitudinalTable(InputFolder,5041,Slant=True,Precision="Simple",TaskName=TaskName) #nuclei
+        ground+=AiresInfo.GetLongitudinalTable(InputFolder,5091,Slant=True,Precision="Simple",TaskName=TaskName) #other charged
+        ground+=AiresInfo.GetLongitudinalTable(InputFolder,5092,Slant=True,Precision="Simple",TaskName=TaskName) #other neutral
+        ground+=AiresInfo.GetLongitudinalTable(InputFolder,5211,Slant=True,Precision="Simple",TaskName=TaskName) #pions
+        ground+=AiresInfo.GetLongitudinalTable(InputFolder,5213,Slant=True,Precision="Simple",TaskName=TaskName) #kaons
+        ground[0]=GroundDepth
+        table=np.vstack((table,ground))        
+        RawShower.long_ed_hadr_cut.append(np.array(table.T[1], dtype=np.float32))              
                          
         table=AiresInfo.GetLongitudinalTable(InputFolder,7801,Slant=True,Precision="Simple",TaskName=TaskName)                      
         RawShower.long_ed_gamma_ioniz.append(np.array(table.T[1], dtype=np.float32))        

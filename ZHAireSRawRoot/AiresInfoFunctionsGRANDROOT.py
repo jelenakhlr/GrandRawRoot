@@ -606,7 +606,37 @@ def GetGroundAltitudeFromSry(sry_file,outmode="N/A"):
     logging.error("GetGroundAltitudeFromSry:file not found or invalid:"+sry_file)
     raise
     return -1
-
+    
+def GetGroundDepthFromSry(sry_file,outmode="N/A"):
+  try:
+    datafile=open(sry_file,'r')
+    with open(sry_file, "r") as datafile:
+      for line in datafile:
+        if 'Ground altitude:' in line:
+          start_index = line.find("(") + 1
+          #catch the case where is the default indicator "(D)" at the begining of the linde
+          if(line[start_index]=="D"):
+            line=line[start_index:]
+            start_index = line.find("(") + 1          
+          end_index = line.find(" ", start_index)
+          depth_str = line[start_index:end_index]
+          try:
+           depth = float(depth_str)
+           return depth
+          except ValueError:
+            # Handle the case where the extracted string cannot be converted to a float
+            logging.error("Could not convert string to depth value"+str(depth_str))
+            return None          
+      try:
+        depth
+      except NameError:
+        logging.error('warning depth not found, defaulting to 1035 g/cm2')
+        return 1035
+  except:
+    logging.error("GetGroundDepthFromSry:file not found or invalid:"+sry_file)
+    raise
+    return -1
+       
 def GetTimeBinFromSry(sry_file,outmode="N/A"):
   try:
     datafile=open(sry_file,'r')
