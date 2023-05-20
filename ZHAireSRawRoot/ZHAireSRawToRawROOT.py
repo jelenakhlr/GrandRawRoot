@@ -251,8 +251,8 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.meson_energy_cut = MesonEnergyCut
         RawShower.nucleon_energy_cut = NucleonEnergyCut              
         
-        #METAZHAireS
-        RawShower.shower_core_pos=np.array(CorePosition) # shower core position 
+        #METAZHAireS (I propose to pass this to a separate tree and section
+        #RawShower.shower_core_pos=np.array(CorePosition) # shower core position 
 
         #Fill the tables
         table=AiresInfo.GetLongitudinalTable(InputFolder,1001,Slant=False,Precision="Simple",TaskName=TaskName)               
