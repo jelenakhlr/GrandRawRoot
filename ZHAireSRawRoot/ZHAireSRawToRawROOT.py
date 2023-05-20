@@ -24,9 +24,11 @@ logging.getLogger('matplotlib').setLevel(logging.ERROR) #this is to shut-up matp
 # Fill EventWeight
 # Fill TestedCores
 # Fill UnixTime
+#TODO ASAP: In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level. In coreas, this is stored at the last bin of the Cut tables.#
+# In aires is on separate tables (5001, 505021-5213). I will have to
 #TODO ASAP: Get Refractivity Model parameters from the sry (unfortunatelly these are not reported in the sry, this will have to wait to the next version of zhaires hopefully after ICRC 2023)
 #Maybe move them to the function call for now, and remove the unused Longitudinal switches?
-   
+#TODO: Add energy longitudinal development tables (on zhaires own tree)   
 
 def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="LookForIt", EventName="UseTaskName"): 
     '''
@@ -143,8 +145,6 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 
         #The tree with the Shower information common to ZHAireS and Coreas       
         RawShower = RawTrees.RawShowerTree(OutputFileName)
-        # The tree with ZHAireS only information
-        SimZhairesShower = RawTrees.RawZHAireSTree(OutputFileName)
 
         #########################################################################################################################
         # Part I: get the information from ZHAIRES (for COREAS, its stuff would be here)
@@ -459,15 +459,16 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 
     if(SimMetaInfo):
         #MetaZHAires       		        
+        #All this part will go in a function inside of EventParametersGenerator.py, CreateMetaTree(rootfile, eventparameterfile)
         #TODO:Document .EventParemeters file format 
-        #We expect an .EventParameters File that has inside the line:  Core Position: Xcore Ycore Zcore in meters, eg: "Core Position: 2468.927 -4323.117 1998.000"   
-    
+        
         EventParametersFile=[InputFolder+"/"+TaskName+".EventParameters"]
     
         if os.path.isfile(EventParametersFile[0]):      
-          ArrayName=EParGen.GetArrayNameFromParametersFile(EventParametersFile[0])       
+          ArrayName=EParGen.GetArrayNameFromParametersFile(EventParametersFile[0])
+          #We expect an .EventParameters File that has inside the line:  Core Position: Xcore Ycore Zcore in meters, eg: "Core Position: 2468.927 -4323.117 1998.000"          
           CorePosition=EParGen.GetCorePositionFromParametersFile(EventParametersFile[0])          
-          UnixTime,UnixNano=EParGen.GetEventUnixTimeFromParametersFile(EventParametersFile[0])
+          UnixSecond,UnixNano=EParGen.GetEventUnixTimeFromParametersFile(EventParametersFile[0])
           EventWeight=EParGen.GetEventWeightFromParametersFile(EventParametersFile[0])
           TestedPositions=EParGen.GetTestedPositionsFromParametersFile(EventParametersFile[0])
  
@@ -476,27 +477,28 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
           # return i will not return, in order to be able to handle old sims. I will asign default or dummy values to the required variables
           ArrayName="Unknown"  
           CorePosition=(0,0,0)
-          UnixTime=1
+          UnixSecond=1
           UnixNano=1
           EventWeight=1
           TestedCores=[]       
 
-        #print("CorePosition")
-        #print(CorePosition)
-        #print("UnixTime")
-        #print(UnixTime,UnixNano)
-        #print("EventWeight")
-        #print(EventWeight)
-        #print("TestedCores")
-        #print(TestedPositions) 
-
-
-   
+        RawMeta = RawTrees.RawMetaTree(OutputFileName)
+        
+        RawMeta.array_name = ArrayName
+        RawMeta.shower_core_pos=np.array(CorePosition)
+        RawMeta.unix_second=UnixSecond
+        RawMeta.unix_nanosecond=UnixNano
+        RawMeta.event_weight=EventWeight
+              
+        for positions in TestedPositions:
+          RawMeta.tested_cores.append(positions)
+             
     #
     #
     #  FROM HERE ITS LEGACY FROM HDF5 THAT I WILL IMPLEMENT IN A "PROPIETARY" CLASS OF ZHAIRES-ONLY INFORMATION
     #
-    #
+    #  # The tree with ZHAireS only information
+    #  SimZhairesShower = RawTrees.RawZHAireSTree(OutputFileName)
 	##############################################################################################################################
 	# LONGITUDINAL TABLES (not implemented yet, will need to have ZHAIRES installed on your system and the Official version of AiresInfoFunctions).
 	##############################################################################################################################
