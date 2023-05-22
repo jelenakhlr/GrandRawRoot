@@ -52,7 +52,7 @@ class RawShowerTree(MotherEventTree):
     ### Event Date  (used to define the atmosphere and/or the magnetic field)
     _event_date: StdString = StdString("")
     
-    ### Unix time of the trigger for this DU
+    ### Unix time of this event date
     _unix_date: np.ndarray = field(default_factory=lambda: np.zeros(1, np.uint32))
    
     ### Random seed
@@ -1084,7 +1084,7 @@ class RawShowerTree(MotherEventTree):
     @property
     def unix_date(self):
         """The date of the event in seconds since epoch"""
-        return self._run_number[0]
+        return self._unix_date[0]
 
     @unix_date.setter
     def unix_date(self, val: np.uint32) -> None:
@@ -1535,6 +1535,122 @@ class RawEfieldTree(MotherEventTree):
 
 #############################################################################################################################################################################################################################
 #
+#   RawMetaTree
+#
+#############################################################################################################################################################################################################################
+
+@dataclass
+## The class for storing meta-data for each event, that is meta to the shower and efield simulation (like, coreposition, array name, antenna selection, etc)
+class RawMetaTree(MotherEventTree):
+    """The class for storing data about the event generation that is meta to the shower/efield simulation itself"""
+
+
+    _type: str = "rawmeta"
+
+    _tree_name: str = "trawmeta"
+    
+    ### Array over wich the event was simulated (use "starshape" for...starshapes)
+    _array_name: StdString = StdString("")
+    
+    #In the simulation, the coordinates are in "shower coordinates" whose origin is at the core position. So core position is always 0,0,0. The core position this represents in your array is meta the simulator 
+    ### Core position with respect to the antenna array (undefined for neutrinos)
+    _shower_core_pos: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float32)) 
+        
+    #In the simulation, the origin of time is when the shower hits the ground.
+    #There is a date (no time of the day, just the date) that can be used to get the magnetic field from the magnetic field model, but nothing else.
+    #If the event you are simulating represents an event that happened at a specific time, you set here its second and nanosecond.     
+    ### Unix second of the shower t0 (when the core traveling at c arrives at the ground?)
+    _unix_second: np.ndarray = field(default_factory=lambda: np.zeros(1, np.uint32))    
+    
+    ### Unix nanosecond of the shower t0 (when the core traveling at c arrives at the ground?)
+    _unix_nanosecond: np.ndarray = field(default_factory=lambda: np.zeros(1, np.uint32))    
+    
+    #The event you are simulating might be the result of several trials at input generation until you found one that has some chance of triggering. You need to store this info for efficiency studies.
+    ### statistical weight given to the event
+    _event_weight: np.ndarray = field(default_factory=lambda: np.zeros(1, np.uint32))    
+    ### tested core positions
+    _tested_cores: StdVectorList = field(default_factory=lambda:StdVectorList("vector<float>"))    
+
+    @property
+    def array_name(self):
+        """array name"""
+        return str(self._array_name)
+
+    @array_name.setter
+    def array_name(self, value):
+        # Not a string was given
+        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
+            raise ValueError(
+                f"Incorrect type for array_name {type(value)}. Either a string or a ROOT.std.string is required."
+            )
+
+        self._array_name.string.assign(value)
+
+    @property
+    def shower_core_pos(self):
+        """Shower core position"""
+        return np.array(self._shower_core_pos)
+
+    @shower_core_pos.setter
+    def shower_core_pos(self, value):
+        self._shower_core_pos = np.array(value).astype(np.float32)
+        self._tree.SetBranchAddress("shower_core_pos", self._shower_core_pos)         
+
+    @property
+    def unix_second(self):
+        """Unix second of the shower t0 (when the core traveling at c arrives at the ground?)"""
+        return self._unix_second[0]
+
+    @unix_second.setter
+    def unix_second(self, val: np.uint32) -> None:
+        self._unix_second[0] = val
+
+
+    @property
+    def unix_nanosecond(self):
+        """Unix nanosecond of the shower t0 (when the core traveling at c arrives at the ground?)"""
+        return self._unix_nanosecond[0]
+
+    @unix_nanosecond.setter
+    def unix_nanosecond(self, val: np.uint32) -> None:
+        self._unix_nanosecond[0] = val
+        
+        
+    @property
+    def event_weight(self):
+        """The event statistical weight"""
+        return self._event_weight[0]
+
+    @event_weight.setter
+    def event_weight(self, val: np.uint32) -> None:
+        self._event_weight[0] = val
+        
+    @property
+    def tested_cores(self):
+        """tested cores"""
+        return self._tested_cores
+        
+    @tested_cores.setter
+    def long_pd_hadr(self, value):
+        # A list was given  
+        if (
+            isinstance(value, list)
+            or isinstance(value, np.ndarray)
+            or isinstance(value, StdVectorList)
+        ):
+            # Clear the vector before setting
+            self._tested_cores.clear()
+            self._tested_cores += value
+        # A vector of strings was given
+        elif isinstance(value, ROOT.vector("vector<float>")):
+            self._tested_cores._vector = value
+        else:
+            raise ValueError(
+                f"Incorrect type for _tested_cores {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+            )                
+
+#############################################################################################################################################################################################################################
+#
 #   RawZHAiresTree
 #
 #############################################################################################################################################################################################################################
@@ -1549,124 +1665,11 @@ class RawZHAireSTree(MotherEventTree):
     _tree_name: str = "teventshowerzhaires"
 
     # ToDo: we need explanations of these parameters
+      
 
-    _relative_thining: StdString = StdString("")
-    _weight_factor: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
-    _gamma_energy_cut: StdString = StdString("")
-    _electron_energy_cut: StdString = StdString("")
-    _muon_energy_cut: StdString = StdString("")
-    _meson_energy_cut: StdString = StdString("")
-    _nucleon_energy_cut: StdString = StdString("")
     _other_parameters: StdString = StdString("")
 
-    # def __post_init__(self):
-    #     super().__post_init__()
-    #
-    #     if self._tree.GetName() == "":
-    #         self._tree.SetName(self._tree_name)
-    #     if self._tree.GetTitle() == "":
-    #         self._tree.SetTitle(self._tree_name)
-    #
-    #     self.create_branches()
 
-    @property
-    def relative_thining(self):
-        """Relative thinning energy"""
-        return str(self._relative_thining)
-
-    @relative_thining.setter
-    def relative_thining(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for relative_thining {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._relative_thining.string.assign(value)
-
-    @property
-    def weight_factor(self):
-        """Weight factor"""
-        return self._weight_factor[0]
-
-    @weight_factor.setter
-    def weight_factor(self, value: np.float64) -> None:
-        self._weight_factor[0] = value
-
-    @property
-    def gamma_energy_cut(self):
-        """Low energy cut for gammas(GeV)"""
-        return str(self._gamma_energy_cut)
-
-    @gamma_energy_cut.setter
-    def gamma_energy_cut(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for gamma_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._gamma_energy_cut.string.assign(value)
-
-    @property
-    def electron_energy_cut(self):
-        """Low energy cut for electrons (GeV)"""
-        return str(self._electron_energy_cut)
-
-    @electron_energy_cut.setter
-    def electron_energy_cut(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for electron_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._electron_energy_cut.string.assign(value)
-
-    @property
-    def muon_energy_cut(self):
-        """Low energy cut for muons (GeV)"""
-        return str(self._muon_energy_cut)
-
-    @muon_energy_cut.setter
-    def muon_energy_cut(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for muon_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._muon_energy_cut.string.assign(value)
-
-    @property
-    def meson_energy_cut(self):
-        """Low energy cut for mesons (GeV)"""
-        return str(self._meson_energy_cut)
-
-    @meson_energy_cut.setter
-    def meson_energy_cut(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for meson_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._meson_energy_cut.string.assign(value)
-
-    @property
-    def nucleon_energy_cut(self):
-        """Low energy cut for nucleons (GeV)"""
-        return str(self._nucleon_energy_cut)
-
-    @nucleon_energy_cut.setter
-    def nucleon_energy_cut(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for nucleon_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._nucleon_energy_cut.string.assign(value)
 
     @property
     def other_parameters(self):
