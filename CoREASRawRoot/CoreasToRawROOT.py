@@ -169,16 +169,10 @@ def CoreasToRawRoot(path):
 
   # In Zhaires converter: RelativeThinning, WeightFactor
   # I have:
-  thin  = [1,2,3] 
+  Thin  = [1,2,3] 
   # THIN = [limit, weight, Rmax]
-  thinh = [1,2,3] 
+  ThinH = [1,2] 
   # THINH = [limit, weight] for hadrons
-  
-  # !!!! suggestion: 
-  ThinLimit  = [thin[0], thinh[0]]
-  ThinWeight = [thin[1], thinh[1]]
-  ThinRmax   = thin[2]
-
 
   # TODO: read keywords with T or F flags as string
   mumult = "T"
@@ -214,16 +208,16 @@ def CoreasToRawRoot(path):
   energy_dep = dE_data
   # the depth here is not the same as for the particle dist, because that would be too easy
   # DEPTH, GAMMA, EM IONIZ, EM CUT, MU IONIZ, MU CUT, HADR IONIZ, HADR CUT, NEUTRINO, SUM
-  ed_depth = particle_dist[:,0]
-  ed_gamma = particle_dist[:,1]
-  ed_em_ioniz = particle_dist[:,2]
-  ed_em_cut = particle_dist[:,3]
-  ed_mu_ioniz = particle_dist[:,4]
-  ed_mu_cut = particle_dist[:,5]
-  ed_hadron_ioniz = particle_dist[:,6]
-  ed_hadron_cut = particle_dist[:,7]
-  ed_neutrino = particle_dist[:,8]
-  ed_sum = particle_dist[:,9]
+  ed_depth = energy_dep[:,0]
+  ed_gamma = energy_dep[:,1]
+  ed_em_ioniz = energy_dep[:,2]
+  ed_em_cut = energy_dep[:,3]
+  ed_mu_ioniz = energy_dep[:,4]
+  ed_mu_cut = energy_dep[:,5]
+  ed_hadron_ioniz = energy_dep[:,6]
+  ed_hadron_cut = energy_dep[:,7]
+  ed_neutrino = energy_dep[:,8]
+  ed_sum = energy_dep[:,9]
 
 
   ##############################################
@@ -300,14 +294,14 @@ def CoreasToRawRoot(path):
   RawShower.low_energy_model = LowEnergyModel
   RawShower.cpu_time = float(CPUTime)
 
-  # from zhaires converter:
-  # RawShower.relative_thinning = RelativeThinning
-  # RawShower.weight_factor = WeightFactor  
-  # change to:
-  RawShower.thinning = ThinLimit # list of floats 
-  RawShower.weight_factor = ThinWeight[0] # list of floats # TODO: figure out how to put the whole list here as well
-  RawShower.thin_Rmax = ThinRmax # float
+  # * THINNING *
+  RawShower.relative_thinning = Thin[0]
+  RawShower.maximum_weight = Thin[1]
+  RawShower.hadronic_thinning = ThinH[0]
+  RawShower.hadronic_thinning_weight = ThinH[1]
+  RawShower.rmax = Thin[3]
 
+  # * CUTS *
   RawShower.gamma_energy_cut = GammaEnergyCut
   RawShower.electron_energy_cut = ElectronEnergyCut
   RawShower.muon_energy_cut = MuonEnergyCut
@@ -464,7 +458,7 @@ def CoreasToRawRoot(path):
   SimCoreasShower.GeomagneticAngle = GeomagneticAngle
   
   SimCoreasShower.nshow  = nshow # number of showers
-  SimCoreasShower.ectmap = ectmap
+  SimCoreasShower.ectmap = ectmap # does not affect output of sim - 100: every particle is printed in long file, 10E11 nothing is printed because cut is too high
   SimCoreasShower.maxprt = maxprt
   SimCoreasShower.radnkg = radnkg
 

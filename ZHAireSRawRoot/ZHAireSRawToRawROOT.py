@@ -244,7 +244,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         
         #ZHAireS/Coreas
         RawShower.relative_thinning = RelativeThinning
-        RawShower.weight_factor = WeightFactor  
+        RawShower.maximum_weight = WeightFactor  
         RawShower.gamma_energy_cut = GammaEnergyCut
         RawShower.electron_energy_cut = ElectronEnergyCut
         RawShower.muon_energy_cut = MuonEnergyCut

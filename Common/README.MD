@@ -28,7 +28,7 @@
     * [long\_hadr\_cut](#raw_root_trees.RawShowerTree.long_ed_hadr_cut)
     * [long\_hadr\_ioniz](#raw_root_trees.RawShowerTree.long_ed_hadr_ioniz)
     * [relative\_thinning](#raw_root_trees.RawShowerTree.relative_thinning)
-    * [weight\_factor](#raw_root_trees.RawShowerTree.weight_factor)
+    * [weight\_factor](#raw_root_trees.RawShowerTree.maximum_weight)
     * [gamma\_energy\_cut](#raw_root_trees.RawShowerTree.gamma_energy_cut)
     * [electron\_energy\_cut](#raw_root_trees.RawShowerTree.electron_energy_cut)
     * [muon\_energy\_cut](#raw_root_trees.RawShowerTree.muon_energy_cut)
@@ -80,7 +80,7 @@
     * [pos\_z](#raw_root_trees.RawEfieldTree.du_z)
   * [RawZHAireSTree](#raw_root_trees.RawZHAireSTree)
     * [relative\_thining](#raw_root_trees.RawZHAireSTree.relative_thining)
-    * [weight\_factor](#raw_root_trees.RawZHAireSTree.weight_factor)
+    * [weight\_factor](#raw_root_trees.RawZHAireSTree.maximum_weight)
     * [gamma\_energy\_cut](#raw_root_trees.RawZHAireSTree.gamma_energy_cut)
     * [electron\_energy\_cut](#raw_root_trees.RawZHAireSTree.electron_energy_cut)
     * [muon\_energy\_cut](#raw_root_trees.RawZHAireSTree.muon_energy_cut)
@@ -470,13 +470,13 @@ def relative_thinning()
 
 Thinning energy, relative to primary energy
 
-<a id="raw_root_trees.RawShowerTree.weight_factor"></a>
+<a id="raw_root_trees.RawShowerTree.maximum_weight"></a>
 
 #### weight\_factor
 
 ```python
 @property
-def weight_factor()
+def maximum_weight()
 ```
 
 Weight factor
@@ -1042,13 +1042,13 @@ def relative_thining()
 
 Relative thinning energy
 
-<a id="raw_root_trees.RawZHAireSTree.weight_factor"></a>
+<a id="raw_root_trees.RawZHAireSTree.maximum_weight"></a>
 
 #### weight\_factor
 
 ```python
 @property
-def weight_factor()
+def maximum_weight()
 ```
 
 Weight factor

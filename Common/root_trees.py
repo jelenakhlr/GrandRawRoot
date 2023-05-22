@@ -6830,7 +6830,7 @@ class TRunShowerSim(MotherRunTree):
     # relative thinning energy
     _rel_thin: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     # weight factor
-    _weight_factor: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    _maximum_weight: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     # low energy cut for electrons (GeV)
     _lowe_cut_e: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     # low energy cut for gammas (GeV)
@@ -6868,13 +6868,13 @@ class TRunShowerSim(MotherRunTree):
         self._rel_thin[0] = value
 
     @property
-    def weight_factor(self):
+    def maximum_weight(self):
         """weight factor"""
-        return self._weight_factor[0]
+        return self._maximum_weight[0]
 
-    @weight_factor.setter
-    def weight_factor(self, value):
-        self._weight_factor[0] = value
+    @maximum_weight.setter
+    def maximum_weight(self, value):
+        self._maximum_weight[0] = value
 
     @property
     def lowe_cut_e(self):
@@ -7394,7 +7394,7 @@ class TRunNoise(MotherRunTree):
 #     # ToDo: we need explanations of these parameters
 #
 #     _relative_thining: StdString = StdString("")
-#     _weight_factor: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+#     _maximum_weight: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 #     _gamma_energy_cut: StdString = StdString("")
 #     _electron_energy_cut: StdString = StdString("")
 #     _muon_energy_cut: StdString = StdString("")
@@ -7428,13 +7428,13 @@ class TRunNoise(MotherRunTree):
 #         self._relative_thining.string.assign(value)
 #
 #     @property
-#     def weight_factor(self):
+#     def maximum_weight(self):
 #         """Weight factor"""
-#         return self._weight_factor[0]
+#         return self._maximum_weight[0]
 #
-#     @weight_factor.setter
-#     def weight_factor(self, value: np.float64) -> None:
-#         self._weight_factor[0] = value
+#     @maximum_weight.setter
+#     def maximum_weight(self, value: np.float64) -> None:
+#         self._maximum_weight[0] = value
 #
 #     @property
 #     def gamma_energy_cut(self):

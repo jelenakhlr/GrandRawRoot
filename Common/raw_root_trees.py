@@ -125,12 +125,26 @@ class RawShowerTree(MotherEventTree):
 
 
     #### ZHAireS/Coreas
+    # * THINNING *
     # Thinning energy, relative to primary energy
+    # this is EFRCTHN in Coreas (the 0th THIN value)
     _relative_thinning: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
     # Main weight factor parameter. This has different meaning for Coreas and Zhaires
-    _weight_factor: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+    # this is WMAX in Coreas (the 1st THIN value) - Weight limit for thinning
+    _maximum_weight: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
+    # this is THINRAT in Coreas (the 0th THINH value) - hadrons
+    _hadronic_thinning: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+
+    # this is THINRAT in Coreas (the 1st THINH value)
+    _hadronic_thinning_weight: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+
+    # this is RMAX in Coreas (the 2nd THIN value)
+    # Maximum radius (in cm) at observation level within which all particles are subject to inner radius thinning
+    _rmax: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+
+    # * CUTS *
     #gamma energy cut (GeV)
     _gamma_energy_cut: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
@@ -678,15 +692,48 @@ class RawShowerTree(MotherEventTree):
     def relative_thinning(self, value: np.float64) -> None:
         self._relative_thinning[0] = value 
  
-    @property
-    def weight_factor(self):
-        """Weight factor"""
-        return self._weight_factor[0]
 
-    @weight_factor.setter
-    def weight_factor(self, value: np.float64) -> None:
-        self._weight_factor[0] = value
+    @property
+    def maximum_weight(self):
+        """Weight limit for thinning"""
+        return self._maximum_weight[0]
+
+    @maximum_weight.setter
+    def maximum_weight(self, value: np.float64) -> None:
+        self._maximum_weight[0] = value
  
+
+    @property
+    def hadronic_thinning(self):
+        """hadronic thinning ratio"""
+        return self._hadronic_thinning[0]
+
+    @hadronic_thinning.setter
+    def hadronic_thinning(self, value: np.float64) -> None:
+        self._hadronic_thinning[0] = value
+
+
+    @property
+    def hadronic_thinning_weight(self):
+        """hadronic thinning weight ratio"""
+        return self._hadronic_thinning_weight[0]
+
+    @hadronic_thinning_weight.setter
+    def hadronic_thinning_weight(self, value: np.float64) -> None:
+        self._hadronic_thinning_weight[0] = value
+
+    
+    @property
+    def rmax(self):
+        """Maximum radius (in cm) at observation level within which all particles are subject to inner radius thinning"""
+        return self._rmax[0]
+
+    @rmax.setter
+    def rmax(self, value: np.float64) -> None:
+        self._rmax[0] = value
+
+
+
     @property
     def gamma_energy_cut(self):
         """gamma energy cut (GeV)"""
@@ -696,6 +743,7 @@ class RawShowerTree(MotherEventTree):
     def gamma_energy_cut(self, value: np.float64) -> None:
         self._gamma_energy_cut[0] = value  
       
+
     @property
     def electron_energy_cut(self):
         """electron energy cut (GeV)"""
