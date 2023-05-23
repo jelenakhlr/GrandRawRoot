@@ -20,8 +20,6 @@ logging.getLogger('matplotlib').setLevel(logging.ERROR) #this is to shut-up matp
 #Author: Matias Tueros, it was Q2 2023 in Barracas, Buenos Aires, Argentina
 
 #TODO:
-#TODO ASAP: In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level. In coreas, this is stored at the last bin of the Cut tables.#
-# In aires is on separate tables (5001, 505021-5213). I will have to
 #TODO: Add energy longitudinal development tables (on zhaires own tree)   
 #TODO ASAP: Get Refractivity Model parameters from the sry (unfortunatelly these are not reported in the sry, this will have to wait to the next version of zhaires hopefully after ICRC 2023)
 #Maybe move them to the function call for now, and remove the unused Longitudinal switches?
@@ -176,7 +174,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         ShowerSimulator=AiresInfo.GetAiresVersionFromSry(sryfile[0])                                   # 
         ShowerSimulator="Aires "+ShowerSimulator                                                       #
   
-        RelativeThinning=AiresInfo.GetThinningRelativeEnergyFromSry(sryfile[0])                        #Used
+        RelativeThinning=AiresInfo.GetThinningRelativeEnergyFromSry(sryfile[0])                        #Used        
         GammaEnergyCut=AiresInfo.GetGammaEnergyCutFromSry(sryfile[0])                                  #Used
         ElectronEnergyCut=AiresInfo.GetElectronEnergyCutFromSry(sryfile[0])                            #Used
         MuonEnergyCut=AiresInfo.GetMuonEnergyCutFromSry(sryfile[0])                                    #Used
@@ -185,7 +183,9 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 
         #These are ZHAireS specific parameters. Other simulators wont have these parameters, and might have others
         WeightFactor=AiresInfo.GetWeightFactorFromSry(sryfile[0])                                      #Used
- 
+        EmToHadrFactor=AiresInfo.GetEMtoHadronWFRatioFromSry(sryfile[0])
+        MaxWeight=AiresInfo.ComputeMaxWeight(Energy*1E9,RelativeThinning,WeightFactor) 
+         
         #Get the atmospheric density profile
         Atmostable=AiresInfo.GetLongitudinalTable(InputFolder,100,Slant=True,Precision="Simple",TaskName=TaskName)   
         Atmosaltitude=np.array(Atmostable.T[0],dtype=np.float32) #its important to make it float32 or it will complain
@@ -490,43 +490,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         EventParametersFile= InputFolder+"/"+TaskName+".EventParameters"
         
         EParGen.GenerateRawMetaTree(EventParametersFile,RunID,EventID,OutputFileName)
-    
-    
-    '''
-        if os.path.isfile(EventParametersFile[0]):      
-          ArrayName=EParGen.GetArrayNameFromParametersFile(EventParametersFile[0])
-          #We expect an .EventParameters File that has inside the line:  Core Position: Xcore Ycore Zcore in meters, eg: "Core Position: 2468.927 -4323.117 1998.000"          
-          CorePosition=EParGen.GetCorePositionFromParametersFile(EventParametersFile[0])          
-          UnixSecond,UnixNano=EParGen.GetEventUnixTimeFromParametersFile(EventParametersFile[0])
-          EventWeight=EParGen.GetEventWeightFromParametersFile(EventParametersFile[0])
-          TestedPositions=EParGen.GetTestedPositionsFromParametersFile(EventParametersFile[0])
- 
-        else:
-          logging.critical("Input EventParametersFile file not found, {} using default values".format(EventParametersFile))
-          # return i will not return, in order to be able to handle old sims. I will asign default or dummy values to the required variables
-          ArrayName="Unknown"  
-          CorePosition=(0,0,0)
-          UnixSecond=1
-          UnixNano=1
-          EventWeight=1
-          TestedCores=[]       
-
-        RawMeta = RawTrees.RawMetaTree(OutputFileName)
-        RawMeta.run_number = RunID
-        RawMeta.event_number = EventID
-        
-        RawMeta.array_name = ArrayName
-        RawMeta.shower_core_pos=np.array(CorePosition)
-        RawMeta.unix_second=UnixSecond
-        RawMeta.unix_nanosecond=UnixNano
-        RawMeta.event_weight=EventWeight
-              
-        for positions in TestedPositions:
-          RawMeta.tested_cores.append(positions)
-          
-        RawMeta.fill()
-        RawMeta.write()   
-    '''         
+  
     #
     #
     #  FROM HERE ITS LEGACY FROM HDF5 THAT I WILL IMPLEMENT IN A "PROPIETARY" CLASS OF ZHAIRES-ONLY INFORMATION

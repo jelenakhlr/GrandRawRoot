@@ -737,13 +737,44 @@ def GetWeightFactorFromSry(sry_file,outmode="N/A"):
       try:
         wf
       except NameError:
-        logging.error('warning weight factor not found, default is 12')
+        logging.info('warning weight factor not found, default is 12')
         return 12
   except:
     logging.error("GetWeightFactorFromSry:file not found or invalid:"+sry_file)
     raise
     return -1
 
+
+
+def GetEMtoHadronWFRatioFromSry(sry_file,outmode="N/A"):
+  try:
+    datafile=open(sry_file,'r')
+    with open(sry_file, "r") as datafile:
+      for line in datafile:
+        if 'EM to Hadron WF ratio:' in line:
+          line = line.lstrip()
+          stripedline=line.split(':',-1)
+          stripedline=stripedline[1]
+          stripedline=stripedline.lstrip()
+          stripedline=stripedline.split(' ',-1)
+          wf=float(stripedline[0])
+          return wf
+      try:
+        wf
+      except NameError:
+        logging.info('warning EMtoHadronWFRatio not found, default is 88')
+        return 88
+  except:
+    logging.error("GetEMtoHadronWFRatioFromSry:file not found or invalid:"+sry_file)
+    raise
+    return -1
+
+
+#From Aires Manual sec 2.3.2 Aires Extended Thinning algorithm
+def ComputeMaxWeight(PrimaryEnergyInGeV,RelativeThinning,WeightFactor):
+   
+   MaxWeight=PrimaryEnergyInGeV*RelativeThinning*WeightFactor/14.0
+   return MaxWeight
 
 
 def GetMagneticFieldFromSry(sry_file,outmode="N/A"):
