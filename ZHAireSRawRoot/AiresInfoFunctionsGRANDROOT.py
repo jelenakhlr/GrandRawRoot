@@ -772,7 +772,6 @@ def GetEMtoHadronWFRatioFromSry(sry_file,outmode="N/A"):
 
 #From Aires Manual sec 2.3.2 Aires Extended Thinning algorithm
 def ComputeMaxWeight(PrimaryEnergyInGeV,RelativeThinning,WeightFactor):
-   print(type(PrimaryEnergyInGeV),type(RelativeThinning),type(WeightFactor))
    MaxWeight=PrimaryEnergyInGeV*RelativeThinning*WeightFactor/14.0
    return MaxWeight
 
