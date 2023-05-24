@@ -219,10 +219,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         AngleA=np.deg2rad(180-Zenith)
         AngleC=np.arcsin((sidec/sidea)*np.sin(AngleA))
         AngleB=np.deg2rad(180-np.rad2deg(AngleA)-np.rad2deg(AngleC))
-        sideb=sidec*np.sin(AngleB)/np.sin(AngleC)
-        #print("SideA ",sidea,"SideC ",sidec,"SideB ",sideb)
-        #print("AngleA",np.rad2deg(AngleA),"AngleC",np.rad2deg(AngleC),"AngleB",np.rad2deg(AngleB))
-        
+        sideb=sidec*np.sin(AngleB)/np.sin(AngleC)       
         RawShower.prim_injpoint_shc = [(sideb*np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),sideb*np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),sideb*np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries        
         RawShower.atmos_model = str(AtmosphericModel) #TODO: Standarize
         #TODO:atmos_model_param  # Atmospheric model parameters: TODO: Think about this. Different models and softwares can have different parameters
@@ -241,7 +238,11 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         
         #ZHAireS/Coreas
         RawShower.relative_thinning = RelativeThinning
-        RawShower.maximum_weight = WeightFactor  
+        RawShower.maximum_weight = WeightFactor
+        RawShower.hadronic_thinning=1.0
+        RawShower.hadronic_thinning_weight=EmToHadrFactor
+        #RawShower.rmax= TODO: This is left for the future, when Marty arrives. 
+          
         RawShower.gamma_energy_cut = GammaEnergyCut
         RawShower.electron_energy_cut = ElectronEnergyCut
         RawShower.muon_energy_cut = MuonEnergyCut

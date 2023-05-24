@@ -188,7 +188,7 @@ def GetThinningRelativeEnergyFromSry(sry_file,outmode="N/A"):
           if(Relative!="Relative\n"):
              logging.error('warning , we only support Relative thinning for now, sorry!. This is easy to implement if you need it!')
              return -1
-          return Thinning
+          return float(Thinning)
       try:
         Thinning
       except NameError:
@@ -738,7 +738,7 @@ def GetWeightFactorFromSry(sry_file,outmode="N/A"):
         wf
       except NameError:
         logging.info('warning weight factor not found, default is 12')
-        return 12
+        return 12.0
   except:
     logging.error("GetWeightFactorFromSry:file not found or invalid:"+sry_file)
     raise
@@ -763,7 +763,7 @@ def GetEMtoHadronWFRatioFromSry(sry_file,outmode="N/A"):
         wf
       except NameError:
         logging.info('warning EMtoHadronWFRatio not found, default is 88')
-        return 88
+        return 88.0
   except:
     logging.error("GetEMtoHadronWFRatioFromSry:file not found or invalid:"+sry_file)
     raise
@@ -772,7 +772,7 @@ def GetEMtoHadronWFRatioFromSry(sry_file,outmode="N/A"):
 
 #From Aires Manual sec 2.3.2 Aires Extended Thinning algorithm
 def ComputeMaxWeight(PrimaryEnergyInGeV,RelativeThinning,WeightFactor):
-   
+   print(type(PrimaryEnergyInGeV),type(RelativeThinning),type(WeightFactor))
    MaxWeight=PrimaryEnergyInGeV*RelativeThinning*WeightFactor/14.0
    return MaxWeight
 
