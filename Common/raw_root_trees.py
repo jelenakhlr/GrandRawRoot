@@ -130,18 +130,21 @@ class RawShowerTree(MotherEventTree):
     # this is EFRCTHN in Coreas (the 0th THIN value)
     _relative_thinning: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
-    # Main weight factor parameter. This has different meaning for Coreas and Zhaires
+    # this is the maximum weight, computed in zhaires as PrimaryEnergy*RelativeThinning*WeightFactor/14.0 (see aires manual section 3.3.6 and 2.3.2) to make it mean the same as Corsika Wmax
     # this is WMAX in Coreas (the 1st THIN value) - Weight limit for thinning
     _maximum_weight: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
-
+    
+    # this is the ratio of energy at wich thining starts in hadrons and electromagnetic particles. In Aires is always 1
     # this is THINRAT in Coreas (the 0th THINH value) - hadrons
     _hadronic_thinning: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
-    # this is THINRAT in Coreas (the 1st THINH value)
+    # this is the ratio of electromagnetic to hadronic maximum weights.
+    # this is WEIRAT in Coreas (the 1st THINH value)
     _hadronic_thinning_weight: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
+    # Maximum radius (in cm) at observation level within which all particles are subject to inner radius thinning. In corsika particles are sampled following a r^(-4) distribution
+    # Aires has a similar feature, but the definition is much more complex...so this will be left empty for now.
     # this is RMAX in Coreas (the 2nd THIN value)
-    # Maximum radius (in cm) at observation level within which all particles are subject to inner radius thinning
     _rmax: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
     # * CUTS *
