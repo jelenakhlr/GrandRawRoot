@@ -26,6 +26,7 @@
 #10/2019 Migrated them to make it the official library
 #12/2019 Set up on git
 #03/2020 Corona Virus
+#05/2023 RawRoot work
 
 import sys
 from sys import argv
@@ -52,21 +53,21 @@ def GetZenithAngleFromSry(sry_file,outmode="GRAND"):
     datafile=open(sry_file,'r')
     with open(sry_file, "r") as datafile:
       for line in datafile:
-        if 'Primary sim_zenith angle:' in line:
+        if 'Primary zenith angle:' in line:
           line = line.lstrip()
           stripedline=line.split(' ',-1)
           zen=float(stripedline[len(stripedline)-2])
           if outmode == 'GRAND':
             zen = 180-zen  #conversion to GRAND convention i.e. pointing towards antenna/propagtion direction
-          #logging.debug('Found sim_zenith ' + str(zen))
+          #logging.debug('Found Zenith ' + str(zen))
           return zen
       try:
         zen
       except NameError:
-        zen = 0 #If no sim_zenith angle was included in the input file, AIRES defaults to 0
+        zen = 0 #If no zenith angle was included in the input file, AIRES defaults to 0
         if outmode == 'GRAND':
           zen = 180-0 #that translates to 180 in GRAND
-        logging.info("sim_zenith Angle not found in sry file, defaulting to:" + str(zen))
+        logging.info("Zenith Angle not found in sry file, defaulting to:" + str(zen))
         return zen
   except:
     logging.error("GetZenithAngleFromSry:file not found or invalid:"+sry_file)
@@ -78,7 +79,7 @@ def GetAzimuthAngleFromSry(sry_file,outmode="GRAND"):
     datafile=open(sry_file,'r')
     with open(sry_file, "r") as datafile:
       for line in datafile:
-        if 'Primary sim_azimuth angle:' in line:
+        if 'Primary azimuth angle:' in line:
           line = line.lstrip()
           stripedline=line.split(' ',-1)
           azim = float(stripedline[len(stripedline)-2])
@@ -86,15 +87,15 @@ def GetAzimuthAngleFromSry(sry_file,outmode="GRAND"):
             azim=azim+180 #conversion to GRAND convention i.e. pointing towards antenna/propagtion direction
             if azim>=360:
               azim= azim-360
-          #logging.debug('Found sim_azimuth ' + str(azim))
+          #logging.debug('Found Azimuth ' + str(azim))
           return azim
       try:
         azim
       except NameError:
-        azim = 0 #If no sim_azimuth angle was included in the input file, AIRES defaults to 0
+        azim = 0 #If no azimuth angle was included in the input file, AIRES defaults to 0
         if outmode == 'GRAND':
           azim = 0+180 # that translates to 18
-        logging.info("sim_azimuth Angle not found in sry file, defaulting to:" + str(azim))
+        logging.info("Azimuth Angle not found in sry file, defaulting to:" + str(azim))
         return azim
 
   except:
@@ -1111,7 +1112,7 @@ def get_antenna_t0(xant,yant,hant, azimuthdeg, zenithdeg):
     #this code is copied from zhaires fieldinit
     #returns the t0 of the antenna in ns
     #x,y,hant is antenna position in zhaires reference frame, hant is the altitude above ground (its making flat earth asumptions for now)
-    #sim_azimuth and sim_zenith are in ZHAireS,degrees
+    #azimuth and zenith are in ZHAireS,degrees
     cspeed = 299792458.0
     #get incoming azimut in radians
     phidirrad=azimuthdeg*np.pi/180.0
@@ -1653,15 +1654,15 @@ def DeprecatedReadAiresSry(sry_file,outmode="GRAND"):
     for line in datafile:
         ## print(line) #debug level 2
 
-        if 'Primary sim_zenith angle:' in line:
+        if 'Primary zenith angle:' in line:
             line = line.lstrip()
             stripedline=line.split(' ',-1)
             zen=float(stripedline[len(stripedline)-2])
             if outmode == 'GRAND':
                 zen = 180-zen  #conversion to GRAND convention i.e. pointing towards antenna/propagtion direction
-            logging.debug('Found sim_zenith ' + str(zen))
+            logging.debug('Found Zenith ' + str(zen))
 
-        if 'Primary sim_azimuth angle:' in line:
+        if 'Primary azimuth angle:' in line:
             line = line.lstrip()
             stripedline=line.split(' ',-1)
             azim = float(stripedline[len(stripedline)-2])
@@ -1670,7 +1671,7 @@ def DeprecatedReadAiresSry(sry_file,outmode="GRAND"):
                 azim=azim+180 #conversion to GRAND convention i.e. pointing towards antenna/propagtion direction
                 if azim>=360:
                     azim= azim-360
-            logging.debug('Found sim_azimuth ' + str(azim))
+            logging.debug('Found Azimuth ' + str(azim))
 
         if 'Primary energy:' in line:
             line = line.lstrip()
@@ -1741,13 +1742,13 @@ def DeprecatedReadAiresSry(sry_file,outmode="GRAND"):
     try:
         zen
     except NameError:
-        zen = 0 #If no sim_zenith angle was included in the input file, AIRES defaults to 0
+        zen = 0 #If no zenith angle was included in the input file, AIRES defaults to 0
         if outmode == 'GRAND':
           zen = 180-0 #that translates to 180 in GRAND
     try:
         azim
     except NameError:
-        azim = 0 #If no sim_azimuth angle was included in the input file, AIRES defaults to 0
+        azim = 0 #If no azimuth angle was included in the input file, AIRES defaults to 0
         if outmode == 'GRAND':
           azim = 0+180 # that translates to 180
     try:

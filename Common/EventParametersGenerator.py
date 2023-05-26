@@ -3,10 +3,10 @@ import numpy as np
 import raw_root_trees as RawTrees
       
 #Author: Matias Tueros, with ChatGP3 help for documentation and error handling. it was Mar 24th 2023 in Barracas, Buenos Aires, Argentina
-def GenerateEventParametersFile(EventName, Primary, Energy, sim_zenith, sim_azimuth, CorePosition, ArrayName, EventWeight=1, EventUnixTime=0, EventUnixNanosecond=0, OutMode="a", TestedPositions="None"):
+def GenerateEventParametersFile(EventName, Primary, Energy, Zenith, Azimuth, CorePosition, ArrayName, EventWeight=1, EventUnixTime=0, EventUnixNanosecond=0, OutMode="a", TestedPositions="None"):
     '''
     The function generates an event parameters file in a specific format for use in simulation programs. 
-    The file includes information such as the event name, primary particle, energy, sim_zenith and sim_azimuth angles, core position, 
+    The file includes information such as the event name, primary particle, energy, zenith and azimuth angles, core position, 
     and array name. 
     Optionally, the Event Weight and Unix Time and Unix Nanosecond can be specified
     Additionally, the file can include a list of tested positions that were tried before generating the event. 
@@ -19,8 +19,8 @@ def GenerateEventParametersFile(EventName, Primary, Energy, sim_zenith, sim_azim
     - EventName (str): The name of the event.
     - Primary (str): The type of primary particle.
     - Energy (float): The energy of the primary particle in GeV.
-    - sim_zenith (float): The sim_zenith angle of the event in degrees.
-    - sim_azimuth (float): The sim_azimuth angle of the event in degrees.
+    - Zenith (float): The zenith angle of the event in degrees.
+    - Azimuth (float): The azimuth angle of the event in degrees.
     - CorePosition (tuple): The (x,y,z) coordinates of the core position in meters.
     - ArrayName (str): The name of the array used for the simulation.
     - EventWeight (float,optional): The statistical weight of the event. Default is 1
@@ -40,8 +40,8 @@ def GenerateEventParametersFile(EventName, Primary, Energy, sim_zenith, sim_azim
         fout.write('EventName: {}\n'.format(EventName))
         fout.write('Primary: {}\n'.format(Primary))
         fout.write('PrimaryEnergy: {0:.5} GeV\n'.format(round(float(Energy),5)))
-        fout.write('sim_zenith: {0:.2f} deg\n'.format(round(float(sim_zenith),5)))
-        fout.write('sim_azimuth: {0:.2f} deg Magnetic\n'.format(round(float(sim_azimuth),5)))
+        fout.write('Zenith: {0:.2f} deg\n'.format(round(float(Zenith),5)))
+        fout.write('Azimuth: {0:.2f} deg Magnetic\n'.format(round(float(Azimuth),5)))
         fout.write('Core Position: {0:.3f} {1:.3f} {2:.3f}\n'.format(CorePosition[0],CorePosition[1],CorePosition[2]))
         fout.write('ArrayName: {}\n'.format(ArrayName))  
         fout.write('EventWeight: {0:.3f}\n'.format(EventWeight))
@@ -280,7 +280,7 @@ if __name__ == '__main__':
   print (np.size(sys.argv))
   
   if np.size(sys.argv)!=7:
-    print ("Arguments = EventName, Primary, Energy, sim_zenith, sim_azimuth, ArrayName")
+    print ("Arguments = EventName, Primary, Energy, Zenith, Azimuth, ArrayName")
     print ("\n")
     print ("For example: python3 Test Proton 10 20 30 JuanDomingo")
   #
@@ -290,16 +290,16 @@ if __name__ == '__main__':
     EventName = sys.argv[1]
     Primary = sys.argv[2] 
     Energy = float(sys.argv[3]) #in deg
-    sim_zenith = float(sys.argv[4]) #in deg
-    sim_azimuth = float(sys.argv[5]) #in deg
+    Zenith = float(sys.argv[4]) #in deg
+    Azimuth = float(sys.argv[5]) #in deg
     ArrayName = sys.argv[6]
     #
     print("Going to try creating an EventParameters file")
     print("EventName", EventName)
     print("Primary", Primary)
     print("Energy [GeV]", Energy)
-    print("sim_zenith [Deg]" , sim_zenith)
-    print("sim_azimuth [Deg]", sim_azimuth)
+    print("Zenith [Deg]" , Zenith)
+    print("Azimuth [Deg]", Azimuth)
     print("ArrayName",ArrayName)
   
     TestedPositions=[]  
@@ -314,7 +314,7 @@ if __name__ == '__main__':
     
     CorePosition=(np.random.rand(),np.random.rand(),np.random.rand())
     print("Going in with Core Position", CorePosition)       
-    GenerateEventParametersFile(EventName, Primary, Energy, sim_zenith, sim_azimuth, CorePosition, ArrayName, EventWeight, UnixTime, UnixNano, OutMode="w", TestedPositions=TestedPositions )
+    GenerateEventParametersFile(EventName, Primary, Energy, Zenith, Azimuth, CorePosition, ArrayName, EventWeight, UnixTime, UnixNano, OutMode="w", TestedPositions=TestedPositions )
     
     print("Found Tested positions")
     positions=GetTestedPositionsFromParametersFile(EventName+".EventParameters")

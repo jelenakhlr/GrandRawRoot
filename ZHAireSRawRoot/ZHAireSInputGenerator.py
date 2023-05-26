@@ -5,8 +5,8 @@
 import os
 import numpy as np
 #
-def CreateAiresInputHeaderForGRAND(EventName, Primary, Energy, sim_zenith, sim_azimuth, RandomSeed="Auto", OutputFile=None, AngularConvention="PointToSource",PrimaryConvention="PDG", OutMode="a" ):
-#CreateAiresInputHeaderForGRAND(EventName, Primary, sim_zenith, sim_azimuth, Energy)
+def CreateAiresInputHeaderForGRAND(EventName, Primary, Energy, Zenith, Azimuth, RandomSeed="Auto", OutputFile=None, AngularConvention="PointToSource",PrimaryConvention="PDG", OutMode="a" ):
+#CreateAiresInputHeaderForGRAND(EventName, Primary, Zenith, Azimuth, Energy)
 #Authors: Matias Tueros
 #Debugers:
 #Testers:
@@ -14,11 +14,11 @@ def CreateAiresInputHeaderForGRAND(EventName, Primary, Energy, sim_zenith, sim_a
 #
 #Note that:
 # Energy will be rounded to 5 significant digits, becouse then in the Aires summary they are rounded and the summary is used by other scripts to get the parameters.
-# sim_zenith and sim_azimuth to 2 decimals
+# Zenith and azimuth to 2 decimals
 #EventName, the name of the task. All files in the run will have that name, and some extension. It is usually also the name of the .inp, but not necessarily
 #Primary [PDG]: https://pdg.lbl.gov/2007/reviews/montecarlorpp.pdf  Proton, Iron, Gamma, or see Aires Manual
-#sim_zenith  [deg, PointToSource (CR) or IncomingDirection (primary direction) [deg] TODO, implement it, find a cool name
-#sim_azimuth [deg, CR or Neutrino convention, geomagnetic, North is 0, West is 90, South 180, East 270, Negative not allowed. deg]:
+#Zenith  [deg, PointToSource (CR) or IncomingDirection (primary direction) [deg] TODO, implement it, find a cool name
+#Azimuth [deg, CR or Neutrino convention, geomagnetic, North is 0, West is 90, South 180, East 270, Negative not allowed. deg]:
 #Energy  [GeV]
 #RandomSeed A number from (0 to 1). "Automatic" produces a random number. "Aires" leaves the work of setting a random seed to Aires.
 #OutPutFile: The output filename and path
@@ -98,8 +98,8 @@ def CreateAiresInputHeaderForGRAND(EventName, Primary, Energy, sim_zenith, sim_a
     prim='PrimaryParticle '+str(Primary) + '\n'
     file.write(prim)
     file.write('PrimaryEnergy {0:.5} GeV\n'.format( round(float(Energy),5) ) )
-    file.write('PrimaryZenAngle {0:.2f} deg\n'.format(round(float(sim_zenith),5) ) )
-    file.write('PrimaryAzimAngle {0:.2f} deg Magnetic\n'.format(round(float(sim_azimuth),5)))
+    file.write('PrimaryZenAngle {0:.2f} deg\n'.format(round(float(Zenith),5) ) )
+    file.write('PrimaryAzimAngle {0:.2f} deg Magnetic\n'.format(round(float(Azimuth),5)))
     if(RandomSeed!="Aires"):
         file.write('RandomSeed {0:1.9f}\n'.format(RandomSeed))
     file.write('##############################################################################################\n')
@@ -165,13 +165,13 @@ def CreateTimeWindowInp( xmaxdistance, OutputFile, Tmin=-250.0, Tmax=750.0):
     file.close()
 #
 #
-def ZHAireSInputGeneratorForGRAND(SimParametersFile, EventName, Primary, Energy, sim_zenith, sim_azimuth, RandomSeed="Auto", OutputFile=None, AngularConvention="PointToSource", PrimaryConvention="PDG", OutMode="a"):
+def ZHAireSInputGeneratorForGRAND(SimParametersFile, EventName, Primary, Energy, Zenith, Azimuth, RandomSeed="Auto", OutputFile=None, AngularConvention="PointToSource", PrimaryConvention="PDG", OutMode="a"):
 #
 # OutputFile
 # Name and path of the OutputFile
 #
 # SimParametersFile:
-# A file that has all the relevant parameters for a valid simulation, except  RandomSeed, EventName, Primary, Energy, sim_zenith, sim_azimuth
+# A file that has all the relevant parameters for a valid simulation, except  RandomSeed, EventName, Primary, Energy, Zenith, Azimuth
 # this File will be concatenated into the generated fie 
 #
 # RandomSeed: A real number between in (0,1)
@@ -180,8 +180,8 @@ def ZHAireSInputGeneratorForGRAND(SimParametersFile, EventName, Primary, Energy,
 # TODO: Check if the truncations and roundings modify the input this is the case and truncate/round if necessary. The truncate part is the dificult one
 # Primary: Particle type (PDG conventions)
 # Energy: GeV   - can't have more than 5 significant digits for technical reasons (silly but important ones, if this becomes a problem it can be overcome with some work)
-# sim_zenith: GRAND conventions: Angle of direction of motion wrt vertical  (oposite to CR convention that looks at where particle is coming from) (2 decimal places)
-# sim_azimuth: GRAND conventions, 0 is geomagnetic north with, it augments towards West (so Aires sim_azimuth is) (2 decimal places)
+# Zenith: GRAND conventions: Angle of direction of motion wrt vertical  (oposite to CR convention that looks at where particle is coming from) (2 decimal places)
+# Azimuth: GRAND conventions, 0 is geomagnetic north with, it augments towards West (so Aires Azimuth is) (2 decimal places)
 # ZHAiresMode: On or Off (to have ZHAireS radio routines enabled or not)
 #
 # TODO: Check if SimParametersFileExists
@@ -189,7 +189,7 @@ def ZHAireSInputGeneratorForGRAND(SimParametersFile, EventName, Primary, Energy,
     if OutputFile==None:
         OutputFile=EventName+".inp" 
 # 
-    CreateAiresInputHeaderForGRAND(EventName, Primary, Energy, sim_zenith, sim_azimuth, RandomSeed, OutputFile, AngularConvention, PrimaryConvention, OutMode )
+    CreateAiresInputHeaderForGRAND(EventName, Primary, Energy, Zenith, Azimuth, RandomSeed, OutputFile, AngularConvention, PrimaryConvention, OutMode )
 #
 #   Apending SimParametersFile
 #
@@ -218,8 +218,8 @@ def GenerateZHAireSArrayInputFromSry(SryFile, ArrayPositionsFile, CorePosition, 
     #
     # Get The shower Parmeters from the sry file
     #    
-    sim_zenith=AiresInfo.GetZenithAngleFromSry(SryFile,"Aires")
-    sim_azimuth=AiresInfo.GetAzimuthAngleFromSry(SryFile,"Aires")
+    Zenith=AiresInfo.GetZenithAngleFromSry(SryFile,"Aires")
+    Azimuth=AiresInfo.GetAzimuthAngleFromSry(SryFile,"Aires")
     # 
     EventName=AiresInfo.GetTaskNameFromSry(SryFile)
     EventName=ArrayName+"_"+EventName
@@ -240,7 +240,7 @@ def GenerateZHAireSArrayInputFromSry(SryFile, ArrayPositionsFile, CorePosition, 
     #
     # Create the input header with said parameters. Angular convention needs to be PoitnToSource, becouse data is taken from Aires.sry
     #       
-    CreateAiresInputHeaderForGRAND(EventName, Primary, Energy, sim_zenith, sim_azimuth, RandomSeed, OutputFile, AngularConvention="PointToSource", PrimaryConvention="Aires", OutMode=OutMode ) 
+    CreateAiresInputHeaderForGRAND(EventName, Primary, Energy, Zenith, Azimuth, RandomSeed, OutputFile, AngularConvention="PointToSource", PrimaryConvention="Aires", OutMode=OutMode ) 
     #
     # Load the AntennaARray
     #
@@ -284,7 +284,7 @@ def GenerateZHAireSArrayInputFromSry(SryFile, ArrayPositionsFile, CorePosition, 
     fout.write(data)
     fout.write('#End of SimParametersFile ####################################################################\n')   
 
-def GenerateEventParametersFile(EventName, Primary, Energy, sim_zenith, sim_azimuth, CorePosition, ArrayName, OutMode="a", TestedPositions="None"):
+def GenerateEventParametersFile(EventName, Primary, Energy, Zenith, Azimuth, CorePosition, ArrayName, OutMode="a", TestedPositions="None"):
 #    
 #   The idea behind having this file is to make it friendly for other simulation programs, and to avoid putting extra things in the Aires/ZHAireS .inp file
 #   For now, the only really needed parameters are ArrayName and CorePosition, but if we implement an antenna selection this would be the place to put that information.
@@ -296,8 +296,8 @@ def GenerateEventParametersFile(EventName, Primary, Energy, sim_zenith, sim_azim
     fout.write('#Event Simulation Parameters##################################################################\n')
     fout.write('EventName: {}\n'.format(EventName))
     fout.write('PrimaryEnergy: {0:.5} GeV\n'.format( round(float(Energy),5) ) )
-    fout.write('sim_zenith: {0:.2f} deg\n'.format(round(float(sim_zenith),5) ) )
-    fout.write('sim_azimuth: {0:.2f} deg Magnetic\n'.format(round(float(sim_azimuth),5)))
+    fout.write('Zenith: {0:.2f} deg\n'.format(round(float(Zenith),5) ) )
+    fout.write('Azimuth: {0:.2f} deg Magnetic\n'.format(round(float(Azimuth),5)))
     fout.write('Core Position: {0:.3f} {1:.3f} {2:.3f}\n'.format(CorePosition[0],CorePosition[1],CorePosition[2]))
     fout.write('ArrayName: {}\n'.format(ArrayName))            
     if(TestedPositions!="None"):
@@ -411,7 +411,7 @@ if __name__ == '__main__':
   print (np.size(sys.argv))
   
   if np.size(sys.argv)!=8:
-    print ("Arguments = EventName Primary(PDG) Energy (GeV) sim_zenith (deg, CR) sim_azimuth (deg, CR) SimParametersFile ArrayPositionsFile (x,y,z [m]) ")
+    print ("Arguments = EventName Primary(PDG) Energy (GeV) Zenith (deg, CR) Azimuth (deg, CR) SimParametersFile ArrayPositionsFile (x,y,z [m]) ")
     print ("\n")
     print ("For example: python3 ZHAireSInputGenerator.py TestEvent 2212 1.2345E9 67.89 0 GRAND.VeryCoarse.Subei.Skeleton.inp layout_datachallenge.dat")
   #
@@ -425,8 +425,8 @@ if __name__ == '__main__':
     EventName = sys.argv[1]
     Primary = int(sys.argv[2])  
     Energy = float(sys.argv[3]) #in deg
-    sim_zenith = float(sys.argv[4]) #in deg
-    sim_azimuth = float(sys.argv[5]) #in deg
+    Zenith = float(sys.argv[4]) #in deg
+    Azimuth = float(sys.argv[5]) #in deg
     SimParametersFile = sys.argv[6]
     ArrayPositionsFile = sys.argv[7]
     #
@@ -434,8 +434,8 @@ if __name__ == '__main__':
     print("EventName", EventName)
     print("Primary", Primary)
     print("Energy [GeV]", Energy)
-    print("sim_zenith [Deg]" , sim_zenith)
-    print("sim_azimuth [Deg]", sim_azimuth)
+    print("Zenith [Deg]" , Zenith)
+    print("Azimuth [Deg]", Azimuth)
     print("SimParametersFile",SimParametersFile)
     print("ArrayPositionsFile",ArrayPositionsFile)
     #SimParametersFile="../GRAND.VeryCoarse.Subei.Skeleton.inp"
@@ -445,7 +445,7 @@ if __name__ == '__main__':
     ######################################################################
     #
     #Generate the no radio simulation inp
-    ZHAireSInputGeneratorForGRAND(SimParametersFile, EventName, Primary, Energy, sim_zenith, sim_azimuth, OutMode="w")
+    ZHAireSInputGeneratorForGRAND(SimParametersFile, EventName, Primary, Energy, Zenith, Azimuth, OutMode="w")
     #Run ZHAires for that
     cmd= ZHAireSBinary + '<' + EventName+'.inp'
     print("about to run",cmd)
@@ -467,7 +467,7 @@ if __name__ == '__main__':
     # End USER CODE
     ####################################################################    
     #Generate the EventName.EventParameters
-    GenerateEventParametersFile(EventName, Primary, Energy, sim_zenith, sim_azimuth, CorePosition, ArrayName, OutMode="w")
+    GenerateEventParametersFile(EventName, Primary, Energy, Zenith, Azimuth, CorePosition, ArrayName, OutMode="w")
     #Generate the input file for the radio sim  
     GenerateZHAireSArrayInputFromSry(SryFile, ArrayPositionsFile, CorePosition, ArrayName, SimParametersFile,OutMode="w")
     #comment the exit statement to also run tthe radio sim after the input file is generated 
