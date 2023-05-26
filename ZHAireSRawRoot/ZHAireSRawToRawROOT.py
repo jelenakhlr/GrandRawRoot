@@ -223,10 +223,10 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.prim_injpoint_shc = [(sideb*np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),sideb*np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),sideb*np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries        
         RawShower.atmos_model = str(AtmosphericModel) #TODO: Standarize
         #TODO:atmos_model_param  # Atmospheric model parameters: TODO: Think about this. Different models and softwares can have different parameters
-        RawShower.atmos_altitude.append(Atmosaltitude) 
         RawShower.atmos_density.append(Atmosdensity)
         RawShower.atmos_depth.append(Atmosdepth)
-        
+        RawShower.atmos_altitude.append(Atmosaltitude)
+
         RawShower.magnetic_field = np.array([FieldInclination,FieldDeclination,FieldIntensity])
         RawShower.xmax_grams = SlantXmax
         RawShower.xmax_pos_shc = XmaxPosition
