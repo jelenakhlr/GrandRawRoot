@@ -2,8 +2,8 @@
 EventName: Test
 Primary: Proton
 PrimaryEnergy: 10.0 GeV
-Zenith: 22.96 deg
-Azimuth: 180.47 deg Magnetic
+sim_zenith: 22.96 deg
+sim_azimuth: 180.47 deg Magnetic
 Core Position: 6114472.520 -452068.509 1425.000
 ArrayName: GP10
 EventWeight: 3

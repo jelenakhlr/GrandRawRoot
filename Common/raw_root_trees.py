@@ -44,7 +44,7 @@ class RawShowerTree(MotherEventTree):
     _tree_name: str = "trawshower"
     
     ## Name and version of the shower simulator
-    _shower_sim: StdString = StdString("")
+    _sim_name: StdString = StdString("")
 
     ### Event name (the task name, can be usefull to track the original simulation)
     _event_name: StdString = StdString("")
@@ -62,25 +62,25 @@ class RawShowerTree(MotherEventTree):
     _energy_in_neutrinos: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary energy (GeV) 
-    _energy_primary: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _sim_energy_primary: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     
-    ### Shower azimuth (deg, CR convention)
-    _azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    ### Shower sim_azimuth (deg, CR convention)
+    _sim_azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
 
-    ### Shower zenith  (deg, CR convention)
-    _zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    ### Shower sim_zenith  (deg, CR convention)
+    _sim_zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary particle type (PDG)
-    _primary_type: StdVectorList = field(default_factory=lambda: StdVectorList("string"))
+    _sim_primary_type: StdVectorList = field(default_factory=lambda: StdVectorList("string"))
 
     # Primary injection point [m] in Shower coordinates
-    _prim_injpoint_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _sim_primary_injpoint_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
     ### Primary injection altitude [m] in Shower Coordinates
-    _prim_inj_alt_shc: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _sim_primary_inj_alt_shc: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
 
     # primary injection direction in Shower Coordinates
-    _prim_inj_dir_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _sim_primary_inj_dir_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
     ### Atmospheric model name TODO:standardize
     _atmos_model: StdString = StdString("")
@@ -103,10 +103,10 @@ class RawShowerTree(MotherEventTree):
     _magnetic_field: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float32))
 
     ### Shower Xmax depth  (g/cm2 along the shower axis)
-    _xmax_grams: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    _sim_xmax_grams: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Shower Xmax position in shower coordinates [m]
-    _xmax_pos_shc: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float64))
+    _sim_xmax_pos_shc: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float64))
     
     ### Distance of Xmax  [m] to the ground
     _xmax_distance: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
@@ -128,7 +128,7 @@ class RawShowerTree(MotherEventTree):
     # * THINNING *
     # Thinning energy, relative to primary energy
     # this is EFRCTHN in Coreas (the 0th THIN value)
-    _relative_thinning: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+    _rel_thin: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
     # this is the maximum weight, computed in zhaires as PrimaryEnergy*RelativeThinning*WeightFactor/14.0 (see aires manual section 3.3.6 and 2.3.2) to make it mean the same as Corsika Wmax
     # this is WMAX in Coreas (the 1st THIN value) - Weight limit for thinning
@@ -149,19 +149,19 @@ class RawShowerTree(MotherEventTree):
 
     # * CUTS *
     #gamma energy cut (GeV)
-    _gamma_energy_cut: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+    _lowe_cut_gamma: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
     #electron/positron energy cut (GeV)
-    _electron_energy_cut: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+    _lowe_cut_e: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
     #muons energy cut (GeV)
-    _muon_energy_cut: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+    _lowe_cut_mu: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
     #mesons energy cut (GeV)
-    _meson_energy_cut: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+    _lowe_cut_meson: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
     #nucleons energy cut (GeV)
-    _nucleon_energy_cut: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
+    _lowe_cut_nucleon: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
 
     ###META ZHAireS/Coreas
@@ -217,16 +217,16 @@ class RawShowerTree(MotherEventTree):
  
 
     @property
-    def shower_sim(self):
-         return str(self._shower_sim)
+    def sim_name(self):
+         return str(self._sim_name)
     
-    @shower_sim.setter
-    def shower_sim(self, value):
+    @sim_name.setter
+    def sim_name(self, value):
         # Not a string was given
         if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
             raise ValueError(f"Incorrect type for site {type(value)}. Either a string or a ROOT.std.string is required.")
     
-        self._shower_sim.string.assign(value)
+        self._sim_name.string.assign(value)
 
     @property
     def long_depth(self):
@@ -687,13 +687,13 @@ class RawShowerTree(MotherEventTree):
             )         
   
     @property
-    def relative_thinning(self):
+    def rel_thin(self):
         """Thinning energy, relative to primary energy"""
-        return self._relative_thinning[0]
+        return self._rel_thin[0]
 
-    @relative_thinning.setter
-    def relative_thinning(self, value: np.float64) -> None:
-        self._relative_thinning[0] = value 
+    @rel_thin.setter
+    def rel_thin(self, value: np.float64) -> None:
+        self._rel_thin[0] = value 
  
 
     @property
@@ -738,50 +738,50 @@ class RawShowerTree(MotherEventTree):
 
 
     @property
-    def gamma_energy_cut(self):
+    def lowe_cut_gamma(self):
         """gamma energy cut (GeV)"""
-        return self._gamma_energy_cut[0]
+        return self._lowe_cut_gamma[0]
 
-    @gamma_energy_cut.setter
-    def gamma_energy_cut(self, value: np.float64) -> None:
-        self._gamma_energy_cut[0] = value  
+    @lowe_cut_gamma.setter
+    def lowe_cut_gamma(self, value: np.float64) -> None:
+        self._lowe_cut_gamma[0] = value  
       
 
     @property
-    def electron_energy_cut(self):
+    def lowe_cut_e(self):
         """electron energy cut (GeV)"""
-        return self._electron_energy_cut[0]
+        return self._lowe_cut_e[0]
 
-    @electron_energy_cut.setter
-    def electron_energy_cut(self, value: np.float64) -> None:
-        self._electron_energy_cut[0] = value 
+    @lowe_cut_e.setter
+    def lowe_cut_e(self, value: np.float64) -> None:
+        self._lowe_cut_e[0] = value 
 
     @property
-    def muon_energy_cut(self):
+    def lowe_cut_mu(self):
         """muon energy cut (GeV)"""
-        return self._muon_energy_cut[0]
+        return self._lowe_cut_mu[0]
 
-    @muon_energy_cut.setter
-    def muon_energy_cut(self, value: np.float64) -> None:
-        self._muon_energy_cut[0] = value 
+    @lowe_cut_mu.setter
+    def lowe_cut_mu(self, value: np.float64) -> None:
+        self._lowe_cut_mu[0] = value 
 
     @property
-    def meson_energy_cut(self):
+    def lowe_cut_meson(self):
         """meson energy cut (GeV)"""
-        return self._meson_energy_cut[0]
+        return self._lowe_cut_meson[0]
 
-    @meson_energy_cut.setter
-    def meson_energy_cut(self, value: np.float64) -> None:
-        self._meson_energy_cut[0] = value 
+    @lowe_cut_meson.setter
+    def lowe_cut_meson(self, value: np.float64) -> None:
+        self._lowe_cut_meson[0] = value 
 
     @property
-    def nucleon_energy_cut(self):
+    def lowe_cut_nucleon(self):
         """nucleon energy cut (GeV)"""
-        return self._nucleon_energy_cut[0]
+        return self._lowe_cut_nucleon[0]
 
-    @nucleon_energy_cut.setter
-    def nucleon_energy_cut(self, value: np.float64) -> None:
-        self._nucleon_energy_cut[0] = value 
+    @lowe_cut_nucleon.setter
+    def lowe_cut_nucleon(self, value: np.float64) -> None:
+        self._lowe_cut_nucleon[0] = value 
 
 
     @property
@@ -833,79 +833,79 @@ class RawShowerTree(MotherEventTree):
         self._energy_in_neutrinos[0] = value
 
     @property
-    def energy_primary(self):
+    def sim_energy_primary(self):
         """Primary energy (GeV) TODO: Check unit conventions. # LWP: Multiple primaries? I guess, variable count. Thus variable size array or a std::vector"""
-        return self._energy_primary
+        return self._sim_energy_primary
 
-    @energy_primary.setter
-    def energy_primary(self, value):
+    @sim_energy_primary.setter
+    def sim_energy_primary(self, value):
         # A list of strings was given
         if isinstance(value, list):
             # Clear the vector before setting
-            self._energy_primary.clear()
-            self._energy_primary += value
+            self._sim_energy_primary.clear()
+            self._sim_energy_primary += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("float")):
-            self._energy_primary._vector = value
+            self._sim_energy_primary._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for energy_primary {type(value)}. Either a list or a ROOT.vector of floats required."
+                f"Incorrect type for sim_energy_primary {type(value)}. Either a list or a ROOT.vector of floats required."
             )
 
     @property
-    def azimuth(self):
-        """Shower azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem"""
-        return self._azimuth[0]
+    def sim_azimuth(self):
+        """Shower sim_azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem"""
+        return self._sim_azimuth[0]
 
-    @azimuth.setter
-    def azimuth(self, value):
-        self._azimuth[0] = value
-
-    @property
-    def zenith(self):
-        """Shower zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth"""
-        return self._zenith[0]
-
-    @zenith.setter
-    def zenith(self, value):
-        self._zenith[0] = value
+    @sim_azimuth.setter
+    def sim_azimuth(self, value):
+        self._sim_azimuth[0] = value
 
     @property
-    def primary_type(self):
+    def sim_zenith(self):
+        """Shower sim_zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth"""
+        return self._sim_zenith[0]
+
+    @sim_zenith.setter
+    def sim_zenith(self, value):
+        self._sim_zenith[0] = value
+
+    @property
+    def sim_primary_type(self):
         """Primary particle type TODO: standarize (PDG?)"""
-        return self._primary_type
+        return self._sim_primary_type
 
-    @primary_type.setter
-    def primary_type(self, value):
+    @sim_primary_type.setter
+    def sim_primary_type(self, value):
         # A list of strings was given
         if isinstance(value, list):
             # Clear the vector before setting
-            self._primary_type.clear()
-            self._primary_type += value
+            self._sim_primary_type.clear()
+            self._sim_primary_type += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("string")):
-            self._primary_type._vector = value
+            self._sim_primary_type._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for primary_type {type(value)}. Either a list or a ROOT.vector of strings required."
+                f"Incorrect type for sim_primary_type {type(value)}. Either a list or a ROOT.vector of strings required."
             )
 
     @property
-    def prim_injpoint_shc(self):
+    def sim_primary_injpoint_shc(self):
         """Primary injection point in Shower coordinates"""
-        return np.array(self._prim_injpoint_shc)
+        return np.array(self._sim_primary_injpoint_shc)
 
-    @prim_injpoint_shc.setter
-    def prim_injpoint_shc(self, value):
-        set_vector_of_vectors(value, "vector<float>", self._prim_injpoint_shc, "prim_injpoint_shc")
+    @sim_primary_injpoint_shc.setter
+    def sim_primary_injpoint_shc(self, value):
+        set_vector_of_vectors(value, "vector<float>", self._sim_primary_injpoint_shc, "sim_primary_injpoint_shc")
 
     @property
-    def prim_inj_alt_shc(self):
+    def sim_primary_inj_alt_shc(self):
         """Primary injection altitude in Shower Coordinates"""
-        return self._prim_inj_alt_shc
+        return self._sim_primary_inj_alt_shc
 
-    @prim_inj_alt_shc.setter
-    def prim_inj_alt_shc(self, value):
+    @sim_primary_inj_alt_shc.setter
+    def sim_primary_inj_alt_shc(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -913,24 +913,24 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._prim_inj_alt_shc.clear()
-            self._prim_inj_alt_shc += value
+            self._sim_primary_inj_alt_shc.clear()
+            self._sim_primary_inj_alt_shc += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("float")):
-            self._prim_inj_alt_shc._vector = value
+            self._sim_primary_inj_alt_shc._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for prim_inj_alt_shc {type(value)}. Either a list, an array or a ROOT.vector of floats required."
+                f"Incorrect type for sim_primary_inj_alt_shc {type(value)}. Either a list, an array or a ROOT.vector of floats required."
             )
 
     @property
-    def prim_inj_dir_shc(self):
+    def sim_primary_inj_dir_shc(self):
         """primary injection direction in Shower Coordinates"""
-        return np.array(self._prim_inj_dir_shc)
+        return np.array(self._sim_primary_inj_dir_shc)
 
-    @prim_inj_dir_shc.setter
-    def prim_inj_dir_shc(self, value):
-        set_vector_of_vectors(value, "vector<float>", self._prim_inj_dir_shc, "prim_inj_dir_shc")
+    @sim_primary_inj_dir_shc.setter
+    def sim_primary_inj_dir_shc(self, value):
+        set_vector_of_vectors(value, "vector<float>", self._sim_primary_inj_dir_shc, "sim_primary_inj_dir_shc")
 
     @property
     def atmos_model(self):
@@ -1045,23 +1045,23 @@ class RawShowerTree(MotherEventTree):
         self._tree.SetBranchAddress("magnetic_field", self._magnetic_field)
 
     @property
-    def xmax_grams(self):
+    def sim_xmax_grams(self):
         """Shower Xmax depth (g/cm2 along the shower axis)"""
-        return self._xmax_grams[0]
+        return self._sim_xmax_grams[0]
 
-    @xmax_grams.setter
-    def xmax_grams(self, value):
-        self._xmax_grams[0] = value
+    @sim_xmax_grams.setter
+    def sim_xmax_grams(self, value):
+        self._sim_xmax_grams[0] = value
 
     @property
-    def xmax_pos_shc(self):
+    def sim_xmax_pos_shc(self):
         """Shower Xmax position in shower coordinates"""
-        return np.array(self._xmax_pos_shc)
+        return np.array(self._sim_xmax_pos_shc)
 
-    @xmax_pos_shc.setter
-    def xmax_pos_shc(self, value):
-        self._xmax_pos_shc = np.array(value).astype(np.float64)
-        self._tree.SetBranchAddress("xmax_pos_shc", self._xmax_pos_shc)
+    @sim_xmax_pos_shc.setter
+    def sim_xmax_pos_shc(self, value):
+        self._sim_xmax_pos_shc = np.array(value).astype(np.float64)
+        self._tree.SetBranchAddress("sim_xmax_pos_shc", self._sim_xmax_pos_shc)
 
     @property
     def xmax_distance(self):
@@ -1191,12 +1191,6 @@ class RawEfieldTree(MotherEventTree):
     ## Z position in shower referential
     _du_z: StdVectorList = field(default_factory=lambda: StdVectorList("float"))    
     
-    ## Efield trace in X direction
-    _trace_x: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    ## Efield trace in Y direction
-    _trace_y: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    ## Efield trace in Z direction
-    _trace_z: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
     ## Efield trace in X,Y,Z direction
     # value = np.concatenate((self._du_id, self._trace_x, self._trace_y, self._trace_z, self.t_bin_size))
@@ -1414,77 +1408,7 @@ class RawEfieldTree(MotherEventTree):
                 f"Incorrect type for p2p {type(value)}. Either a list, an array or a ROOT.vector of float required."
             )        
 
-    @property
-    def trace_x(self):
-        """Efield trace in X direction"""
-        return self._trace_x
 
-    @trace_x.setter
-    def trace_x(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._trace_x.clear()
-            self._trace_x += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._trace_x._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for trace_x {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )
-
-    @property
-    def trace_y(self):
-        """Efield trace in Y direction"""
-        return self._trace_y
-
-    @trace_y.setter
-    def trace_y(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._trace_y.clear()
-            self._trace_y += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._trace_y._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for trace_y {type(value)}. Either a list, an array or a ROOT.vector of float required."
-            )
-
-    @property
-    def trace_z(self):
-        """Efield trace in Z direction"""
-        return self._trace_z
-
-    @trace_z.setter
-    def trace_z(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._trace_z.clear()
-            self._trace_z += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._trace_z._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for trace_z {type(value)}. Either a list, an array or a ROOT.vector of float required."
-            )
         
     @property
     def trace(self):

@@ -54,8 +54,8 @@ def determine_direction(ant_pos, signal):
     t /= np.linalg.norm(t)
     
     # Convert the direction to spherical coordinates
-    zenith = np.arccos(t[2])
-    azimuth = np.arctan2(t[1], t[0])
+    sim_zenith = np.arccos(t[2])
+    sim_azimuth = np.arctan2(t[1], t[0])
     
-    return zenith, azimuth
+    return sim_zenith, sim_azimuth
 
