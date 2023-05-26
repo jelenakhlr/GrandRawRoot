@@ -125,8 +125,8 @@ Inputs:
 - EventName (str): The name of the event.
 - Primary (str): The type of primary particle.
 - Energy (float): The energy of the primary particle in GeV.
-- sim_zenith (float): The sim_zenith angle of the event in degrees.
-- sim_azimuth (float): The sim_azimuth angle of the event in degrees.
+- Zenith (float): The zenith angle of the event in degrees.
+- Azimuth (float): The azimuth angle of the event in degrees.
 - CorePosition (tuple): The (x,y,z) coordinates of the core position in meters.
 - ArrayName (str): The name of the array used for the simulation.
 - EventWeight (float,optional): The statistical weight of the event. Default is 1

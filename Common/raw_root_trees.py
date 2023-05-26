@@ -64,10 +64,10 @@ class RawShowerTree(MotherEventTree):
     ### Primary energy (GeV) 
     _sim_energy_primary: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     
-    ### Shower sim_azimuth (deg, CR convention)
+    ### Shower azimuth (deg, CR convention)
     _sim_azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
 
-    ### Shower sim_zenith  (deg, CR convention)
+    ### Shower zenith  (deg, CR convention)
     _sim_zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary particle type (PDG)

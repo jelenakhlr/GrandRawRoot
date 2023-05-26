@@ -89,9 +89,9 @@
 
                     Primary particle: Proton
                       Primary energy: 30.000 PeV
-                Primary sim_zenith angle:    22.96 deg
-               Primary sim_azimuth angle:   180.47 deg
-              Zero sim_azimuth direction: Local magnetic north
+                Primary zenith angle:    22.96 deg
+               Primary azimuth angle:   180.47 deg
+              Zero azimuth direction: Local magnetic north
                      Thinning energy: 1.0000E-05 Relative
      (D)          Injection altitude: 100.00 km (1.2829228E-03 g/cm2)
      (D)             Ground altitude: 1.4250 km (870.3832 g/cm2)
