@@ -215,6 +215,11 @@ class RawShowerTree(MotherEventTree):
     ## Longitudinal Profile of energy deposit by hadrons (GeV)
     _long_ed_hadr_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))     
  
+    # extra values
+    _long_ed_depth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_depth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+
+    _first_interaction: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
 
     @property
     def sim_name(self):
@@ -227,6 +232,8 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(f"Incorrect type for site {type(value)}. Either a string or a ROOT.std.string is required.")
     
         self._sim_name.string.assign(value)
+
+
 
     @property
     def long_depth(self):
@@ -277,6 +284,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for _long_slantdepth {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
  
+
+
     @property
     def long_pd_gammas(self):
         """Longitudinal profile of gammas"""
@@ -300,6 +309,8 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(
                 f"Incorrect type for _long_pd_gammas {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
+
+
 
     @property
     def long_pd_eplus(self):
@@ -325,6 +336,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for _long_pd_eplus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
 
+
+
     @property
     def long_pd_eminus(self):
         """Longitudinal profile of electrons"""
@@ -348,6 +361,8 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(
                 f"Incorrect type for _long_pd_eminus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
+
+
 
     @property
     def long_pd_muplus(self):
@@ -373,6 +388,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for _long_pd_muplus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
 
+
+
     @property
     def long_pd_muminus(self):
         """Longitudinal profile of electrons"""
@@ -397,6 +414,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for _long_pd_muminus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
 
+
+
     @property
     def long_pd_allch(self):
         """Longitudinal profile of all charged particles"""
@@ -420,6 +439,8 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(
                 f"Incorrect type for _long_pd_allch {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
+
+
 
     @property
     def long_pd_nuclei(self):
@@ -446,6 +467,7 @@ class RawShowerTree(MotherEventTree):
             )  
 
 
+
     @property
     def long_pd_hadr(self):
         """Longitudinal profile of hadrons"""
@@ -469,6 +491,8 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(
                 f"Incorrect type for _long_pd_hadr {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
+
+
 
     @property
     def long_ed_neutrino(self):
@@ -494,6 +518,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for _long_ed_neutrino {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
 
+
+
     @property
     def long_ed_gamma_cut(self):
         """Longitudinal profile of low energy gammas"""
@@ -517,7 +543,9 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(
                 f"Incorrect type for _long_ed_gamma_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
-                
+
+
+
     @property
     def long_ed_gamma_ioniz(self):
         """Longitudinal profile of gamma energy deposit"""
@@ -542,6 +570,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for _long_ed_gamma_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )    
             
+
+
     @property
     def long_ed_e_cut(self):
         """Longitudinal profile of low energy e+/e-"""
@@ -565,7 +595,9 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(
                 f"Incorrect type for _long_ed_e_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
-                
+
+
+
     @property
     def long_ed_e_ioniz(self):
         """Longitudinal profile of energy deposit by e+/e-"""
@@ -590,6 +622,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for _long_ed_e_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )  
 
+
+
     @property
     def long_ed_mu_cut(self):
         """Longitudinal profile of low energy muons"""
@@ -613,7 +647,9 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(
                 f"Incorrect type for _long_ed_mu_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
-                
+
+
+
     @property
     def long_ed_mu_ioniz(self):
         """Longitudinal profile of muon energy deposit"""
@@ -638,6 +674,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for _long_ed_mu_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
             
+
+
     @property
     def long_ed_hadr_cut(self):
         """Longitudinal profile of low energy hadrons"""
@@ -661,7 +699,9 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(
                 f"Incorrect type for _long_ed_hadr_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )
-                
+
+
+
     @property
     def long_ed_hadr_ioniz(self):
         """Longitudinal profile of hadrons energy deposit"""
@@ -686,6 +726,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for _long_ed_hadr_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )         
   
+
+
     @property
     def rel_thin(self):
         """Thinning energy, relative to primary energy"""
@@ -695,6 +737,7 @@ class RawShowerTree(MotherEventTree):
     def rel_thin(self, value: np.float64) -> None:
         self._rel_thin[0] = value 
  
+
 
     @property
     def maximum_weight(self):
@@ -706,6 +749,7 @@ class RawShowerTree(MotherEventTree):
         self._maximum_weight[0] = value
  
 
+
     @property
     def hadronic_thinning(self):
         """hadronic thinning ratio"""
@@ -714,6 +758,7 @@ class RawShowerTree(MotherEventTree):
     @hadronic_thinning.setter
     def hadronic_thinning(self, value: np.float64) -> None:
         self._hadronic_thinning[0] = value
+
 
 
     @property
@@ -726,6 +771,7 @@ class RawShowerTree(MotherEventTree):
         self._hadronic_thinning_weight[0] = value
 
     
+
     @property
     def rmax(self):
         """Maximum radius (in cm) at observation level within which all particles are subject to inner radius thinning"""
@@ -747,6 +793,7 @@ class RawShowerTree(MotherEventTree):
         self._lowe_cut_gamma[0] = value  
       
 
+
     @property
     def lowe_cut_e(self):
         """electron energy cut (GeV)"""
@@ -755,6 +802,8 @@ class RawShowerTree(MotherEventTree):
     @lowe_cut_e.setter
     def lowe_cut_e(self, value: np.float64) -> None:
         self._lowe_cut_e[0] = value 
+
+
 
     @property
     def lowe_cut_mu(self):
@@ -765,6 +814,8 @@ class RawShowerTree(MotherEventTree):
     def lowe_cut_mu(self, value: np.float64) -> None:
         self._lowe_cut_mu[0] = value 
 
+
+
     @property
     def lowe_cut_meson(self):
         """meson energy cut (GeV)"""
@@ -774,6 +825,8 @@ class RawShowerTree(MotherEventTree):
     def lowe_cut_meson(self, value: np.float64) -> None:
         self._lowe_cut_meson[0] = value 
 
+
+
     @property
     def lowe_cut_nucleon(self):
         """nucleon energy cut (GeV)"""
@@ -782,6 +835,7 @@ class RawShowerTree(MotherEventTree):
     @lowe_cut_nucleon.setter
     def lowe_cut_nucleon(self, value: np.float64) -> None:
         self._lowe_cut_nucleon[0] = value 
+
 
 
     @property
@@ -799,6 +853,8 @@ class RawShowerTree(MotherEventTree):
 
         self._event_name.string.assign(value)
 
+
+
     @property
     def event_date(self):
         """Event Date"""
@@ -814,6 +870,8 @@ class RawShowerTree(MotherEventTree):
 
         self._event_date.string.assign(value)
 
+
+
     @property
     def rnd_seed(self):
         """Random seed"""
@@ -823,6 +881,8 @@ class RawShowerTree(MotherEventTree):
     def rnd_seed(self, value):
         self._rnd_seed[0] = value
 
+
+
     @property
     def energy_in_neutrinos(self):
         """Energy in neutrinos generated in the shower (GeV). Usefull for invisible energy"""
@@ -831,6 +891,8 @@ class RawShowerTree(MotherEventTree):
     @energy_in_neutrinos.setter
     def energy_in_neutrinos(self, value):
         self._energy_in_neutrinos[0] = value
+
+
 
     @property
     def sim_energy_primary(self):
@@ -852,6 +914,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for sim_energy_primary {type(value)}. Either a list or a ROOT.vector of floats required."
             )
 
+
+
     @property
     def sim_azimuth(self):
         """Shower sim_azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem"""
@@ -861,6 +925,8 @@ class RawShowerTree(MotherEventTree):
     def sim_azimuth(self, value):
         self._sim_azimuth[0] = value
 
+
+
     @property
     def sim_zenith(self):
         """Shower sim_zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth"""
@@ -869,6 +935,8 @@ class RawShowerTree(MotherEventTree):
     @sim_zenith.setter
     def sim_zenith(self, value):
         self._sim_zenith[0] = value
+
+
 
     @property
     def sim_primary_type(self):
@@ -890,6 +958,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for sim_primary_type {type(value)}. Either a list or a ROOT.vector of strings required."
             )
 
+
+
     @property
     def sim_primary_injpoint_shc(self):
         """Primary injection point in Shower coordinates"""
@@ -898,6 +968,8 @@ class RawShowerTree(MotherEventTree):
     @sim_primary_injpoint_shc.setter
     def sim_primary_injpoint_shc(self, value):
         set_vector_of_vectors(value, "vector<float>", self._sim_primary_injpoint_shc, "sim_primary_injpoint_shc")
+
+
 
     @property
     def sim_primary_inj_alt_shc(self):
@@ -923,6 +995,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for sim_primary_inj_alt_shc {type(value)}. Either a list, an array or a ROOT.vector of floats required."
             )
 
+
+
     @property
     def sim_primary_inj_dir_shc(self):
         """primary injection direction in Shower Coordinates"""
@@ -931,6 +1005,8 @@ class RawShowerTree(MotherEventTree):
     @sim_primary_inj_dir_shc.setter
     def sim_primary_inj_dir_shc(self, value):
         set_vector_of_vectors(value, "vector<float>", self._sim_primary_inj_dir_shc, "sim_primary_inj_dir_shc")
+
+
 
     @property
     def atmos_model(self):
@@ -947,6 +1023,8 @@ class RawShowerTree(MotherEventTree):
 
         self._atmos_model.string.assign(value)
 
+
+
     @property
     def atmos_model_param(self):
         """Atmospheric model parameters: TODO: Think about this. Different models and softwares can have different parameters"""
@@ -957,11 +1035,12 @@ class RawShowerTree(MotherEventTree):
         self._atmos_model_param = np.array(value).astype(np.float32)
         self._tree.SetBranchAddress("atmos_model_param", self._atmos_model_param)
 
+
+
     @property
     def atmos_altitude(self):
         """height above sea level in meters, for the atmos_density and atmos_depth table"""
         return self._atmos_altitude
-
 
     @atmos_altitude.setter
     def atmos_altitude(self, value):
@@ -982,6 +1061,8 @@ class RawShowerTree(MotherEventTree):
                 f"Incorrect type for atmos_altitude {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
             )            
         
+
+
     @property
     def atmos_density(self):
         """Table of air density [g/cm3]"""
@@ -1033,7 +1114,6 @@ class RawShowerTree(MotherEventTree):
 
 
 
-
     @property
     def magnetic_field(self):
         """Magnetic field parameters: Inclination, Declination, modulus. TODO: Standarize. Check units. Think about coordinates. Shower coordinates make sense."""
@@ -1044,6 +1124,8 @@ class RawShowerTree(MotherEventTree):
         self._magnetic_field = np.array(value).astype(np.float32)
         self._tree.SetBranchAddress("magnetic_field", self._magnetic_field)
 
+
+
     @property
     def sim_xmax_grams(self):
         """Shower Xmax depth (g/cm2 along the shower axis)"""
@@ -1052,6 +1134,8 @@ class RawShowerTree(MotherEventTree):
     @sim_xmax_grams.setter
     def sim_xmax_grams(self, value):
         self._sim_xmax_grams[0] = value
+
+
 
     @property
     def sim_xmax_pos_shc(self):
@@ -1063,6 +1147,8 @@ class RawShowerTree(MotherEventTree):
         self._sim_xmax_pos_shc = np.array(value).astype(np.float64)
         self._tree.SetBranchAddress("sim_xmax_pos_shc", self._sim_xmax_pos_shc)
 
+
+
     @property
     def xmax_distance(self):
         """Distance of Xmax [m]"""
@@ -1072,6 +1158,8 @@ class RawShowerTree(MotherEventTree):
     def xmax_distance(self, value):
         self._xmax_distance[0] = value
 
+
+
     @property
     def xmax_alt(self):
         """Altitude of Xmax (m, in the shower simulation earth. Its important for the index of refraction )"""
@@ -1080,6 +1168,8 @@ class RawShowerTree(MotherEventTree):
     @xmax_alt.setter
     def xmax_alt(self, value):
         self._xmax_alt[0] = value
+
+
 
     @property
     def hadronic_model(self):
@@ -1096,6 +1186,8 @@ class RawShowerTree(MotherEventTree):
 
         self._hadronic_model.string.assign(value)
 
+
+
     @property
     def low_energy_model(self):
         """High energy model (and version) used TODO: standarize"""
@@ -1111,6 +1203,8 @@ class RawShowerTree(MotherEventTree):
 
         self._low_energy_model.string.assign(value)
 
+
+
     @property
     def cpu_time(self):
         """Time it took for the shower + efield simulation."""
@@ -1121,6 +1215,8 @@ class RawShowerTree(MotherEventTree):
         self._cpu_time = np.array(value).astype(np.float32)
         self._tree.SetBranchAddress("cpu_time", self._cpu_time)
         
+
+
     @property
     def shower_core_pos(self):
         """Shower core position"""
@@ -1131,6 +1227,7 @@ class RawShowerTree(MotherEventTree):
         self._shower_core_pos = np.array(value).astype(np.float32)
         self._tree.SetBranchAddress("shower_core_pos", self._shower_core_pos)        
         
+
 
     @property
     def unix_date(self):
@@ -1143,6 +1240,65 @@ class RawShowerTree(MotherEventTree):
 
 
 
+    @property
+    def long_ed_depth(self):
+        return self._long_ed_depth
+    
+    @long_ed_depth.setter
+    def long_ed_depth(self, value):
+        # A list was given
+        if (
+            isinstance(value, list)
+            or isinstance(value, np.ndarray)
+            or isinstance(value, StdVectorList)
+        ):
+            # Clear the vector before setting
+            self._long_ed_depth.clear()
+            self._long_ed_depth += value
+        # A vector of strings was given
+        elif isinstance(value, ROOT.vector("vector<float>")):
+            self._long_ed_depth._vector = value
+        else:
+            raise ValueError(
+                f"Incorrect type for _long_ed_depth {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+            )  
+
+    
+    @property
+    def long_pd_depth(self):
+        return self._long_pd_depth
+    
+    @long_pd_depth.setter
+    def long_pd_depth(self, value):
+        # A list was given
+        if (
+            isinstance(value, list)
+            or isinstance(value, np.ndarray)
+            or isinstance(value, StdVectorList)
+        ):
+            # Clear the vector before setting
+            self._long_pd_depth.clear()
+            self._long_pd_depth += value
+        # A vector of strings was given
+        elif isinstance(value, ROOT.vector("vector<float>")):
+            self._long_pd_depth._vector = value
+        else:
+            raise ValueError(
+                f"Incorrect type for _long_pd_depth {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+            )  
+
+
+
+    @property
+    def first_interaction(self):
+        """Height of the first interaction"""
+        return self._first_interaction[0]
+
+    @first_interaction.setter
+    def first_interaction(self, value):
+        self._first_interaction[0] = value
+    
+    
 #####################################################################################################################################################################################################
 #
 # RawEfieldTree
@@ -1192,9 +1348,15 @@ class RawEfieldTree(MotherEventTree):
     _du_z: StdVectorList = field(default_factory=lambda: StdVectorList("float"))    
     
 
-    ## Efield trace in X,Y,Z direction
-    # value = np.concatenate((self._du_id, self._trace_x, self._trace_y, self._trace_z, self.t_bin_size))
-    _trace: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    ## Efield traces 
+    ## Efield trace in X direction
+    _trace_x: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    ## Efield trace in Y direction
+    _trace_y: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    ## Efield trace in Z direction
+    _trace_z: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+
+
 
     @property
     def du_count(self):
@@ -1408,31 +1570,6 @@ class RawEfieldTree(MotherEventTree):
                 f"Incorrect type for p2p {type(value)}. Either a list, an array or a ROOT.vector of float required."
             )        
 
-
-        
-    @property
-    def trace(self):
-        return self._trace
-    
-    @trace.setter
-    def trace(self, value):
-        # value = np.concatenate((self._du_id, self._trace_x, self._trace_y, self._trace_z, self.t_bin_size))
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._trace.clear()
-            self._trace += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._trace._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for trace {type(value)}. Either a list, an array or a ROOT.vector of float required."
-            )
                 
 
     @property
@@ -1507,6 +1644,83 @@ class RawEfieldTree(MotherEventTree):
                 f"Incorrect type for du_z {type(value)}. Either a list, an array or a ROOT.vector of floats required."
             )
 
+
+
+    @property
+    def trace_x(self):
+        """Efield trace in X direction"""
+        return self._trace_x
+
+    @trace_x.setter
+    def trace_x(self, value):
+        # A list was given
+        if (
+            isinstance(value, list)
+            or isinstance(value, np.ndarray)
+            or isinstance(value, StdVectorList)
+        ):
+            # Clear the vector before setting
+            self._trace_x.clear()
+            self._trace_x += value
+        # A vector of strings was given
+        elif isinstance(value, ROOT.vector("vector<float>")):
+            self._trace_x._vector = value
+        else:
+            raise ValueError(
+                f"Incorrect type for trace_x {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
+            )
+
+
+    @property
+    def trace_y(self):
+        """Efield trace in Y direction"""
+        return self._trace_y
+
+    @trace_y.setter
+    def trace_y(self, value):
+        # A list was given
+        if (
+            isinstance(value, list)
+            or isinstance(value, np.ndarray)
+            or isinstance(value, StdVectorList)
+        ):
+            # Clear the vector before setting
+            self._trace_y.clear()
+            self._trace_y += value
+        # A vector of strings was given
+        elif isinstance(value, ROOT.vector("vector<float>")):
+            self._trace_y._vector = value
+        else:
+            raise ValueError(
+                f"Incorrect type for trace_y {type(value)}. Either a list, an array or a ROOT.vector of float required."
+            )
+        
+
+
+    @property
+    def trace_z(self):
+        """Efield trace in Z direction"""
+        return self._trace_z
+
+    @trace_z.setter
+    def trace_z(self, value):
+        # A list was given
+        if (
+            isinstance(value, list)
+            or isinstance(value, np.ndarray)
+            or isinstance(value, StdVectorList)
+        ):
+            # Clear the vector before setting
+            self._trace_z.clear()
+            self._trace_z += value
+        # A vector of strings was given
+        elif isinstance(value, ROOT.vector("vector<float>")):
+            self._trace_z._vector = value
+        else:
+            raise ValueError(
+                f"Incorrect type for trace_z {type(value)}. Either a list, an array or a ROOT.vector of float required."
+            )
+        
 
 #############################################################################################################################################################################################################################
 #

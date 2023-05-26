@@ -323,37 +323,35 @@ def CoreasToRawRoot(path):
   
   """
 
-  RawShower.long_pd_gammas = [pd_gammas]#.astype(np.float32)
-  RawShower.long_pd_eminus = [pd_electrons]#.astype(np.float32)
-  RawShower.long_pd_eplus = [pd_positrons]#.astype(np.float32)
-  RawShower.long_pd_muminus = [pd_muN]#.astype(np.float32)
-  RawShower.long_pd_muplus = [pd_muP]#.astype(np.float32)
-  RawShower.long_pd_allch = [pd_charged]#.astype(np.float32)
-  RawShower.long_pd_nuclei = [pd_nuclei]#.astype(np.float32)
-  RawShower.long_pd_hadr = [pd_hadrons]#.astype(np.float32)
+  RawShower.long_pd_gammas = [pd_gammas]
+  RawShower.long_pd_eminus = [pd_electrons]
+  RawShower.long_pd_eplus = [pd_positrons]
+  RawShower.long_pd_muminus = [pd_muN]
+  RawShower.long_pd_muplus = [pd_muP]
+  RawShower.long_pd_allch = [pd_charged]
+  RawShower.long_pd_nuclei = [pd_nuclei]
+  RawShower.long_pd_hadr = [pd_hadrons]
 
-  RawShower.long_ed_neutrino = [ed_neutrino]#.astype(np.float32)
-  RawShower.long_ed_e_cut = [ed_em_cut]#.astype(np.float32)
-  RawShower.long_ed_mu_cut = [ed_mu_cut]#.astype(np.float32)
-  RawShower.long_ed_hadr_cut = [ed_hadron_cut]#.astype(np.float32)
+  RawShower.long_ed_neutrino = [ed_neutrino]
+  RawShower.long_ed_e_cut = [ed_em_cut]
+  RawShower.long_ed_mu_cut = [ed_mu_cut]
+  RawShower.long_ed_hadr_cut = [ed_hadron_cut]
   
   # gamma cut - I believe this was the same value as for another particle
   # for now: use hadron cut as placeholder
   # TODO ASAP: check this
-  RawShower.long_ed_gamma_cut = [ed_hadron_cut]#.astype(np.float32)
+  RawShower.long_ed_gamma_cut = [ed_hadron_cut]
   
-  RawShower.long_ed_gamma_ioniz = [ed_gamma]#.astype(np.float32)
-  RawShower.long_ed_e_ioniz = [ed_em_ioniz]#.astype(np.float32)
-  RawShower.long_ed_mu_ioniz = [ed_mu_ioniz]#.astype(np.float32)
-  RawShower.long_ed_hadr_ioniz = [ed_hadron_ioniz]#.astype(np.float32)
+  RawShower.long_ed_gamma_ioniz = [ed_gamma]
+  RawShower.long_ed_e_ioniz = [ed_em_ioniz]
+  RawShower.long_ed_mu_ioniz = [ed_mu_ioniz]
+  RawShower.long_ed_hadr_ioniz = [ed_hadron_ioniz]
   
   # The next values are "leftover" from the comparison with ZhaireS.
   # They should go in TShowerSim along with the values above.
-  RawShower.long_ed_depth = [ed_depth]#.astype(np.float32)
-  RawShower.long_pd_depth = [pd_depth]#.astype(np.float32)
-  RawShower.long_pd_cherenkov = [pd_cherenkov]#.astype(np.float32)
-  RawShower.long_ed_sum = [ed_sum]#.astype(np.float32)
-
+  RawShower.long_ed_depth = [ed_depth]
+  RawShower.long_pd_depth = [pd_depth]
+  
   RawShower.first_interaction = first_interaction
 
   RawShower.fill()
@@ -430,11 +428,10 @@ def CoreasToRawRoot(path):
     RawEfield.t_0.append(timestamp[0].astype(np.float32))
 
     # Traces
-    # RawEfield.trace_x.append(trace_x.astype(np.float32))
-    # RawEfield.trace_y.append(trace_y.astype(np.float32))
-    # RawEfield.trace_z.append(trace_z.astype(np.float32))
-    trace_vals = np.concatenate((int(antenna), trace_x, trace_y, trace_z, TimeBinSize))
-    RawEfield.trace.append(trace_vals.astype(np.float32))
+    RawEfield.trace_x.append(trace_x.astype(np.float32))
+    RawEfield.trace_y.append(trace_y.astype(np.float32))
+    RawEfield.trace_z.append(trace_z.astype(np.float32))
+
 
     # Antenna positions in showers's referential in [m]
     ant_position = get_antenna_position(pathAntennaList, antenna)

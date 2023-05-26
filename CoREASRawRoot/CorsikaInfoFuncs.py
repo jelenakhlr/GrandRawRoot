@@ -59,8 +59,9 @@ def read_first_interaction(log_file):
         for line in datafile:
             if "height of first interaction" in line:
                 val = line.split("interaction")[-1]
-                first_interaction = find_input_vals(val)
-    return first_interaction
+                first_interaction = find_input_vals(val).group()
+                print("first interaction =", first_interaction)
+    return float(first_interaction)
 
 
 
