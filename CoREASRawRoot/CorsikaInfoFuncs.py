@@ -1,7 +1,10 @@
+import sys
 from re import search
 import io
 import numpy as np
-from grand.io.root_trees import *
+sys.path.append("/home/grand/") # !TODO: make sure to update this path once RawROOT is included in grandlib!!
+from grand.io.root_trees import * # this is home/grand/grand (at least in docker) or ../../grand
+
 
 # read values from SIM.reas or RUN.inp
 def find_input_vals(line):
@@ -56,8 +59,9 @@ def read_first_interaction(log_file):
         for line in datafile:
             if "height of first interaction" in line:
                 val = line.split("interaction")[-1]
-                first_interaction = find_input_vals(val)
-    return first_interaction
+                first_interaction = find_input_vals(val).group()
+                print("first interaction =", first_interaction)
+    return float(first_interaction)
 
 
 

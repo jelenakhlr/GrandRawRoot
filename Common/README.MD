@@ -27,32 +27,32 @@
     * [long\_mu\_ioniz](#raw_root_trees.RawShowerTree.long_ed_mu_ioniz)
     * [long\_hadr\_cut](#raw_root_trees.RawShowerTree.long_ed_hadr_cut)
     * [long\_hadr\_ioniz](#raw_root_trees.RawShowerTree.long_ed_hadr_ioniz)
-    * [relative\_thinning](#raw_root_trees.RawShowerTree.relative_thinning)
+    * [relative\_thinning](#raw_root_trees.RawShowerTree.rel_thin)
     * [weight\_factor](#raw_root_trees.RawShowerTree.maximum_weight)
-    * [gamma\_energy\_cut](#raw_root_trees.RawShowerTree.gamma_energy_cut)
-    * [electron\_energy\_cut](#raw_root_trees.RawShowerTree.electron_energy_cut)
-    * [muon\_energy\_cut](#raw_root_trees.RawShowerTree.muon_energy_cut)
-    * [meson\_energy\_cut](#raw_root_trees.RawShowerTree.meson_energy_cut)
-    * [nucleon\_energy\_cut](#raw_root_trees.RawShowerTree.nucleon_energy_cut)
+    * [gamma\_energy\_cut](#raw_root_trees.RawShowerTree.lowe_cut_gamma)
+    * [electron\_energy\_cut](#raw_root_trees.RawShowerTree.lowe_cut_e)
+    * [muon\_energy\_cut](#raw_root_trees.RawShowerTree.lowe_cut_mu)
+    * [meson\_energy\_cut](#raw_root_trees.RawShowerTree.lowe_cut_meson)
+    * [nucleon\_energy\_cut](#raw_root_trees.RawShowerTree.lowe_cut_nucleon)
     * [event\_name](#raw_root_trees.RawShowerTree.event_name)
     * [event\_date](#raw_root_trees.RawShowerTree.event_date)
     * [rnd\_seed](#raw_root_trees.RawShowerTree.rnd_seed)
     * [energy\_in\_neutrinos](#raw_root_trees.RawShowerTree.energy_in_neutrinos)
-    * [prim\_energy](#raw_root_trees.RawShowerTree.energy_primary)
-    * [shower\_azimuth](#raw_root_trees.RawShowerTree.azimuth)
-    * [shower\_zenith](#raw_root_trees.RawShowerTree.zenith)
-    * [prim\_type](#raw_root_trees.RawShowerTree.primary_type)
-    * [prim\_injpoint\_shc](#raw_root_trees.RawShowerTree.prim_injpoint_shc)
-    * [prim\_inj\_alt\_shc](#raw_root_trees.RawShowerTree.prim_inj_alt_shc)
-    * [prim\_inj\_dir\_shc](#raw_root_trees.RawShowerTree.prim_inj_dir_shc)
+    * [prim\_energy](#raw_root_trees.RawShowerTree.sim_energy_primary)
+    * [shower\_sim_azimuth](#raw_root_trees.RawShowerTree.sim_azimuth)
+    * [shower\_sim_zenith](#raw_root_trees.RawShowerTree.sim_zenith)
+    * [prim\_type](#raw_root_trees.RawShowerTree.sim_primary_type)
+    * [prim\_injpoint\_shc](#raw_root_trees.RawShowerTree.sim_primary_injpoint_shc)
+    * [prim\_inj\_alt\_shc](#raw_root_trees.RawShowerTree.sim_primary_inj_alt_shc)
+    * [prim\_inj\_dir\_shc](#raw_root_trees.RawShowerTree.sim_primary_inj_dir_shc)
     * [atmos\_model](#raw_root_trees.RawShowerTree.atmos_model)
     * [atmos\_model\_param](#raw_root_trees.RawShowerTree.atmos_model_param)
     * [atmos\_altitude](#raw_root_trees.RawShowerTree.atmos_altitude)
     * [atmos\_density](#raw_root_trees.RawShowerTree.atmos_density)
     * [atmos\_depth](#raw_root_trees.RawShowerTree.atmos_depth)
     * [magnetic\_field](#raw_root_trees.RawShowerTree.magnetic_field)
-    * [xmax\_grams](#raw_root_trees.RawShowerTree.xmax_grams)
-    * [xmax\_pos\_shc](#raw_root_trees.RawShowerTree.xmax_pos_shc)
+    * [xmax\_grams](#raw_root_trees.RawShowerTree.sim_xmax_grams)
+    * [xmax\_pos\_shc](#raw_root_trees.RawShowerTree.sim_xmax_pos_shc)
     * [xmax\_distance](#raw_root_trees.RawShowerTree.xmax_distance)
     * [xmax\_alt](#raw_root_trees.RawShowerTree.xmax_alt)
     * [hadronic\_model](#raw_root_trees.RawShowerTree.hadronic_model)
@@ -81,11 +81,11 @@
   * [RawZHAireSTree](#raw_root_trees.RawZHAireSTree)
     * [relative\_thining](#raw_root_trees.RawZHAireSTree.relative_thining)
     * [weight\_factor](#raw_root_trees.RawZHAireSTree.maximum_weight)
-    * [gamma\_energy\_cut](#raw_root_trees.RawZHAireSTree.gamma_energy_cut)
-    * [electron\_energy\_cut](#raw_root_trees.RawZHAireSTree.electron_energy_cut)
-    * [muon\_energy\_cut](#raw_root_trees.RawZHAireSTree.muon_energy_cut)
-    * [meson\_energy\_cut](#raw_root_trees.RawZHAireSTree.meson_energy_cut)
-    * [nucleon\_energy\_cut](#raw_root_trees.RawZHAireSTree.nucleon_energy_cut)
+    * [gamma\_energy\_cut](#raw_root_trees.RawZHAireSTree.lowe_cut_gamma)
+    * [electron\_energy\_cut](#raw_root_trees.RawZHAireSTree.lowe_cut_e)
+    * [muon\_energy\_cut](#raw_root_trees.RawZHAireSTree.lowe_cut_mu)
+    * [meson\_energy\_cut](#raw_root_trees.RawZHAireSTree.lowe_cut_meson)
+    * [nucleon\_energy\_cut](#raw_root_trees.RawZHAireSTree.lowe_cut_nucleon)
     * [other\_parameters](#raw_root_trees.RawZHAireSTree.other_parameters)
 
 <a id="EventParametersGenerator"></a>
@@ -100,8 +100,8 @@
 def GenerateEventParametersFile(EventName,
                                 Primary,
                                 Energy,
-                                Zenith,
-                                Azimuth,
+                                sim_zenith,
+                                sim_azimuth,
                                 CorePosition,
                                 ArrayName,
                                 EventWeight=1,
@@ -112,7 +112,7 @@ def GenerateEventParametersFile(EventName,
 ```
 
 The function generates an event parameters file in a specific format for use in simulation programs. 
-The file includes information such as the event name, primary particle, energy, zenith and azimuth angles, core position, 
+The file includes information such as the event name, primary particle, energy, sim_zenith and sim_azimuth angles, core position, 
 and array name. 
 Optionally, the Event Weight and Unix Time and Unix Nanosecond can be specified
 Additionally, the file can include a list of tested positions that were tried before generating the event. 
@@ -125,8 +125,8 @@ Inputs:
 - EventName (str): The name of the event.
 - Primary (str): The type of primary particle.
 - Energy (float): The energy of the primary particle in GeV.
-- Zenith (float): The zenith angle of the event in degrees.
-- Azimuth (float): The azimuth angle of the event in degrees.
+- sim_zenith (float): The sim_zenith angle of the event in degrees.
+- sim_azimuth (float): The sim_azimuth angle of the event in degrees.
 - CorePosition (tuple): The (x,y,z) coordinates of the core position in meters.
 - ArrayName (str): The name of the array used for the simulation.
 - EventWeight (float,optional): The statistical weight of the event. Default is 1
@@ -459,13 +459,13 @@ def long_ed_hadr_ioniz()
 
 Longitudinal profile of hadrons energy deposit
 
-<a id="raw_root_trees.RawShowerTree.relative_thinning"></a>
+<a id="raw_root_trees.RawShowerTree.rel_thin"></a>
 
 #### relative\_thinning
 
 ```python
 @property
-def relative_thinning()
+def rel_thin()
 ```
 
 Thinning energy, relative to primary energy
@@ -481,57 +481,57 @@ def maximum_weight()
 
 Weight factor
 
-<a id="raw_root_trees.RawShowerTree.gamma_energy_cut"></a>
+<a id="raw_root_trees.RawShowerTree.lowe_cut_gamma"></a>
 
 #### gamma\_energy\_cut
 
 ```python
 @property
-def gamma_energy_cut()
+def lowe_cut_gamma()
 ```
 
 gamma energy cut (GeV)
 
-<a id="raw_root_trees.RawShowerTree.electron_energy_cut"></a>
+<a id="raw_root_trees.RawShowerTree.lowe_cut_e"></a>
 
 #### electron\_energy\_cut
 
 ```python
 @property
-def electron_energy_cut()
+def lowe_cut_e()
 ```
 
 electron energy cut (GeV)
 
-<a id="raw_root_trees.RawShowerTree.muon_energy_cut"></a>
+<a id="raw_root_trees.RawShowerTree.lowe_cut_mu"></a>
 
 #### muon\_energy\_cut
 
 ```python
 @property
-def muon_energy_cut()
+def lowe_cut_mu()
 ```
 
 muon energy cut (GeV)
 
-<a id="raw_root_trees.RawShowerTree.meson_energy_cut"></a>
+<a id="raw_root_trees.RawShowerTree.lowe_cut_meson"></a>
 
 #### meson\_energy\_cut
 
 ```python
 @property
-def meson_energy_cut()
+def lowe_cut_meson()
 ```
 
 meson energy cut (GeV)
 
-<a id="raw_root_trees.RawShowerTree.nucleon_energy_cut"></a>
+<a id="raw_root_trees.RawShowerTree.lowe_cut_nucleon"></a>
 
 #### nucleon\_energy\_cut
 
 ```python
 @property
-def nucleon_energy_cut()
+def lowe_cut_nucleon()
 ```
 
 nucleon energy cut (GeV)
@@ -580,79 +580,79 @@ def energy_in_neutrinos()
 
 Energy in neutrinos generated in the shower (GeV). Usefull for invisible energy
 
-<a id="raw_root_trees.RawShowerTree.energy_primary"></a>
+<a id="raw_root_trees.RawShowerTree.sim_energy_primary"></a>
 
 #### prim\_energy
 
 ```python
 @property
-def energy_primary()
+def sim_energy_primary()
 ```
 
 Primary energy (GeV) TODO: Check unit conventions. # LWP: Multiple primaries? I guess, variable count. Thus variable size array or a std::vector
 
-<a id="raw_root_trees.RawShowerTree.azimuth"></a>
+<a id="raw_root_trees.RawShowerTree.sim_azimuth"></a>
 
-#### shower\_azimuth
-
-```python
-@property
-def azimuth()
-```
-
-Shower azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem
-
-<a id="raw_root_trees.RawShowerTree.zenith"></a>
-
-#### shower\_zenith
+#### shower\_sim_azimuth
 
 ```python
 @property
-def zenith()
+def sim_azimuth()
 ```
 
-Shower zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth
+Shower sim_azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem
 
-<a id="raw_root_trees.RawShowerTree.primary_type"></a>
+<a id="raw_root_trees.RawShowerTree.sim_zenith"></a>
+
+#### shower\_sim_zenith
+
+```python
+@property
+def sim_zenith()
+```
+
+Shower sim_zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth
+
+<a id="raw_root_trees.RawShowerTree.sim_primary_type"></a>
 
 #### prim\_type
 
 ```python
 @property
-def primary_type()
+def sim_primary_type()
 ```
 
 Primary particle type TODO: standarize (PDG?)
 
-<a id="raw_root_trees.RawShowerTree.prim_injpoint_shc"></a>
+<a id="raw_root_trees.RawShowerTree.sim_primary_injpoint_shc"></a>
 
 #### prim\_injpoint\_shc
 
 ```python
 @property
-def prim_injpoint_shc()
+def sim_primary_injpoint_shc()
 ```
 
 Primary injection point in Shower coordinates
 
-<a id="raw_root_trees.RawShowerTree.prim_inj_alt_shc"></a>
+<a id="raw_root_trees.RawShowerTree.sim_primary_inj_alt_shc"></a>
 
 #### prim\_inj\_alt\_shc
 
 ```python
 @property
-def prim_inj_alt_shc()
+def sim_primary_inj_alt_shc()
 ```
 
 Primary injection altitude in Shower Coordinates
 
-<a id="raw_root_trees.RawShowerTree.prim_inj_dir_shc"></a>
+<a id="raw_root_trees.RawShowerTree.sim_primary_inj_dir_shc"></a>
 
 #### prim\_inj\_dir\_shc
 
 ```python
 @property
-def prim_inj_dir_shc()
+def sim_primary_inj_dir_shc()
 ```
 
 primary injection direction in Shower Coordinates
@@ -723,24 +723,24 @@ def magnetic_field()
 
 Magnetic field parameters: Inclination, Declination, modulus. TODO: Standarize. Check units. Think about coordinates. Shower coordinates make sense.
 
-<a id="raw_root_trees.RawShowerTree.xmax_grams"></a>
+<a id="raw_root_trees.RawShowerTree.sim_xmax_grams"></a>
 
 #### xmax\_grams
 
 ```python
 @property
-def xmax_grams()
+def sim_xmax_grams()
 ```
 
 Shower Xmax depth (g/cm2 along the shower axis)
 
-<a id="raw_root_trees.RawShowerTree.xmax_pos_shc"></a>
+<a id="raw_root_trees.RawShowerTree.sim_xmax_pos_shc"></a>
 
 #### xmax\_pos\_shc
 
 ```python
 @property
-def xmax_pos_shc()
+def sim_xmax_pos_shc()
 ```
 
 Shower Xmax position in shower coordinates
@@ -1053,57 +1053,57 @@ def maximum_weight()
 
 Weight factor
 
-<a id="raw_root_trees.RawZHAireSTree.gamma_energy_cut"></a>
+<a id="raw_root_trees.RawZHAireSTree.lowe_cut_gamma"></a>
 
 #### gamma\_energy\_cut
 
 ```python
 @property
-def gamma_energy_cut()
+def lowe_cut_gamma()
 ```
 
 Low energy cut for gammas(GeV)
 
-<a id="raw_root_trees.RawZHAireSTree.electron_energy_cut"></a>
+<a id="raw_root_trees.RawZHAireSTree.lowe_cut_e"></a>
 
 #### electron\_energy\_cut
 
 ```python
 @property
-def electron_energy_cut()
+def lowe_cut_e()
 ```
 
 Low energy cut for electrons (GeV)
 
-<a id="raw_root_trees.RawZHAireSTree.muon_energy_cut"></a>
+<a id="raw_root_trees.RawZHAireSTree.lowe_cut_mu"></a>
 
 #### muon\_energy\_cut
 
 ```python
 @property
-def muon_energy_cut()
+def lowe_cut_mu()
 ```
 
 Low energy cut for muons (GeV)
 
-<a id="raw_root_trees.RawZHAireSTree.meson_energy_cut"></a>
+<a id="raw_root_trees.RawZHAireSTree.lowe_cut_meson"></a>
 
 #### meson\_energy\_cut
 
 ```python
 @property
-def meson_energy_cut()
+def lowe_cut_meson()
 ```
 
 Low energy cut for mesons (GeV)
 
-<a id="raw_root_trees.RawZHAireSTree.nucleon_energy_cut"></a>
+<a id="raw_root_trees.RawZHAireSTree.lowe_cut_nucleon"></a>
 
 #### nucleon\_energy\_cut
 
 ```python
 @property
-def nucleon_energy_cut()
+def lowe_cut_nucleon()
 ```
 
 Low energy cut for nucleons (GeV)

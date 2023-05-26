@@ -40,7 +40,7 @@ For inputs the FILE "/home/kit/ikp/bg5912/work/sims/GRAND/mpitest/sim_storage//i
  ********************** PYINIT: initialization completed **********************
  
 
- CoREAS-001600007-000000001: SetShowerAxis zenith=0deg   azimuth=0deg
+ CoREAS-001600007-000000001: SetShowerAxis sim_zenith=0deg   sim_azimuth=0deg
  CoREAS-001600007-000000001: height of first interaction 2.3e+04m
  CoREAS-001600007-000000001: observation level 2m
 

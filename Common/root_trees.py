@@ -6255,15 +6255,15 @@ class TShower(MotherEventTree):
     _tree_name: str = "tshower"
 
     # Shower primary type
-    _primary_type: StdString = StdString("")
+    _sim_primary_type: StdString = StdString("")
     # Energy from e+- (ie related to radio emission) (GeV)
     _energy_em: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     # Total energy of the primary (including muons, neutrinos, ...) (GeV)
-    _energy_primary: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
-    # Shower azimuth  (coordinates system = NWU + origin = core, "pointing to")
-    _azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
-    # Shower zenith  (coordinates system = NWU + origin = core, , "pointing to")
-    _zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    _sim_energy_primary: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    # Shower sim_azimuth  (coordinates system = NWU + origin = core, "pointing to")
+    _sim_azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    # Shower sim_zenith  (coordinates system = NWU + origin = core, , "pointing to")
+    _sim_zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     # Direction vector (u_x, u_y, u_z)  of shower in GRAND detector ref
     _direction: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float32))
     # Shower core position in GRAND detector ref (if it is an upgoing shower, there is no core position)
@@ -6277,30 +6277,30 @@ class TShower(MotherEventTree):
     # Ground Altitude at core position (m asl)
     _core_alt: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     # Shower Xmax depth  (g/cm2 along the shower axis)
-    _xmax_grams: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    _sim_xmax_grams: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     # Shower Xmax position in GRAND detector ref
     _xmax_pos: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float64))
     # Shower Xmax position in shower coordinates
-    _xmax_pos_shc: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float64))
+    _sim_xmax_pos_shc: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float64))
     # Unix time when the shower was at the core position (seconds after epoch)
     _core_time_s: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
     # Unix time when the shower was at the core position (seconds after epoch)
     _core_time_ns: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
 
     @property
-    def primary_type(self):
+    def sim_primary_type(self):
         """Shower primary type"""
-        return str(self._primary_type)
+        return str(self._sim_primary_type)
 
-    @primary_type.setter
-    def primary_type(self, value):
+    @sim_primary_type.setter
+    def sim_primary_type(self, value):
         # Not a string was given
         if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
             raise ValueError(
-                f"Incorrect type for primary_type {type(value)}. Either a string or a ROOT.std.string is required."
+                f"Incorrect type for sim_primary_type {type(value)}. Either a string or a ROOT.std.string is required."
             )
 
-        self._primary_type.string.assign(value)
+        self._sim_primary_type.string.assign(value)
 
     @property
     def energy_em(self):
@@ -6312,31 +6312,31 @@ class TShower(MotherEventTree):
         self._energy_em[0] = value
 
     @property
-    def energy_primary(self):
+    def sim_energy_primary(self):
         """Total energy of the primary (including muons, neutrinos, ...) (GeV)"""
-        return self._energy_primary[0]
+        return self._sim_energy_primary[0]
 
-    @energy_primary.setter
-    def energy_primary(self, value):
-        self._energy_primary[0] = value
-
-    @property
-    def azimuth(self):
-        """Shower azimuth  (coordinates system = NWU + origin = core, "pointing to")"""
-        return self._azimuth[0]
-
-    @azimuth.setter
-    def azimuth(self, value):
-        self._azimuth[0] = value
+    @sim_energy_primary.setter
+    def sim_energy_primary(self, value):
+        self._sim_energy_primary[0] = value
 
     @property
-    def zenith(self):
-        """Shower zenith  (coordinates system = NWU + origin = core, , "pointing to")"""
-        return self._zenith[0]
+    def sim_azimuth(self):
+        """Shower sim_azimuth  (coordinates system = NWU + origin = core, "pointing to")"""
+        return self._sim_azimuth[0]
 
-    @zenith.setter
-    def zenith(self, value):
-        self._zenith[0] = value
+    @sim_azimuth.setter
+    def sim_azimuth(self, value):
+        self._sim_azimuth[0] = value
+
+    @property
+    def sim_zenith(self):
+        """Shower sim_zenith  (coordinates system = NWU + origin = core, , "pointing to")"""
+        return self._sim_zenith[0]
+
+    @sim_zenith.setter
+    def sim_zenith(self, value):
+        self._sim_zenith[0] = value
 
     @property
     def direction(self):
@@ -6403,13 +6403,13 @@ class TShower(MotherEventTree):
         self._core_alt[0] = value
 
     @property
-    def xmax_grams(self):
+    def sim_xmax_grams(self):
         """Shower Xmax depth (g/cm2 along the shower axis)"""
-        return self._xmax_grams[0]
+        return self._sim_xmax_grams[0]
 
-    @xmax_grams.setter
-    def xmax_grams(self, value):
-        self._xmax_grams[0] = value
+    @sim_xmax_grams.setter
+    def sim_xmax_grams(self, value):
+        self._sim_xmax_grams[0] = value
 
     @property
     def xmax_pos(self):
@@ -6422,14 +6422,14 @@ class TShower(MotherEventTree):
         self._tree.SetBranchAddress("xmax_pos", self._xmax_pos)
 
     @property
-    def xmax_pos_shc(self):
+    def sim_xmax_pos_shc(self):
         """Shower Xmax position in shower coordinates."""
-        return np.array(self._xmax_pos_shc)
+        return np.array(self._sim_xmax_pos_shc)
 
-    @xmax_pos_shc.setter
-    def xmax_pos_shc(self, value):
-        self._xmax_pos_shc = np.array(value).astype(np.float64)
-        self._tree.SetBranchAddress("xmax_pos_shc", self._xmax_pos_shc)
+    @sim_xmax_pos_shc.setter
+    def sim_xmax_pos_shc(self, value):
+        self._sim_xmax_pos_shc = np.array(value).astype(np.float64)
+        self._tree.SetBranchAddress("sim_xmax_pos_shc", self._sim_xmax_pos_shc)
 
     @property
     def core_time_s(self):
@@ -7395,11 +7395,11 @@ class TRunNoise(MotherRunTree):
 #
 #     _relative_thining: StdString = StdString("")
 #     _maximum_weight: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
-#     _gamma_energy_cut: StdString = StdString("")
-#     _electron_energy_cut: StdString = StdString("")
-#     _muon_energy_cut: StdString = StdString("")
-#     _meson_energy_cut: StdString = StdString("")
-#     _nucleon_energy_cut: StdString = StdString("")
+#     _lowe_cut_gamma: StdString = StdString("")
+#     _lowe_cut_e: StdString = StdString("")
+#     _lowe_cut_mu: StdString = StdString("")
+#     _lowe_cut_meson: StdString = StdString("")
+#     _lowe_cut_nucleon: StdString = StdString("")
 #     _other_parameters: StdString = StdString("")
 #
 #     # def __post_init__(self):
@@ -7437,79 +7437,79 @@ class TRunNoise(MotherRunTree):
 #         self._maximum_weight[0] = value
 #
 #     @property
-#     def gamma_energy_cut(self):
+#     def lowe_cut_gamma(self):
 #         """Low energy cut for gammas(GeV)"""
-#         return str(self._gamma_energy_cut)
+#         return str(self._lowe_cut_gamma)
 #
-#     @gamma_energy_cut.setter
-#     def gamma_energy_cut(self, value):
+#     @lowe_cut_gamma.setter
+#     def lowe_cut_gamma(self, value):
 #         # Not a string was given
 #         if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
 #             raise ValueError(
-#                 f"Incorrect type for gamma_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
+#                 f"Incorrect type for lowe_cut_gamma {type(value)}. Either a string or a ROOT.std.string is required."
 #             )
 #
-#         self._gamma_energy_cut.string.assign(value)
+#         self._lowe_cut_gamma.string.assign(value)
 #
 #     @property
-#     def electron_energy_cut(self):
+#     def lowe_cut_e(self):
 #         """Low energy cut for electrons (GeV)"""
-#         return str(self._electron_energy_cut)
+#         return str(self._lowe_cut_e)
 #
-#     @electron_energy_cut.setter
-#     def electron_energy_cut(self, value):
+#     @lowe_cut_e.setter
+#     def lowe_cut_e(self, value):
 #         # Not a string was given
 #         if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
 #             raise ValueError(
-#                 f"Incorrect type for electron_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
+#                 f"Incorrect type for lowe_cut_e {type(value)}. Either a string or a ROOT.std.string is required."
 #             )
 #
-#         self._electron_energy_cut.string.assign(value)
+#         self._lowe_cut_e.string.assign(value)
 #
 #     @property
-#     def muon_energy_cut(self):
+#     def lowe_cut_mu(self):
 #         """Low energy cut for muons (GeV)"""
-#         return str(self._muon_energy_cut)
+#         return str(self._lowe_cut_mu)
 #
-#     @muon_energy_cut.setter
-#     def muon_energy_cut(self, value):
+#     @lowe_cut_mu.setter
+#     def lowe_cut_mu(self, value):
 #         # Not a string was given
 #         if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
 #             raise ValueError(
-#                 f"Incorrect type for muon_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
+#                 f"Incorrect type for lowe_cut_mu {type(value)}. Either a string or a ROOT.std.string is required."
 #             )
 #
-#         self._muon_energy_cut.string.assign(value)
+#         self._lowe_cut_mu.string.assign(value)
 #
 #     @property
-#     def meson_energy_cut(self):
+#     def lowe_cut_meson(self):
 #         """Low energy cut for mesons (GeV)"""
-#         return str(self._meson_energy_cut)
+#         return str(self._lowe_cut_meson)
 #
-#     @meson_energy_cut.setter
-#     def meson_energy_cut(self, value):
+#     @lowe_cut_meson.setter
+#     def lowe_cut_meson(self, value):
 #         # Not a string was given
 #         if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
 #             raise ValueError(
-#                 f"Incorrect type for meson_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
+#                 f"Incorrect type for lowe_cut_meson {type(value)}. Either a string or a ROOT.std.string is required."
 #             )
 #
-#         self._meson_energy_cut.string.assign(value)
+#         self._lowe_cut_meson.string.assign(value)
 #
 #     @property
-#     def nucleon_energy_cut(self):
+#     def lowe_cut_nucleon(self):
 #         """Low energy cut for nucleons (GeV)"""
-#         return str(self._nucleon_energy_cut)
+#         return str(self._lowe_cut_nucleon)
 #
-#     @nucleon_energy_cut.setter
-#     def nucleon_energy_cut(self, value):
+#     @lowe_cut_nucleon.setter
+#     def lowe_cut_nucleon(self, value):
 #         # Not a string was given
 #         if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
 #             raise ValueError(
-#                 f"Incorrect type for nucleon_energy_cut {type(value)}. Either a string or a ROOT.std.string is required."
+#                 f"Incorrect type for lowe_cut_nucleon {type(value)}. Either a string or a ROOT.std.string is required."
 #             )
 #
-#         self._nucleon_energy_cut.string.assign(value)
+#         self._lowe_cut_nucleon.string.assign(value)
 #
 #     @property
 #     def other_parameters(self):

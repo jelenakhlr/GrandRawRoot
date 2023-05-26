@@ -40,9 +40,9 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
     It requires to be present in the directory: 
     - 1) A TaskName.sry file, with a "TaskName" inside, that is what ZHAireS uses to name all the output files. If "EventName" is not provided in the function input (maybe you want to override it), it will use TaskName as EventName (recommended).
          Note that Aires will truncate the TaskName if it is too long, and the script will fail. Keep your TaskNames with a reasonable lenght.
-         ZHAiresRawToRawROOT will take Energy, Primary, Zenith, Azimuth, etc of the simulation from that file.
+         ZHAiresRawToRawROOT will take Energy, Primary, sim_zenith, sim_azimuth, etc of the simulation from that file.
          This has the upside that you dont need to keep the idf file (which is some MB) and you dont need to have Aires installed on your system.
-         But it has the downside that the values are rounded to 2 decimal places. So if you input Zenith was 78.123 it will be read as 78.12
+         But it has the downside that the values are rounded to 2 decimal places. So if you input sim_zenith was 78.123 it will be read as 78.12
          
          Since in Aires 19.04.10 there is a python interface that could read idf files, we could get the exact value from there, but for now i will keep it as it is. Just dont produce inputs with more than 2 decimal places!
                   
@@ -144,8 +144,8 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         # Part I: get the information from ZHAIRES (for COREAS, its stuff would be here)
         #########################################################################################################################   
         Primary= AiresInfo.GetPrimaryFromSry(sryfile[0],"GRAND")            #Used
-        Zenith = AiresInfo.GetZenithAngleFromSry(sryfile[0],"Aires")        #Used
-        Azimuth = AiresInfo.GetAzimuthAngleFromSry(sryfile[0],"Aires")      #Used
+        sim_zenith = AiresInfo.GetZenithAngleFromSry(sryfile[0],"Aires")        #Used
+        sim_azimuth = AiresInfo.GetAzimuthAngleFromSry(sryfile[0],"Aires")      #Used
         Energy = AiresInfo.GetEnergyFromSry(sryfile[0],"Aires")             #Used
         XmaxAltitude, XmaxDistance, XmaxX, XmaxY, XmaxZ = AiresInfo.GetKmXmaxFromSry(sryfile[0])  #Used all
         #Convert to m
@@ -197,30 +197,30 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         ############################################################################################################################
 
         RawShower.run_number = RunID
-        RawShower.shower_sim = ShowerSimulator  
+        RawShower.sim_name = ShowerSimulator  
         RawShower.event_number = EventID
         RawShower.event_name = EventName
         RawShower.event_date = Date
         RawShower.unix_date = UnixDate
         RawShower.rnd_seed = RandomSeed
         RawShower.energy_in_neutrinos = EnergyInNeutrinos    
-        RawShower.energy_primary = [Energy] #TODO: test multiple primaries
-        RawShower.azimuth = Azimuth
-        RawShower.zenith = Zenith
-        RawShower.primary_type = [str(Primary)]  #TODO: test multiple primaries
-        RawShower.prim_inj_alt_shc = [InjectionAltitude] #TODO: test multiple primaries
-        RawShower.prim_inj_dir_shc=[(-np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),-np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),-np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries
+        RawShower.sim_energy_primary = [Energy] #TODO: test multiple primaries
+        RawShower.sim_azimuth = sim_azimuth
+        RawShower.sim_zenith = sim_zenith
+        RawShower.sim_primary_type = [str(Primary)]  #TODO: test multiple primaries
+        RawShower.sim_primary_inj_alt_shc = [InjectionAltitude] #TODO: test multiple primaries
+        RawShower.sim_primary_inj_dir_shc=[(-np.sin(np.deg2rad(sim_zenith))*np.cos(np.deg2rad(sim_azimuth)),-np.sin(np.deg2rad(sim_zenith))*np.sin(np.deg2rad(sim_azimuth)),-np.cos(np.deg2rad(sim_zenith)))]  #TODO: test multiple primaries
 
         #using the sine thorem for a triangle with vertices at the earth center, the injection point and the core position (located at groundlitutde)
         rearth=6370949
         logging.info("warning, using round earth with hard coded radius: 6370949m")  #TODO eventualy: Unhardcode This
         sidea=rearth+InjectionAltitude
         sidec=rearth+GroundAltitude
-        AngleA=np.deg2rad(180-Zenith)
+        AngleA=np.deg2rad(180-sim_zenith)
         AngleC=np.arcsin((sidec/sidea)*np.sin(AngleA))
         AngleB=np.deg2rad(180-np.rad2deg(AngleA)-np.rad2deg(AngleC))
         sideb=sidec*np.sin(AngleB)/np.sin(AngleC)       
-        RawShower.prim_injpoint_shc = [(sideb*np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),sideb*np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),sideb*np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries        
+        RawShower.sim_primary_injpoint_shc = [(sideb*np.sin(np.deg2rad(sim_zenith))*np.cos(np.deg2rad(sim_azimuth)),sideb*np.sin(np.deg2rad(sim_zenith))*np.sin(np.deg2rad(sim_azimuth)),sideb*np.cos(np.deg2rad(sim_zenith)))]  #TODO: test multiple primaries        
         RawShower.atmos_model = str(AtmosphericModel) #TODO: Standarize
         #TODO:atmos_model_param  # Atmospheric model parameters: TODO: Think about this. Different models and softwares can have different parameters
         RawShower.atmos_density.append(Atmosdensity)
@@ -228,8 +228,8 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.atmos_altitude.append(Atmosaltitude)
 
         RawShower.magnetic_field = np.array([FieldInclination,FieldDeclination,FieldIntensity])
-        RawShower.xmax_grams = SlantXmax
-        RawShower.xmax_pos_shc = XmaxPosition
+        RawShower.sim_xmax_grams = SlantXmax
+        RawShower.sim_xmax_pos_shc = XmaxPosition
         RawShower.xmax_distance = XmaxDistance                 
         RawShower.xmax_alt = XmaxAltitude
         RawShower.hadronic_model = HadronicModel
@@ -237,6 +237,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.cpu_time = float(CPUTime) 
         
         #ZHAireS/Coreas
+<<<<<<< Updated upstream
         RawShower.relative_thinning = RelativeThinning
         RawShower.maximum_weight = WeightFactor
         RawShower.hadronic_thinning=1.0
@@ -248,6 +249,15 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.muon_energy_cut = MuonEnergyCut
         RawShower.meson_energy_cut = MesonEnergyCut
         RawShower.nucleon_energy_cut = NucleonEnergyCut              
+=======
+        RawShower.rel_thin = RelativeThinning
+        RawShower.maximum_weight = WeightFactor  
+        RawShower.lowe_cut_gamma = GammaEnergyCut
+        RawShower.lowe_cut_e = ElectronEnergyCut
+        RawShower.lowe_cut_mu = MuonEnergyCut
+        RawShower.lowe_cut_meson = MesonEnergyCut
+        RawShower.lowe_cut_nucleon = NucleonEnergyCut              
+>>>>>>> Stashed changes
         
         #METAZHAireS (I propose to pass this to a separate tree and section
         #RawShower.shower_core_pos=np.array(CorePosition) # shower core position 

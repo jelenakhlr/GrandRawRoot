@@ -1,10 +1,13 @@
+import sys
 import glob
 import datetime #to get the unix timestamp
 import time #to get the unix timestamp
-from grand.io.root_trees import *
-from CorsikaInfoFuncs import *
+from CorsikaInfoFuncs import * # this is in the same dir as this file
 sys.path.append("../Common")
-import raw_root_trees as RawTrees
+import raw_root_trees as RawTrees # this is in Common. since we're in CoREASRawRoot, this is in ../Common
+sys.path.append("/home/grand/") # !TODO: make sure to update this path once RawROOT is included in grandlib!!
+from grand.io.root_trees import * # this is home/grand/grand (at least in docker) or ../../grand
+
 
 def CoreasToRawRoot(path):
   """
@@ -124,8 +127,8 @@ def CoreasToRawRoot(path):
   GPSNanoSecs = read_params(reas_input, "GPSNanoSecs")
   FieldDeclination = read_params(reas_input, "RotationAngleForMagfieldDeclination") # in degrees
 
-  Zenith = read_params(reas_input, "ShowerZenithAngle")
-  Azimuth = read_params(reas_input, "ShowerAzimuthAngle")
+  sim_zenith = read_params(reas_input, "ShowerZenithAngle")
+  sim_azimuth = read_params(reas_input, "ShowerAzimuthAngle")
 
   Energy = read_params(reas_input, "PrimaryParticleEnergy") # in eV
   Primary = read_params(reas_input, "PrimaryParticleType") # as defined in CORSIKA -> TODO: change to PDG system
@@ -206,7 +209,7 @@ def CoreasToRawRoot(path):
 
   #**** energy deposit
   energy_dep = dE_data
-  # the depth here is not the same as for the particle dist, because that would be too easy
+  # the depth here is not the same as for the particle dist, because that would be too easy (they are usually shifted by 5)
   # DEPTH, GAMMA, EM IONIZ, EM CUT, MU IONIZ, MU CUT, HADR IONIZ, HADR CUT, NEUTRINO, SUM
   ed_depth = energy_dep[:,0]
   ed_gamma = energy_dep[:,1]
@@ -268,7 +271,7 @@ def CoreasToRawRoot(path):
 
   # ********** fill RawShower **********
   RawShower.run_number = RunID
-  RawShower.shower_sim = "Coreas"  # TODO:Unhardcode this, add version, etc
+  RawShower.sim_name = "Coreas"  # TODO:Unhardcode this, add version, etc
   RawShower.event_number = EventID
   RawShower.event_name = EventName
   RawShower.event_date = Date
@@ -278,16 +281,16 @@ def CoreasToRawRoot(path):
   # right now I get this error "ValueError: setting an array element with a sequence." if I try to pass just "RandomSeed"
 
   RawShower.energy_in_neutrinos = EnergyInNeutrinos
-  RawShower.energy_primary = [Energy]
-  RawShower.azimuth = Azimuth
-  RawShower.zenith = Zenith
-  RawShower.primary_type = [str(Primary)]
-  RawShower.prim_inj_alt_shc = [InjectionAltitude]
+  RawShower.sim_energy_primary = [Energy]
+  RawShower.sim_azimuth = sim_azimuth
+  RawShower.sim_zenith = sim_zenith
+  RawShower.sim_primary_type = [str(Primary)]
+  RawShower.sim_primary_inj_alt_shc = [InjectionAltitude]
   RawShower.atmos_model = str(AtmosphericModel)
 
   RawShower.magnetic_field = np.array([FieldInclination,FieldDeclination,FieldIntensity])
-  # RawShower.xmax_grams = SlantXmax
-  # RawShower.xmax_pos_shc = XmaxPosition
+  # RawShower.sim_xmax_grams = SlantXmax
+  # RawShower.sim_xmax_pos_shc = XmaxPosition
   # RawShower.xmax_distance = XmaxDistance
   # RawShower.xmax_alt = XmaxAltitude
   RawShower.hadronic_model = HadronicModel
@@ -295,24 +298,21 @@ def CoreasToRawRoot(path):
   RawShower.cpu_time = float(CPUTime)
 
   # * THINNING *
-  RawShower.relative_thinning = Thin[0]
+  RawShower.rel_thin = Thin[0]
   RawShower.maximum_weight = Thin[1]
   RawShower.hadronic_thinning = ThinH[0]
   RawShower.hadronic_thinning_weight = ThinH[1]
-  RawShower.rmax = Thin[3]
+  RawShower.rmax = Thin[2]*100 #cm -> m
 
   # * CUTS *
-  RawShower.gamma_energy_cut = GammaEnergyCut
-  RawShower.electron_energy_cut = ElectronEnergyCut
-  RawShower.muon_energy_cut = MuonEnergyCut
-  RawShower.meson_energy_cut = MesonEnergyCut # and hadrons
-  RawShower.nucleon_energy_cut = NucleonEnergyCut # same as meson and hadron cut
+  RawShower.lowe_cut_gamma = GammaEnergyCut
+  RawShower.lowe_cut_e = ElectronEnergyCut
+  RawShower.lowe_cut_mu = MuonEnergyCut
+  RawShower.lowe_cut_meson = MesonEnergyCut # and hadrons
+  RawShower.lowe_cut_nucleon = NucleonEnergyCut # same as meson and hadron cut
 
   RawShower.shower_core_pos = np.array(CorePosition)
-  #TODO ASAP: ArrayName
-  RawShower.array_name = ArrayName
-  #TODO: EventWeight ?
-  #TODO: TestedCores ?
+
 
   """
   In the next steps, fill the longitudinal profile, 
@@ -323,41 +323,43 @@ def CoreasToRawRoot(path):
   
   """
 
-  RawShower.long_pd_gammas = pd_gammas.astype(np.float32)
-  RawShower.long_pd_eminus = pd_electrons.astype(np.float32)
-  RawShower.long_pd_eplus = pd_positrons.astype(np.float32)
-  RawShower.long_pd_muminus = pd_muN.astype(np.float32)
-  RawShower.long_pd_muplus = pd_muP.astype(np.float32)
-  RawShower.long_pd_allch = pd_charged.astype(np.float32)
-  RawShower.long_pd_nuclei = pd_nuclei.astype(np.float32)
-  RawShower.long_pd_hadr = pd_hadrons.astype(np.float32)
+  RawShower.long_pd_gammas = [pd_gammas]
+  RawShower.long_pd_eminus = [pd_electrons]
+  RawShower.long_pd_eplus = [pd_positrons]
+  RawShower.long_pd_muminus = [pd_muN]
+  RawShower.long_pd_muplus = [pd_muP]
+  RawShower.long_pd_allch = [pd_charged]
+  RawShower.long_pd_nuclei = [pd_nuclei]
+  RawShower.long_pd_hadr = [pd_hadrons]
 
-  RawShower.long_ed_neutrino = ed_neutrino.astype(np.float32)
-  RawShower.long_ed_e_cut = ed_em_cut.astype(np.float32)
-  RawShower.long_ed_mu_cut = ed_mu_cut.astype(np.float32)
-  RawShower.long_ed_hadr_cut = ed_hadron_cut.astype(np.float32)
+  RawShower.long_ed_neutrino = [ed_neutrino]
+  RawShower.long_ed_e_cut = [ed_em_cut]
+  RawShower.long_ed_mu_cut = [ed_mu_cut]
+  RawShower.long_ed_hadr_cut = [ed_hadron_cut]
   
   # gamma cut - I believe this was the same value as for another particle
   # for now: use hadron cut as placeholder
   # TODO ASAP: check this
-  RawShower.long_ed_gamma_cut = ed_hadron_cut.astype(np.float32)
+  RawShower.long_ed_gamma_cut = [ed_hadron_cut]
   
-  RawShower.long_ed_gamma_ioniz = ed_gamma.astype(np.float32)
-  RawShower.long_ed_e_ioniz = ed_em_ioniz.astype(np.float32)
-  RawShower.long_ed_mu_ioniz = ed_mu_ioniz.astype(np.float32)
-  RawShower.long_ed_hadr_ioniz = ed_hadron_ioniz.astype(np.float32)
+  RawShower.long_ed_gamma_ioniz = [ed_gamma]
+  RawShower.long_ed_e_ioniz = [ed_em_ioniz]
+  RawShower.long_ed_mu_ioniz = [ed_mu_ioniz]
+  RawShower.long_ed_hadr_ioniz = [ed_hadron_ioniz]
   
   # The next values are "leftover" from the comparison with ZhaireS.
   # They should go in TShowerSim along with the values above.
-  RawShower.long_ed_depth = ed_depth.astype(np.float32)
-  RawShower.long_pd_depth = pd_depth.astype(np.float32)
-  RawShower.long_pd_cherenkov = pd_cherenkov.astype(np.float32)
-  RawShower.long_ed_sum = ed_sum.astype(np.float32)
-
+  RawShower.long_ed_depth = [ed_depth]
+  RawShower.long_pd_depth = [pd_depth]
+  
   RawShower.first_interaction = first_interaction
 
   RawShower.fill()
   RawShower.write()
+
+
+  # *** fill MetaShower *** 
+
 
   #########################################################################################################################
   # Part B.II.i: get the information from Coreas output files (i.e. the traces and some extra info)
@@ -426,11 +428,10 @@ def CoreasToRawRoot(path):
     RawEfield.t_0.append(timestamp[0].astype(np.float32))
 
     # Traces
-    # RawEfield.trace_x.append(trace_x.astype(np.float32))
-    # RawEfield.trace_y.append(trace_y.astype(np.float32))
-    # RawEfield.trace_z.append(trace_z.astype(np.float32))
-    trace_vals = np.concatenate((int(antenna), trace_x, trace_y, trace_z, TimeBinSize))
-    RawEfield.trace.append(trace_vals.astype(np.float32))
+    RawEfield.trace_x.append(trace_x.astype(np.float32))
+    RawEfield.trace_y.append(trace_y.astype(np.float32))
+    RawEfield.trace_z.append(trace_z.astype(np.float32))
+
 
     # Antenna positions in showers's referential in [m]
     ant_position = get_antenna_position(pathAntennaList, antenna)
