@@ -10,7 +10,7 @@
   * [RawShowerTree](#raw_root_trees.RawShowerTree)
     * [long\_depth](#raw_root_trees.RawShowerTree.long_depth)
     * [long\_slantdepth](#raw_root_trees.RawShowerTree.long_slantdepth)
-    * [long\_gammas](#raw_root_trees.RawShowerTree.long_pd_gammas)
+    * [long\_gammas](#raw_root_trees.RawShowerTree.long_pd_gamma)
     * [long\_eplus](#raw_root_trees.RawShowerTree.long_pd_eplus)
     * [long\_eminus](#raw_root_trees.RawShowerTree.long_pd_eminus)
     * [long\_muplus](#raw_root_trees.RawShowerTree.long_pd_muplus)
@@ -272,13 +272,13 @@ def long_slantdepth()
 
 Longitudinal profile of slant depth (g/cm2)
 
-<a id="raw_root_trees.RawShowerTree.long_pd_gammas"></a>
+<a id="raw_root_trees.RawShowerTree.long_pd_gamma"></a>
 
 #### long\_gammas
 
 ```python
 @property
-def long_pd_gammas()
+def long_pd_gamma()
 ```
 
 Longitudinal profile of gammas

@@ -255,7 +255,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         #Fill the tables
         table=AiresInfo.GetLongitudinalTable(InputFolder,1001,Slant=False,Precision="Simple",TaskName=TaskName)               
         RawShower.long_depth.append(np.array(table.T[0], dtype=np.float32))  
-        RawShower.long_pd_gammas.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_pd_gamma.append(np.array(table.T[1], dtype=np.float32)) 
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1005,Slant=True,Precision="Simple",TaskName=TaskName)                      
         RawShower.long_slantdepth.append(np.array(table.T[0], dtype=np.float32))  

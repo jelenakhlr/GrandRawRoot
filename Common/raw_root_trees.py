@@ -173,51 +173,51 @@ class RawShowerTree(MotherEventTree):
     ### Longitudinal Pofiles (those compatible between Coreas/ZHAires)
     
     ## Longitudinal Profile of vertical depth (g/cm2)
-    _long_depth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_depth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Longitudinal Profile of slant depth (g/cm2)
-    _long_slantdepth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_slantdepth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Longitudinal Profile of Number of Gammas      
-    _long_pd_gammas: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_gammas: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Longitudinal Profile of Number of e+
-    _long_pd_eplus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_eplus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Longitudinal Profile of Number of e-
-    _long_pd_eminus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>")) 
+    _long_pd_eminus: StdVectorList = field(default_factory=lambda: StdVectorList("float")) 
     ## Longitudinal Profile of Number of mu+
-    _long_pd_muplus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_muplus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Longitudinal Profile of Number of mu-
-    _long_pd_muminus: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))      
+    _long_pd_muminus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))      
     ## Longitudinal Profile of Number of All charged particles
-    _long_pd_allch: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))   
+    _long_pd_allch: StdVectorList = field(default_factory=lambda: StdVectorList("float"))   
     ## Longitudinal Profile of Number of Nuclei
-    _long_pd_nuclei: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_nuclei: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Longitudinal Profile of Number of Hadrons
-    _long_pd_hadr:StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_pd_hadr:StdVectorList = field(default_factory=lambda: StdVectorList("float"))
 
     ## Longitudinal Profile of Energy of created neutrinos (GeV)
-    _long_ed_neutrino: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_neutrino: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
 
 
     ## Longitudinal Profile of low energy gammas (GeV)
-    _long_ed_gamma_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_gamma_cut: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
     ## Longitudinal Profile of low energy e+/e- (GeV)
-    _long_ed_e_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_e_cut: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
     ## Longitudinal Profile of low energy mu+/mu- (GeV)
-    _long_ed_mu_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_mu_cut: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
     ## Longitudinal Profile of low energy hadrons (GeV)
-    _long_ed_hadr_cut: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_ed_hadr_cut: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     
     ## Longitudinal Profile of energy deposit by gammas (GeV)
-    _long_ed_gamma_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))                          
+    _long_ed_gamma_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("float"))                          
     ## Longitudinal Profile of energy deposit by e+/e-  (GeV)
-    _long_ed_e_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_e_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
     ## Longitudinal Profile of energy deposit by muons  (GeV)
-    _long_ed_mu_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))           
+    _long_ed_mu_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
     ## Longitudinal Profile of energy deposit by hadrons (GeV)
-    _long_ed_hadr_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))     
+    _long_ed_hadr_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("float"))     
  
     # extra values
-    _long_ed_depth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    _long_pd_depth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _long_ed_depth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _long_pd_depth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
 
     _first_interaction: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
 
@@ -287,12 +287,12 @@ class RawShowerTree(MotherEventTree):
 
 
     @property
-    def long_pd_gammas(self):
+    def long_pd_gamma(self):
         """Longitudinal profile of gammas"""
         return self._long_pd_gammas
 
-    @long_pd_gammas.setter
-    def long_pd_gammas(self, value):
+    @long_pd_gamma.setter
+    def long_pd_gamma(self, value):
         # A list was given
         if (
             isinstance(value, list)

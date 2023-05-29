@@ -323,7 +323,7 @@ def CoreasToRawRoot(path):
   
   """
 
-  RawShower.long_pd_gammas = [pd_gammas]
+  RawShower.long_pd_gamma = [pd_gammas]
   RawShower.long_pd_eminus = [pd_electrons]
   RawShower.long_pd_eplus = [pd_positrons]
   RawShower.long_pd_muminus = [pd_muN]
