@@ -204,12 +204,12 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.unix_date = UnixDate
         RawShower.rnd_seed = RandomSeed
         RawShower.energy_in_neutrinos = EnergyInNeutrinos    
-        RawShower.sim_energy_primary = [Energy] #TODO: test multiple primaries
-        RawShower.sim_azimuth = Azimuth
-        RawShower.sim_zenith = Zenith
-        RawShower.sim_primary_type = [str(Primary)]  #TODO: test multiple primaries
-        RawShower.sim_primary_inj_alt_shc = [InjectionAltitude] #TODO: test multiple primaries
-        RawShower.sim_primary_inj_dir_shc=[(-np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),-np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),-np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries
+        RawShower.energy_primary = [Energy] #TODO: test multiple primaries
+        RawShower.azimuth = Azimuth
+        RawShower.zenith = Zenith
+        RawShower.primary_type = [str(Primary)]  #TODO: test multiple primaries
+        RawShower.primary_inj_alt_shc = [InjectionAltitude] #TODO: test multiple primaries
+        RawShower.primary_inj_dir_shc=[(-np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),-np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),-np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries
 
         #using the sine thorem for a triangle with vertices at the earth center, the injection point and the core position (located at groundlitutde)
         rearth=6370949
@@ -220,7 +220,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         AngleC=np.arcsin((sidec/sidea)*np.sin(AngleA))
         AngleB=np.deg2rad(180-np.rad2deg(AngleA)-np.rad2deg(AngleC))
         sideb=sidec*np.sin(AngleB)/np.sin(AngleC)       
-        RawShower.sim_primary_injpoint_shc = [(sideb*np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),sideb*np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),sideb*np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries        
+        RawShower.primary_inj_point_shc = [(sideb*np.sin(np.deg2rad(Zenith))*np.cos(np.deg2rad(Azimuth)),sideb*np.sin(np.deg2rad(Zenith))*np.sin(np.deg2rad(Azimuth)),sideb*np.cos(np.deg2rad(Zenith)))]  #TODO: test multiple primaries        
         RawShower.atmos_model = str(AtmosphericModel) #TODO: Standarize
         #TODO:atmos_model_param  # Atmospheric model parameters: TODO: Think about this. Different models and softwares can have different parameters
         RawShower.atmos_density.append(Atmosdensity)
@@ -228,8 +228,8 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         RawShower.atmos_altitude.append(Atmosaltitude)
 
         RawShower.magnetic_field = np.array([FieldInclination,FieldDeclination,FieldIntensity])
-        RawShower.sim_xmax_grams = SlantXmax
-        RawShower.sim_xmax_pos_shc = XmaxPosition
+        RawShower.xmax_grams = SlantXmax
+        RawShower.xmax_pos_shc = XmaxPosition
         RawShower.xmax_distance = XmaxDistance                 
         RawShower.xmax_alt = XmaxAltitude
         RawShower.hadronic_model = HadronicModel

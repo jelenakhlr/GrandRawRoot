@@ -38,21 +38,21 @@
     * [event\_date](#raw_root_trees.RawShowerTree.event_date)
     * [rnd\_seed](#raw_root_trees.RawShowerTree.rnd_seed)
     * [energy\_in\_neutrinos](#raw_root_trees.RawShowerTree.energy_in_neutrinos)
-    * [prim\_energy](#raw_root_trees.RawShowerTree.sim_energy_primary)
-    * [shower\_sim_azimuth](#raw_root_trees.RawShowerTree.sim_azimuth)
-    * [shower\_sim_zenith](#raw_root_trees.RawShowerTree.sim_zenith)
-    * [prim\_type](#raw_root_trees.RawShowerTree.sim_primary_type)
-    * [prim\_injpoint\_shc](#raw_root_trees.RawShowerTree.sim_primary_injpoint_shc)
-    * [prim\_inj\_alt\_shc](#raw_root_trees.RawShowerTree.sim_primary_inj_alt_shc)
-    * [prim\_inj\_dir\_shc](#raw_root_trees.RawShowerTree.sim_primary_inj_dir_shc)
+    * [prim\_energy](#raw_root_trees.RawShowerTree.energy_primary)
+    * [shower\_azimuth](#raw_root_trees.RawShowerTree.azimuth)
+    * [shower\_zenith](#raw_root_trees.RawShowerTree.zenith)
+    * [prim\_type](#raw_root_trees.RawShowerTree.primary_type)
+    * [prim\_injpoint\_shc](#raw_root_trees.RawShowerTree.primary_inj_point_shc)
+    * [prim\_inj\_alt\_shc](#raw_root_trees.RawShowerTree.primary_inj_alt_shc)
+    * [prim\_inj\_dir\_shc](#raw_root_trees.RawShowerTree.primary_inj_dir_shc)
     * [atmos\_model](#raw_root_trees.RawShowerTree.atmos_model)
     * [atmos\_model\_param](#raw_root_trees.RawShowerTree.atmos_model_param)
     * [atmos\_altitude](#raw_root_trees.RawShowerTree.atmos_altitude)
     * [atmos\_density](#raw_root_trees.RawShowerTree.atmos_density)
     * [atmos\_depth](#raw_root_trees.RawShowerTree.atmos_depth)
     * [magnetic\_field](#raw_root_trees.RawShowerTree.magnetic_field)
-    * [xmax\_grams](#raw_root_trees.RawShowerTree.sim_xmax_grams)
-    * [xmax\_pos\_shc](#raw_root_trees.RawShowerTree.sim_xmax_pos_shc)
+    * [xmax\_grams](#raw_root_trees.RawShowerTree.xmax_grams)
+    * [xmax\_pos\_shc](#raw_root_trees.RawShowerTree.xmax_pos_shc)
     * [xmax\_distance](#raw_root_trees.RawShowerTree.xmax_distance)
     * [xmax\_alt](#raw_root_trees.RawShowerTree.xmax_alt)
     * [hadronic\_model](#raw_root_trees.RawShowerTree.hadronic_model)
@@ -100,8 +100,8 @@
 def GenerateEventParametersFile(EventName,
                                 Primary,
                                 Energy,
-                                sim_zenith,
-                                sim_azimuth,
+                                zenith,
+                                azimuth,
                                 CorePosition,
                                 ArrayName,
                                 EventWeight=1,
@@ -112,7 +112,7 @@ def GenerateEventParametersFile(EventName,
 ```
 
 The function generates an event parameters file in a specific format for use in simulation programs. 
-The file includes information such as the event name, primary particle, energy, sim_zenith and sim_azimuth angles, core position, 
+The file includes information such as the event name, primary particle, energy, zenith and azimuth angles, core position, 
 and array name. 
 Optionally, the Event Weight and Unix Time and Unix Nanosecond can be specified
 Additionally, the file can include a list of tested positions that were tried before generating the event. 
@@ -580,79 +580,79 @@ def energy_in_neutrinos()
 
 Energy in neutrinos generated in the shower (GeV). Usefull for invisible energy
 
-<a id="raw_root_trees.RawShowerTree.sim_energy_primary"></a>
+<a id="raw_root_trees.RawShowerTree.energy_primary"></a>
 
 #### prim\_energy
 
 ```python
 @property
-def sim_energy_primary()
+def energy_primary()
 ```
 
 Primary energy (GeV) TODO: Check unit conventions. # LWP: Multiple primaries? I guess, variable count. Thus variable size array or a std::vector
 
-<a id="raw_root_trees.RawShowerTree.sim_azimuth"></a>
+<a id="raw_root_trees.RawShowerTree.azimuth"></a>
 
-#### shower\_sim_azimuth
-
-```python
-@property
-def sim_azimuth()
-```
-
-Shower sim_azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem
-
-<a id="raw_root_trees.RawShowerTree.sim_zenith"></a>
-
-#### shower\_sim_zenith
+#### shower\_azimuth
 
 ```python
 @property
-def sim_zenith()
+def azimuth()
 ```
 
-Shower sim_zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth
+Shower azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem
 
-<a id="raw_root_trees.RawShowerTree.sim_primary_type"></a>
+<a id="raw_root_trees.RawShowerTree.zenith"></a>
+
+#### shower\_zenith
+
+```python
+@property
+def zenith()
+```
+
+Shower zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth
+
+<a id="raw_root_trees.RawShowerTree.primary_type"></a>
 
 #### prim\_type
 
 ```python
 @property
-def sim_primary_type()
+def primary_type()
 ```
 
 Primary particle type TODO: standarize (PDG?)
 
-<a id="raw_root_trees.RawShowerTree.sim_primary_injpoint_shc"></a>
+<a id="raw_root_trees.RawShowerTree.primary_inj_point_shc"></a>
 
 #### prim\_injpoint\_shc
 
 ```python
 @property
-def sim_primary_injpoint_shc()
+def primary_inj_point_shc()
 ```
 
 Primary injection point in Shower coordinates
 
-<a id="raw_root_trees.RawShowerTree.sim_primary_inj_alt_shc"></a>
+<a id="raw_root_trees.RawShowerTree.primary_inj_alt_shc"></a>
 
 #### prim\_inj\_alt\_shc
 
 ```python
 @property
-def sim_primary_inj_alt_shc()
+def primary_inj_alt_shc()
 ```
 
 Primary injection altitude in Shower Coordinates
 
-<a id="raw_root_trees.RawShowerTree.sim_primary_inj_dir_shc"></a>
+<a id="raw_root_trees.RawShowerTree.primary_inj_dir_shc"></a>
 
 #### prim\_inj\_dir\_shc
 
 ```python
 @property
-def sim_primary_inj_dir_shc()
+def primary_inj_dir_shc()
 ```
 
 primary injection direction in Shower Coordinates
@@ -723,24 +723,24 @@ def magnetic_field()
 
 Magnetic field parameters: Inclination, Declination, modulus. TODO: Standarize. Check units. Think about coordinates. Shower coordinates make sense.
 
-<a id="raw_root_trees.RawShowerTree.sim_xmax_grams"></a>
+<a id="raw_root_trees.RawShowerTree.xmax_grams"></a>
 
 #### xmax\_grams
 
 ```python
 @property
-def sim_xmax_grams()
+def xmax_grams()
 ```
 
 Shower Xmax depth (g/cm2 along the shower axis)
 
-<a id="raw_root_trees.RawShowerTree.sim_xmax_pos_shc"></a>
+<a id="raw_root_trees.RawShowerTree.xmax_pos_shc"></a>
 
 #### xmax\_pos\_shc
 
 ```python
 @property
-def sim_xmax_pos_shc()
+def xmax_pos_shc()
 ```
 
 Shower Xmax position in shower coordinates

@@ -62,25 +62,25 @@ class RawShowerTree(MotherEventTree):
     _energy_in_neutrinos: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary energy (GeV) 
-    _sim_energy_primary: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _energy_primary: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     
     ### Shower azimuth (deg, CR convention)
-    _sim_azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    _azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
 
     ### Shower zenith  (deg, CR convention)
-    _sim_zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    _zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary particle type (PDG)
-    _sim_primary_type: StdVectorList = field(default_factory=lambda: StdVectorList("string"))
+    _primary_type: StdVectorList = field(default_factory=lambda: StdVectorList("string"))
 
     # Primary injection point [m] in Shower coordinates
-    _sim_primary_injpoint_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _primary_inj_point_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
     ### Primary injection altitude [m] in Shower Coordinates
-    _sim_primary_inj_alt_shc: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    _primary_inj_alt_shc: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
 
     # primary injection direction in Shower Coordinates
-    _sim_primary_inj_dir_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    _primary_inj_dir_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
 
     ### Atmospheric model name TODO:standardize
     _atmos_model: StdString = StdString("")
@@ -103,10 +103,10 @@ class RawShowerTree(MotherEventTree):
     _magnetic_field: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float32))
 
     ### Shower Xmax depth  (g/cm2 along the shower axis)
-    _sim_xmax_grams: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
+    _xmax_grams: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Shower Xmax position in shower coordinates [m]
-    _sim_xmax_pos_shc: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float64))
+    _xmax_pos_shc: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float64))
     
     ### Distance of Xmax  [m] to the ground
     _xmax_distance: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float64))
@@ -895,89 +895,89 @@ class RawShowerTree(MotherEventTree):
 
 
     @property
-    def sim_energy_primary(self):
+    def energy_primary(self):
         """Primary energy (GeV) TODO: Check unit conventions. # LWP: Multiple primaries? I guess, variable count. Thus variable size array or a std::vector"""
-        return self._sim_energy_primary
+        return self._energy_primary
 
-    @sim_energy_primary.setter
-    def sim_energy_primary(self, value):
+    @energy_primary.setter
+    def energy_primary(self, value):
         # A list of strings was given
         if isinstance(value, list):
             # Clear the vector before setting
-            self._sim_energy_primary.clear()
-            self._sim_energy_primary += value
+            self._energy_primary.clear()
+            self._energy_primary += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("float")):
-            self._sim_energy_primary._vector = value
+            self._energy_primary._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for sim_energy_primary {type(value)}. Either a list or a ROOT.vector of floats required."
+                f"Incorrect type for energy_primary {type(value)}. Either a list or a ROOT.vector of floats required."
             )
 
 
 
     @property
-    def sim_azimuth(self):
-        """Shower sim_azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem"""
-        return self._sim_azimuth[0]
+    def azimuth(self):
+        """Shower azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem"""
+        return self._azimuth[0]
 
-    @sim_azimuth.setter
-    def sim_azimuth(self, value):
-        self._sim_azimuth[0] = value
-
-
-
-    @property
-    def sim_zenith(self):
-        """Shower sim_zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth"""
-        return self._sim_zenith[0]
-
-    @sim_zenith.setter
-    def sim_zenith(self, value):
-        self._sim_zenith[0] = value
+    @azimuth.setter
+    def azimuth(self, value):
+        self._azimuth[0] = value
 
 
 
     @property
-    def sim_primary_type(self):
+    def zenith(self):
+        """Shower zenith TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth"""
+        return self._zenith[0]
+
+    @zenith.setter
+    def zenith(self, value):
+        self._zenith[0] = value
+
+
+
+    @property
+    def primary_type(self):
         """Primary particle type TODO: standarize (PDG?)"""
-        return self._sim_primary_type
+        return self._primary_type
 
-    @sim_primary_type.setter
-    def sim_primary_type(self, value):
+    @primary_type.setter
+    def primary_type(self, value):
         # A list of strings was given
         if isinstance(value, list):
             # Clear the vector before setting
-            self._sim_primary_type.clear()
-            self._sim_primary_type += value
+            self._primary_type.clear()
+            self._primary_type += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("string")):
-            self._sim_primary_type._vector = value
+            self._primary_type._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for sim_primary_type {type(value)}. Either a list or a ROOT.vector of strings required."
+                f"Incorrect type for primary_type {type(value)}. Either a list or a ROOT.vector of strings required."
             )
 
 
 
     @property
-    def sim_primary_injpoint_shc(self):
+    def primary_inj_point_shc(self):
         """Primary injection point in Shower coordinates"""
-        return np.array(self._sim_primary_injpoint_shc)
+        return np.array(self._primary_inj_point_shc)
 
-    @sim_primary_injpoint_shc.setter
-    def sim_primary_injpoint_shc(self, value):
-        set_vector_of_vectors(value, "vector<float>", self._sim_primary_injpoint_shc, "sim_primary_injpoint_shc")
+    @primary_inj_point_shc.setter
+    def primary_inj_point_shc(self, value):
+        set_vector_of_vectors(value, "vector<float>", self._primary_inj_point_shc, "primary_inj_point_shc")
 
 
 
     @property
-    def sim_primary_inj_alt_shc(self):
+    def primary_inj_alt_shc(self):
         """Primary injection altitude in Shower Coordinates"""
-        return self._sim_primary_inj_alt_shc
+        return self._primary_inj_alt_shc
 
-    @sim_primary_inj_alt_shc.setter
-    def sim_primary_inj_alt_shc(self, value):
+    @primary_inj_alt_shc.setter
+    def primary_inj_alt_shc(self, value):
         # A list was given
         if (
             isinstance(value, list)
@@ -985,26 +985,26 @@ class RawShowerTree(MotherEventTree):
             or isinstance(value, StdVectorList)
         ):
             # Clear the vector before setting
-            self._sim_primary_inj_alt_shc.clear()
-            self._sim_primary_inj_alt_shc += value
+            self._primary_inj_alt_shc.clear()
+            self._primary_inj_alt_shc += value
         # A vector of strings was given
         elif isinstance(value, ROOT.vector("float")):
-            self._sim_primary_inj_alt_shc._vector = value
+            self._primary_inj_alt_shc._vector = value
         else:
             raise ValueError(
-                f"Incorrect type for sim_primary_inj_alt_shc {type(value)}. Either a list, an array or a ROOT.vector of floats required."
+                f"Incorrect type for primary_inj_alt_shc {type(value)}. Either a list, an array or a ROOT.vector of floats required."
             )
 
 
 
     @property
-    def sim_primary_inj_dir_shc(self):
+    def primary_inj_dir_shc(self):
         """primary injection direction in Shower Coordinates"""
-        return np.array(self._sim_primary_inj_dir_shc)
+        return np.array(self._primary_inj_dir_shc)
 
-    @sim_primary_inj_dir_shc.setter
-    def sim_primary_inj_dir_shc(self, value):
-        set_vector_of_vectors(value, "vector<float>", self._sim_primary_inj_dir_shc, "sim_primary_inj_dir_shc")
+    @primary_inj_dir_shc.setter
+    def primary_inj_dir_shc(self, value):
+        set_vector_of_vectors(value, "vector<float>", self._primary_inj_dir_shc, "primary_inj_dir_shc")
 
 
 
@@ -1127,25 +1127,25 @@ class RawShowerTree(MotherEventTree):
 
 
     @property
-    def sim_xmax_grams(self):
+    def xmax_grams(self):
         """Shower Xmax depth (g/cm2 along the shower axis)"""
-        return self._sim_xmax_grams[0]
+        return self._xmax_grams[0]
 
-    @sim_xmax_grams.setter
-    def sim_xmax_grams(self, value):
-        self._sim_xmax_grams[0] = value
+    @xmax_grams.setter
+    def xmax_grams(self, value):
+        self._xmax_grams[0] = value
 
 
 
     @property
-    def sim_xmax_pos_shc(self):
+    def xmax_pos_shc(self):
         """Shower Xmax position in shower coordinates"""
-        return np.array(self._sim_xmax_pos_shc)
+        return np.array(self._xmax_pos_shc)
 
-    @sim_xmax_pos_shc.setter
-    def sim_xmax_pos_shc(self, value):
-        self._sim_xmax_pos_shc = np.array(value).astype(np.float64)
-        self._tree.SetBranchAddress("sim_xmax_pos_shc", self._sim_xmax_pos_shc)
+    @xmax_pos_shc.setter
+    def xmax_pos_shc(self, value):
+        self._xmax_pos_shc = np.array(value).astype(np.float64)
+        self._tree.SetBranchAddress("xmax_pos_shc", self._xmax_pos_shc)
 
 
 

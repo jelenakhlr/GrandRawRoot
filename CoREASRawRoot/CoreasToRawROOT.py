@@ -127,8 +127,8 @@ def CoreasToRawRoot(path):
   GPSNanoSecs = read_params(reas_input, "GPSNanoSecs")
   FieldDeclination = read_params(reas_input, "RotationAngleForMagfieldDeclination") # in degrees
 
-  sim_zenith = read_params(reas_input, "ShowerZenithAngle")
-  sim_azimuth = read_params(reas_input, "ShowerAzimuthAngle")
+  zenith = read_params(reas_input, "ShowerZenithAngle")
+  azimuth = read_params(reas_input, "ShowerAzimuthAngle")
 
   Energy = read_params(reas_input, "PrimaryParticleEnergy") # in eV
   Primary = read_params(reas_input, "PrimaryParticleType") # as defined in CORSIKA -> TODO: change to PDG system
@@ -281,16 +281,16 @@ def CoreasToRawRoot(path):
   # right now I get this error "ValueError: setting an array element with a sequence." if I try to pass just "RandomSeed"
 
   RawShower.energy_in_neutrinos = EnergyInNeutrinos
-  RawShower.sim_energy_primary = [Energy]
-  RawShower.sim_azimuth = sim_azimuth
-  RawShower.sim_zenith = sim_zenith
-  RawShower.sim_primary_type = [str(Primary)]
-  RawShower.sim_primary_inj_alt_shc = [InjectionAltitude]
+  RawShower.energy_primary = [Energy]
+  RawShower.azimuth = azimuth
+  RawShower.zenith = zenith
+  RawShower.primary_type = [str(Primary)]
+  RawShower.primary_inj_alt_shc = [InjectionAltitude]
   RawShower.atmos_model = str(AtmosphericModel)
 
   RawShower.magnetic_field = np.array([FieldInclination,FieldDeclination,FieldIntensity])
-  # RawShower.sim_xmax_grams = SlantXmax
-  # RawShower.sim_xmax_pos_shc = XmaxPosition
+  # RawShower.xmax_grams = SlantXmax
+  # RawShower.xmax_pos_shc = XmaxPosition
   # RawShower.xmax_distance = XmaxDistance
   # RawShower.xmax_alt = XmaxAltitude
   RawShower.hadronic_model = HadronicModel
