@@ -22,6 +22,9 @@ def read_params(input_file, param):
         if find_input_vals(line):
           val = find_input_vals(line).group()
           print(param, "=", val)
+          break 
+          # this is a problem for AutomaticTimeBoundaries, because it also shows up in other comments
+          # therefore, just break after the first one is found. this can definitely be improved
   return float(val)
 
 

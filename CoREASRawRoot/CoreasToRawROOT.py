@@ -141,9 +141,9 @@ def CoreasToRawRoot(path):
 
   # from inp file
   nshow = read_params(inp_input, "NSHOW") # number of showers - should be 1 for coreas, so maybe we dont need this parameter at all
-  ectmap = read_params(inp_input, "ECTMAP")
-  maxprt = read_params(inp_input, "MAXPRT")
-  radnkg = read_params(inp_input, "RADNKG")
+  ectmap = str(read_params(inp_input, "ECTMAP"))
+  maxprt = str(read_params(inp_input, "MAXPRT"))
+  radnkg = str(read_params(inp_input, "RADNKG"))
   print("*****************************************")
 
   # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -162,6 +162,9 @@ def CoreasToRawRoot(path):
   MesonEnergyCut    = HadronEnergyCut # mesons are hadronic, so this should be fine
 
   parallel = [1,2] # COREAS-only
+  ECTCUT = parallel[0]
+  ECTMAX = parallel[1]
+
   # PARALLEL = [ECTCUT, ECTMAX, MPIID, FECTOUT]
   # ECTCUT: limit for subshowers GeV
   # ECTMAX: maximum energy for complete shower GeV
@@ -176,14 +179,6 @@ def CoreasToRawRoot(path):
   # THIN = [limit, weight, Rmax]
   ThinH = [1,2] 
   # THINH = [limit, weight] for hadrons
-
-  # TODO: read keywords with T or F flags as string
-  mumult = "T"
-  muaddi = "T"
-  parout = ["T", "F"]
-  longi  = ["T", "5", "T", "T"]
-  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
   ##########################################
   # get all info from the long file
@@ -323,34 +318,34 @@ def CoreasToRawRoot(path):
   
   """
 
-  RawShower.long_pd_gamma = [pd_gammas]
-  RawShower.long_pd_eminus = [pd_electrons]
-  RawShower.long_pd_eplus = [pd_positrons]
-  RawShower.long_pd_muminus = [pd_muN]
-  RawShower.long_pd_muplus = [pd_muP]
-  RawShower.long_pd_allch = [pd_charged]
-  RawShower.long_pd_nuclei = [pd_nuclei]
-  RawShower.long_pd_hadr = [pd_hadrons]
+  RawShower.long_pd_gamma = pd_gammas
+  RawShower.long_pd_eminus = pd_electrons
+  RawShower.long_pd_eplus = pd_positrons
+  RawShower.long_pd_muminus = pd_muN
+  RawShower.long_pd_muplus = pd_muP
+  RawShower.long_pd_allch = pd_charged
+  RawShower.long_pd_nuclei = pd_nuclei
+  RawShower.long_pd_hadr = pd_hadrons
 
-  RawShower.long_ed_neutrino = [ed_neutrino]
-  RawShower.long_ed_e_cut = [ed_em_cut]
-  RawShower.long_ed_mu_cut = [ed_mu_cut]
-  RawShower.long_ed_hadr_cut = [ed_hadron_cut]
+  RawShower.long_ed_neutrino = ed_neutrino
+  RawShower.long_ed_e_cut = ed_em_cut
+  RawShower.long_ed_mu_cut = ed_mu_cut
+  RawShower.long_ed_hadr_cut = ed_hadron_cut
   
   # gamma cut - I believe this was the same value as for another particle
   # for now: use hadron cut as placeholder
   # TODO ASAP: check this
-  RawShower.long_ed_gamma_cut = [ed_hadron_cut]
+  RawShower.long_ed_gamma_cut = ed_hadron_cut
   
-  RawShower.long_ed_gamma_ioniz = [ed_gamma]
-  RawShower.long_ed_e_ioniz = [ed_em_ioniz]
-  RawShower.long_ed_mu_ioniz = [ed_mu_ioniz]
-  RawShower.long_ed_hadr_ioniz = [ed_hadron_ioniz]
+  RawShower.long_ed_gamma_ioniz = ed_gamma
+  RawShower.long_ed_e_ioniz = ed_em_ioniz
+  RawShower.long_ed_mu_ioniz = ed_mu_ioniz
+  RawShower.long_ed_hadr_ioniz = ed_hadron_ioniz
   
   # The next values are "leftover" from the comparison with ZhaireS.
   # They should go in TShowerSim along with the values above.
-  RawShower.long_ed_depth = [ed_depth]
-  RawShower.long_pd_depth = [pd_depth]
+  RawShower.long_ed_depth = ed_depth
+  RawShower.long_pd_depth = pd_depth
   
   RawShower.first_interaction = first_interaction
 
@@ -410,6 +405,9 @@ def CoreasToRawRoot(path):
   RawEfield.du_count = len(tracefiles)
 
   # loop through polarizations and positions for each antenna
+  print("******")
+  print("Antenna positions (x,y,z)")
+    
   for antenna in ant_IDs:
     tracefile = glob.glob(path + "SIM??????_coreas/raw_" + str(antenna) + ".dat")[0]
 
@@ -435,12 +433,15 @@ def CoreasToRawRoot(path):
 
     # Antenna positions in showers's referential in [m]
     ant_position = get_antenna_position(pathAntennaList, antenna)
+    
+    print("for antenna number:", antenna)
     print(ant_position)
+    
     RawEfield.du_x.append(ant_position[0].astype(np.float32))
     RawEfield.du_y.append(ant_position[1].astype(np.float32))
     RawEfield.du_z.append(ant_position[2].astype(np.float32))
-
-
+  
+  print("******")
   RawEfield.fill()
   RawEfield.write()
   #############################################################
@@ -463,25 +464,8 @@ def CoreasToRawRoot(path):
   SimCoreasShower.maxprt = maxprt
   SimCoreasShower.radnkg = radnkg
 
-  SimCoreasShower.parallel = parallel # = [ECTCUT, ECTMAX]
-
-  # these values are just placeholders for now - not sure if we will actually need them
-  SimCoreasShower.mumult = mumult
-  SimCoreasShower.muaddi = muaddi
-  SimCoreasShower.parout = parout
-  SimCoreasShower.longi  = longi
-
-  # TODO: decide on this 
-  """"
-  I would like these to be in RawEfield and then later in TShowerSim
-
-  Especially important: pd_depth is different from ed_depth!
-  
-  Both need to be stored, but all of the info on particle distribution 
-  and energy deposit should be together
-  """
-  
-
+  SimCoreasShower.parallel_ectcut = ECTCUT # = [ECTCUT, ECTMAX]
+  SimCoreasShower.parallel_ectmax = ECTMAX
 
   SimCoreasShower.fill()
   SimCoreasShower.write()

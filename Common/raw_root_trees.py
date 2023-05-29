@@ -1890,275 +1890,171 @@ class RawCoreasTree(MotherEventTree):
 
     _tree_name: str = "teventshowercoreas"
 
-    _AutomaticTimeBoundaries: StdString = StdString("")
-    _ResolutionReductionScale: StdString = StdString("")
-    _GroundLevelRefractiveIndex: StdString = StdString("")
-    _GPSSecs: StdString = StdString("")
-    _GPSNanosecs: StdString = StdString("")
-    _DepthOfShowerMaximum: StdString = StdString("")
-    _DistanceOfShowerMaximum: StdString = StdString("")
-    _GeomagneticAngle: StdString = StdString("")
-    _nshow: StdString = StdString("")
-    _ectmap: StdString = StdString("")
-    _maxprt: StdString = StdString("")
-    _radnkg: StdString = StdString("")
-    _parallel: StdString = StdString("")
-    _mumult: StdString = StdString("")
-    _muaddi: StdString = StdString("")
-    _parout: StdString = StdString("")
-    _longi: StdString = StdString("")
+    _AutomaticTimeBoundaries: StdVectorList = field(default_factory=lambda: np.zeros(1, np.float32))
+    _ResolutionReductionScale: StdVectorList = field(default_factory=lambda: np.zeros(1, np.float32))
+    _GroundLevelRefractiveIndex: StdVectorList = field(default_factory=lambda: np.zeros(1, np.float32))
+    _GPSSecs: StdVectorList = field(default_factory=lambda: np.zeros(1, np.float32))
+    _GPSNanoSecs: StdVectorList = field(default_factory=lambda: np.zeros(1, np.float32))
+    _DepthOfShowerMaximum: StdVectorList = field(default_factory=lambda: np.zeros(1, np.float32))
+    _DistanceOfShowerMaximum: StdVectorList = field(default_factory=lambda: np.zeros(1, np.float32))
+    _GeomagneticAngle: StdVectorList = field(default_factory=lambda: np.zeros(1, np.float32))
+    _nshow: StdVectorList = field(default_factory=lambda: np.zeros(1, np.float32))
+    _ectmap: StdString = field(default_factory=lambda: np.zeros(1, np.float32))
+    _maxprt: StdString = field(default_factory=lambda: np.zeros(1, np.float32))
+    _radnkg: StdString = field(default_factory=lambda: np.zeros(1, np.float32))
+    _parallel_ectcut: StdString = field(default_factory=lambda: np.zeros(1, np.float32))
+    _parallel_ectmax: StdString = field(default_factory=lambda: np.zeros(1, np.float32))
+
+
 
     @property
     def AutomaticTimeBoundaries(self):
         """Automatic time boundaries"""
-        return str(self._AutomaticTimeBoundaries)
+        return self._AutomaticTimeBoundaries
     
     @AutomaticTimeBoundaries.setter
     def AutomaticTimeBoundaries(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for AutomaticTimeBoundaries {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._AutomaticTimeBoundaries.string.assign(value)
+        self._AutomaticTimeBoundaries[0] = value 
     
+
+
     @property
     def ResolutionReductionScale(self):
         """Resolution reduction scale"""
-        return str(self._ResolutionReductionScale)
+        return self._ResolutionReductionScale
     
     @ResolutionReductionScale.setter
     def ResolutionReductionScale(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for ResolutionReductionScale {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._ResolutionReductionScale[0] = value 
 
-        self._ResolutionReductionScale.string.assign(value)
+
 
     @property
     def GroundLevelRefractiveIndex(self):
         """Ground level refractive index"""
-        return str(self._GroundLevelRefractiveIndex)
+        return self._GroundLevelRefractiveIndex
     
     @GroundLevelRefractiveIndex.setter
     def GroundLevelRefractiveIndex(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for GroundLevelRefractiveIndex {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._GroundLevelRefractiveIndex[0] = value 
 
-        self._GroundLevelRefractiveIndex.string.assign(value)
+
 
     @property
     def GPSSecs(self):
         """GPS seconds"""
-        return str(self._GPSSecs)
+        return self._GPSSecs
     
     @GPSSecs.setter
     def GPSSecs(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for GPSSecs {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._GPSSecs[0] = value  
 
-        self._GPSSecs.string.assign(value)
+
 
     @property
-    def GPSNanosecs(self):
+    def GPSNanoSecs(self):
         """GPS nanoseconds"""
-        return str(self._GPSNanosecs)
+        return self._GPSNanoSecs
     
-    @GPSNanosecs.setter
-    def GPSNanosecs(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for GPSNanosecs {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+    @GPSNanoSecs.setter
+    def GPSNanoSecs(self, value):
+        self._GPSNanoSecs[0] = value  
+        
 
-        self._GPSNanosecs.string.assign(value)
 
     @property
     def DepthOfShowerMaximum(self):
         """Depth of shower maximum"""
-        return str(self._DepthOfShowerMaximum)
+        return self._DepthOfShowerMaximum
     
     @DepthOfShowerMaximum.setter
     def DepthOfShowerMaximum(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for DepthOfShowerMaximum {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._DepthOfShowerMaximum[0] = value  
+        
 
-        self._DepthOfShowerMaximum.string.assign(value)
 
     @property
     def DistanceOfShowerMaximum(self):
         """Distance of shower maximum"""
-        return str(self._DistanceOfShowerMaximum)
+        return self._DistanceOfShowerMaximum
     
     @DistanceOfShowerMaximum.setter
     def DistanceOfShowerMaximum(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for DistanceOfShowerMaximum {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._DistanceOfShowerMaximum[0] = value 
 
-        self._DistanceOfShowerMaximum.string.assign(value)
+
 
     @property
     def GeomagneticAngle(self):
         """Geomagnetic angle"""
-        return str(self._GeomagneticAngle)
+        return self._GeomagneticAngle
     
     @GeomagneticAngle.setter
     def GeomagneticAngle(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for GeomagneticAngle {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._GeomagneticAngle[0] = value  
 
-        self._GeomagneticAngle.string.assign(value)
+
 
     @property
     def nshow(self):
         """nshow"""
-        return str(self._nshow)
+        return self._nshow
     
     @nshow.setter
     def nshow(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for nshow {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._nshow[0] = value 
 
-        self._nshow.string.assign(value)
+
 
     @property
     def ectmap(self):
         """ectmap"""
-        return str(self._ectmap)
+        return self._ectmap
     
     @ectmap.setter
     def ectmap(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for ectmap {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._ectmap[0] = value 
 
-        self._ectmap.string.assign(value)
+
 
     @property
     def maxprt(self):
         """maxprt"""
-        return str(self._maxprt)
+        return self._maxprt
     
     @maxprt.setter
     def maxprt(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for maxprt {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._maxprt[0] = value 
 
-        self._maxprt.string.assign(value)
+
 
     @property
     def radnkg(self):
         """radnkg"""
-        return str(self._radnkg)
+        return self._radnkg
     
     @radnkg.setter
     def radnkg(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for radnkg {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+        self._radnkg[0] = value 
+    
 
-        self._radnkg.string.assign(value)
 
     @property
-    def parallel(self):
-        """parallel"""
-        return str(self._parallel)
+    def parallel_ectcut(self):
+        """first value of PARALLEL option in Coreas input"""
+        return self._parallel_ectcut
     
-    @parallel.setter
-    def parallel(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for parallel {type(value)}. Either a string or a ROOT.std.string is required."
-            )
+    @parallel_ectcut.setter
+    def parallel_ectcut(self, value):
+        self._parallel_ectcut[0] = value
 
-        self._parallel.string.assign(value)
+    
 
     @property
-    def mumult(self):
-        """mumult"""
-        return str(self._mumult)
+    def parallel_ectmax(self):
+        """first value of PARALLEL option in Coreas input"""
+        return self._parallel_ectmax
     
-    @mumult.setter
-    def mumult(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for mumult {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._mumult.string.assign(value)
-
-    @property
-    def muaddi(self):
-        """muaddi"""
-        return str(self._muaddi)
-    
-    @muaddi.setter
-    def muaddi(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for muaddi {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._muaddi.string.assign(value)
-
-    @property
-    def parout(self):
-        """parout"""
-        return str(self._parout)
-    
-    @parout.setter
-    def parout(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for parout {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._parout.string.assign(value)
-
-    @property
-    def longi(self):
-        """longi"""
-        return str(self._longi)
-    
-    @longi.setter
-    def longi(self, value):
-        # Not a string was given
-        if not (isinstance(value, str) or isinstance(value, ROOT.std.string)):
-            raise ValueError(
-                f"Incorrect type for longi {type(value)}. Either a string or a ROOT.std.string is required."
-            )
-
-        self._longi.string.assign(value)
+    @parallel_ectmax.setter
+    def parallel_ectmax(self, value):
+        self._parallel_ectmax[0] = value
