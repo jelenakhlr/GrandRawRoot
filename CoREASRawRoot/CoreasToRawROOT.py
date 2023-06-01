@@ -130,17 +130,17 @@ def CoreasToRawRoot(path):
   zenith = read_params(reas_input, "ShowerZenithAngle")
   azimuth = read_params(reas_input, "ShowerAzimuthAngle")
 
-  Energy = read_params(reas_input, "PrimaryParticleEnergy") # in eV
+  Energy = read_params(reas_input, "PrimaryParticleEnergy") # in GeV
   Primary = read_params(reas_input, "PrimaryParticleType") # as defined in CORSIKA -> TODO: change to PDG system
   DepthOfShowerMaximum = read_params(reas_input, "DepthOfShowerMaximum") # slant depth in g/cm^2
-  DistanceOfShowerMaximum = read_params(reas_input, "DistanceOfShowerMaximum") # geometrical distance of shower maximum from core in cm
-  FieldIntensity = read_params(reas_input, "MagneticFieldStrength") # in Gauss
+  DistanceOfShowerMaximum = read_params(reas_input, "DistanceOfShowerMaximum") * 100 # geometrical distance of shower maximum from core in m
+  FieldIntensity = read_params(reas_input, "MagneticFieldStrength") # in Gauss -> TODO: change to mT
   FieldInclination = read_params(reas_input, "MagneticFieldInclinationAngle") # in degrees, >0: in northern hemisphere, <0: in southern hemisphere
   GeomagneticAngle = read_params(reas_input, "GeomagneticAngle") # in degrees
 
 
   # from inp file
-  nshow = read_params(inp_input, "NSHOW") # number of showers - should be 1 for coreas, so maybe we dont need this parameter at all
+  nshow = read_params(inp_input, "NSHOW") # number of showers - should always be 1 for coreas, so maybe we dont need this parameter at all
   ectmap = str(read_params(inp_input, "ECTMAP"))
   maxprt = str(read_params(inp_input, "MAXPRT"))
   radnkg = str(read_params(inp_input, "RADNKG"))
@@ -149,19 +149,21 @@ def CoreasToRawRoot(path):
   # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   # fix these values! for now: placeholders
   # TODO: read and store all seeds as a list
-
+  print("[WARNING] RandomSeed is hardcoded")
   RandomSeed = [1,2,3,4,5,6]
   
   ecuts = [1,2,3,4] 
+  print("[WARNING] ecuts is hardcoded")
   # 0: hadrons & nuclei, 1: muons, 2: e-, 3: photons
   GammaEnergyCut    = ecuts[3]
   ElectronEnergyCut = ecuts[2]
-  MuonEnergyCut     = ecuts[1] # TODO: check if this exists in Zhaires
+  MuonEnergyCut     = ecuts[1]
   HadronEnergyCut   = ecuts[0]
   NucleonEnergyCut  = ecuts[0]
   MesonEnergyCut    = HadronEnergyCut # mesons are hadronic, so this should be fine
 
   parallel = [1,2] # COREAS-only
+  print("[WARNING] parallel is hardcoded")
   ECTCUT = parallel[0]
   ECTMAX = parallel[1]
 
@@ -176,8 +178,10 @@ def CoreasToRawRoot(path):
   # In Zhaires converter: RelativeThinning, WeightFactor
   # I have:
   Thin  = [1,2,3] 
+  print("[WARNING] THIN is hardcoded")
   # THIN = [limit, weight, Rmax]
   ThinH = [1,2] 
+  print("[WARNING] THINH is hardcoded")
   # THINH = [limit, weight] for hadrons
 
   ##########################################
@@ -228,6 +232,7 @@ def CoreasToRawRoot(path):
 
   AtmosphericModel = read_atmos(inp_input)
   Date = "2017-04-01" # from ATM file. TODO: unhardcode this
+  print("[WARNING] date is hardcoded")
   t1 = time.strptime(Date.strip(),"%Y-%m-%d")
   UnixDate = int(time.mktime(t1))
 
@@ -242,12 +247,14 @@ def CoreasToRawRoot(path):
   # TODO: add function for reading logs
   # TODO: add CPU time
   CPUTime = 1.
+  print("[WARNING] CPUTime is hardcoded")
   # TODO: find injection altitude in TPlotter.h/cpp
   InjectionAltitude = 100.
+  print("[WARNING] InjectionAltitude is hardcoded")
 
-  ArrayName = "GP13" # TODO: unhardcode this
+  ArrayName = "GP13" # TODO: unhardcode this - do we even use this?
+  # print("[WARNING] ArrayName is hardcoded")
 
-  # TODO: find xmax
   # SlantXmax
   # XmaxPosition
   # XmaxDistance
