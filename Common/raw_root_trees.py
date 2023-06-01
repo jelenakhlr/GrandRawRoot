@@ -62,7 +62,7 @@ class RawShowerTree(MotherEventTree):
     _energy_in_neutrinos: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary energy (GeV) 
-    _energy_primary: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    energy_primary: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     
     ### Shower azimuth (deg, CR convention)
     _azimuth: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
@@ -71,16 +71,16 @@ class RawShowerTree(MotherEventTree):
     _zenith: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
     
     ### Primary particle type (PDG)
-    _primary_type: StdVectorList = field(default_factory=lambda: StdVectorList("string"))
+    primary_type: StdVectorListDesc = field(default=StdVectorListDesc("string"))
 
     # Primary injection point [m] in Shower coordinates
-    _primary_inj_point_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    primary_inj_point_shc: StdVectorListDesc = field(default=StdVectorListDesc("vector<float>"))
 
     ### Primary injection altitude [m] in Shower Coordinates
-    _primary_inj_alt_shc: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    primary_inj_alt_shc: StdVectorListDesc = field(default=StdVectorListDesc("float"))
 
     # primary injection direction in Shower Coordinates
-    _primary_inj_dir_shc: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    primary_inj_dir_shc: StdVectorListDesc = field(default=StdVectorListDesc("vector<float>"))
 
     ### Atmospheric model name TODO:standardize
     _atmos_model: StdString = StdString("")
@@ -89,9 +89,9 @@ class RawShowerTree(MotherEventTree):
     _atmos_model_param: np.ndarray = field(default_factory=lambda: np.zeros(3, np.float32))
     
     # Table of air density [g/cm3] and vertical depth [g/cm2] versus altitude [m]
-    _atmos_altitude: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    _atmos_density: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
-    _atmos_depth: StdVectorList = field(default_factory=lambda: StdVectorList("vector<float>"))
+    atmos_altitude: StdVectorListDesc = field(default=StdVectorListDesc("vector<float>"))
+    atmos_density: StdVectorListDesc = field(default=StdVectorListDesc("vector<float>"))
+    atmos_depth: StdVectorListDesc = field(default=StdVectorListDesc("vector<float>"))
 
         
     ### Magnetic field parameters: Inclination, Declination, Fmodulus.: In shower coordinates. Declination
@@ -173,51 +173,51 @@ class RawShowerTree(MotherEventTree):
     ### Longitudinal Pofiles (those compatible between Coreas/ZHAires)
     
     ## Longitudinal Profile of vertical depth (g/cm2)
-    _long_depth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    long_depth: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of slant depth (g/cm2)
-    _long_slantdepth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    #long_slantdepth: StdVectorListDesc = field(default=StdVectorListDesc("float"))
+    long_pd_depth: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of Number of Gammas      
-    _long_pd_gammas: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    long_pd_gammas: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of Number of e+
-    _long_pd_eplus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    long_pd_eplus: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of Number of e-
-    _long_pd_eminus: StdVectorList = field(default_factory=lambda: StdVectorList("float")) 
+    long_pd_eminus: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of Number of mu+
-    _long_pd_muplus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    long_pd_muplus: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of Number of mu-
-    _long_pd_muminus: StdVectorList = field(default_factory=lambda: StdVectorList("float"))      
+    long_pd_muminus: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of Number of All charged particles
-    _long_pd_allch: StdVectorList = field(default_factory=lambda: StdVectorList("float"))   
+    long_pd_allch: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of Number of Nuclei
-    _long_pd_nuclei: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    long_pd_nuclei: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of Number of Hadrons
-    _long_pd_hadr:StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    long_pd_hadr: StdVectorListDesc = field(default=StdVectorListDesc("float"))
 
     ## Longitudinal Profile of Energy of created neutrinos (GeV)
-    _long_ed_neutrino: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
+    long_ed_neutrino: StdVectorListDesc = field(default=StdVectorListDesc("float"))
 
 
     ## Longitudinal Profile of low energy gammas (GeV)
-    _long_ed_gamma_cut: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
+    long_ed_gamma_cut: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of low energy e+/e- (GeV)
-    _long_ed_e_cut: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
+    long_ed_e_cut: StdVectorListDesc = field(default=StdVectorListDesc("float"))           
     ## Longitudinal Profile of low energy mu+/mu- (GeV)
-    _long_ed_mu_cut: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
+    long_ed_mu_cut: StdVectorListDesc = field(default=StdVectorListDesc("float"))           
     ## Longitudinal Profile of low energy hadrons (GeV)
-    _long_ed_hadr_cut: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    long_ed_hadr_cut: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     
     ## Longitudinal Profile of energy deposit by gammas (GeV)
-    _long_ed_gamma_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("float"))                          
+    long_ed_gamma_ioniz: StdVectorListDesc = field(default=StdVectorListDesc("float"))                          
     ## Longitudinal Profile of energy deposit by e+/e-  (GeV)
-    _long_ed_e_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
+    long_ed_e_ioniz: StdVectorListDesc = field(default=StdVectorListDesc("float"))           
     ## Longitudinal Profile of energy deposit by muons  (GeV)
-    _long_ed_mu_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("float"))           
+    long_ed_mu_ioniz: StdVectorListDesc = field(default=StdVectorListDesc("float"))           
     ## Longitudinal Profile of energy deposit by hadrons (GeV)
-    _long_ed_hadr_ioniz: StdVectorList = field(default_factory=lambda: StdVectorList("float"))     
+    long_ed_hadr_ioniz: StdVectorListDesc = field(default=StdVectorListDesc("float"))     
  
     # extra values
-    _long_ed_depth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
-    _long_pd_depth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
+    long_ed_depth: StdVectorListDesc = field(default=StdVectorListDesc("float"))
 
     _first_interaction: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
 
@@ -232,501 +232,6 @@ class RawShowerTree(MotherEventTree):
             raise ValueError(f"Incorrect type for site {type(value)}. Either a string or a ROOT.std.string is required.")
     
         self._sim_name.string.assign(value)
-
-
-
-    @property
-    def long_depth(self):
-        """Longitudinal profile depth (g/cm2)"""
-        return self._long_depth
-
-    @long_depth.setter
-    def long_depth(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_depth.clear()
-            self._long_depth += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_depth._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_depth {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )            
-        
-
-    @property
-    def long_slantdepth(self):
-        """Longitudinal profile of slant depth (g/cm2)"""
-        return self._long_slantdepth
-
-    @long_slantdepth.setter
-    def long_slantdepth(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_slantdepth.clear()
-            self._long_slantdepth += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_slantdepth._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_slantdepth {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )
- 
-
-
-    @property
-    def long_pd_gamma(self):
-        """Longitudinal profile of gammas"""
-        return self._long_pd_gammas
-
-    @long_pd_gamma.setter
-    def long_pd_gamma(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_pd_gammas.clear()
-            self._long_pd_gammas += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_pd_gammas._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_pd_gammas {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )    
-
-
-
-    @property
-    def long_pd_eplus(self):
-        """Longitudinal profile of positrons"""
-        return self._long_pd_eplus
-
-    @long_pd_eplus.setter
-    def long_pd_eplus(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_pd_eplus.clear()
-            self._long_pd_eplus += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_pd_eplus._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_pd_eplus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )    
-
-
-
-    @property
-    def long_pd_eminus(self):
-        """Longitudinal profile of electrons"""
-        return self._long_pd_eminus
-
-    @long_pd_eminus.setter
-    def long_pd_eminus(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_pd_eminus.clear()
-            self._long_pd_eminus += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_pd_eminus._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_pd_eminus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )    
-
-
-
-    @property
-    def long_pd_muplus(self):
-        """Longitudinal profile of positrons"""
-        return self._long_pd_muplus
-
-    @long_pd_muplus.setter
-    def long_pd_muplus(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_pd_muplus.clear()
-            self._long_pd_muplus += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_pd_muplus._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_pd_muplus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )    
-
-
-
-    @property
-    def long_pd_muminus(self):
-        """Longitudinal profile of electrons"""
-        return self._long_pd_muminus
-
-    @long_pd_muminus.setter
-    def long_pd_muminus(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_pd_muminus.clear()
-            self._long_pd_muminus += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_pd_muminus._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_pd_muminus {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )  
-
-
-
-    @property
-    def long_pd_allch(self):
-        """Longitudinal profile of all charged particles"""
-        return self._long_pd_allch
-
-    @long_pd_allch.setter
-    def long_pd_allch(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_pd_allch.clear()
-            self._long_pd_allch += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_pd_allch._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_pd_allch {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )  
-
-
-
-    @property
-    def long_pd_nuclei(self):
-        """Longitudinal profile of nuclei"""
-        return self._long_pd_nuclei
-        
-    @long_pd_nuclei.setter
-    def long_pd_nuclei(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_pd_nuclei.clear()
-            self._long_pd_nuclei += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_pd_nuclei._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_pd_nuclei {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )  
-
-
-
-    @property
-    def long_pd_hadr(self):
-        """Longitudinal profile of hadrons"""
-        return self._long_pd_hadr
-        
-    @long_pd_hadr.setter
-    def long_pd_hadr(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_pd_hadr.clear()
-            self._long_pd_hadr += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_pd_hadr._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_pd_hadr {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )  
-
-
-
-    @property
-    def long_ed_neutrino(self):
-        """Longitudinal profile of created neutrinos"""
-        return self._long_ed_neutrino
-        
-    @long_ed_neutrino.setter
-    def long_ed_neutrino(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_neutrino.clear()
-            self._long_ed_neutrino += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_neutrino._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_neutrino {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )  
-
-
-
-    @property
-    def long_ed_gamma_cut(self):
-        """Longitudinal profile of low energy gammas"""
-        return self._long_ed_gamma_cut
-
-    @long_ed_gamma_cut.setter
-    def long_ed_gamma_cut(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_gamma_cut.clear()
-            self._long_ed_gamma_cut += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_gamma_cut._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_gamma_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )
-
-
-
-    @property
-    def long_ed_gamma_ioniz(self):
-        """Longitudinal profile of gamma energy deposit"""
-        return self._long_ed_gamma_ioniz
-
-    @long_ed_gamma_ioniz.setter
-    def long_ed_gamma_ioniz(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_gamma_ioniz.clear()
-            self._long_ed_gamma_ioniz += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_gamma_ioniz._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_gamma_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )    
-            
-
-
-    @property
-    def long_ed_e_cut(self):
-        """Longitudinal profile of low energy e+/e-"""
-        return self._long_ed_e_cut
-
-    @long_ed_e_cut.setter
-    def long_ed_e_cut(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_e_cut.clear()
-            self._long_ed_e_cut += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_e_cut._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_e_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )
-
-
-
-    @property
-    def long_ed_e_ioniz(self):
-        """Longitudinal profile of energy deposit by e+/e-"""
-        return self._long_ed_e_ioniz
-
-    @long_ed_e_ioniz.setter
-    def long_ed_e_ioniz(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_e_ioniz.clear()
-            self._long_ed_e_ioniz += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_e_ioniz._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_e_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )  
-
-
-
-    @property
-    def long_ed_mu_cut(self):
-        """Longitudinal profile of low energy muons"""
-        return self._long_ed_mu_cut
-
-    @long_ed_mu_cut.setter
-    def long_ed_mu_cut(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_mu_cut.clear()
-            self._long_ed_mu_cut += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_mu_cut._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_mu_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )
-
-
-
-    @property
-    def long_ed_mu_ioniz(self):
-        """Longitudinal profile of muon energy deposit"""
-        return self._long_ed_mu_ioniz
-
-    @long_ed_mu_ioniz.setter
-    def long_ed_mu_ioniz(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_mu_ioniz.clear()
-            self._long_ed_mu_ioniz += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_mu_ioniz._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_mu_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )
-            
-
-
-    @property
-    def long_ed_hadr_cut(self):
-        """Longitudinal profile of low energy hadrons"""
-        return self._long_ed_hadr_cut
-
-    @long_ed_hadr_cut.setter
-    def long_ed_hadr_cut(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_hadr_cut.clear()
-            self._long_ed_hadr_cut += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_hadr_cut._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_hadr_cut {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )
-
-
-
-    @property
-    def long_ed_hadr_ioniz(self):
-        """Longitudinal profile of hadrons energy deposit"""
-        return self._long_ed_hadr_ioniz
-
-    @long_ed_hadr_ioniz.setter
-    def long_ed_hadr_ioniz(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_hadr_ioniz.clear()
-            self._long_ed_hadr_ioniz += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_hadr_ioniz._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_hadr_ioniz {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )         
-  
-
 
     @property
     def rel_thin(self):
@@ -858,7 +363,7 @@ class RawShowerTree(MotherEventTree):
     @property
     def event_date(self):
         """Event Date"""
-        return str(self._date)
+        return str(self._event_date)
 
     @event_date.setter
     def event_date(self, value):
@@ -893,29 +398,6 @@ class RawShowerTree(MotherEventTree):
         self._energy_in_neutrinos[0] = value
 
 
-
-    @property
-    def energy_primary(self):
-        """Primary energy (GeV) TODO: Check unit conventions. # LWP: Multiple primaries? I guess, variable count. Thus variable size array or a std::vector"""
-        return self._energy_primary
-
-    @energy_primary.setter
-    def energy_primary(self, value):
-        # A list of strings was given
-        if isinstance(value, list):
-            # Clear the vector before setting
-            self._energy_primary.clear()
-            self._energy_primary += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("float")):
-            self._energy_primary._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for energy_primary {type(value)}. Either a list or a ROOT.vector of floats required."
-            )
-
-
-
     @property
     def azimuth(self):
         """Shower azimuth TODO: Discuss coordinates Cosmic ray convention is bad for neutrinos, but neurtino convention is problematic for round earth. Also, geoid vs sphere problem"""
@@ -935,76 +417,6 @@ class RawShowerTree(MotherEventTree):
     @zenith.setter
     def zenith(self, value):
         self._zenith[0] = value
-
-
-
-    @property
-    def primary_type(self):
-        """Primary particle type TODO: standarize (PDG?)"""
-        return self._primary_type
-
-    @primary_type.setter
-    def primary_type(self, value):
-        # A list of strings was given
-        if isinstance(value, list):
-            # Clear the vector before setting
-            self._primary_type.clear()
-            self._primary_type += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("string")):
-            self._primary_type._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for primary_type {type(value)}. Either a list or a ROOT.vector of strings required."
-            )
-
-
-
-    @property
-    def primary_inj_point_shc(self):
-        """Primary injection point in Shower coordinates"""
-        return np.array(self._primary_inj_point_shc)
-
-    @primary_inj_point_shc.setter
-    def primary_inj_point_shc(self, value):
-        set_vector_of_vectors(value, "vector<float>", self._primary_inj_point_shc, "primary_inj_point_shc")
-
-
-
-    @property
-    def primary_inj_alt_shc(self):
-        """Primary injection altitude in Shower Coordinates"""
-        return self._primary_inj_alt_shc
-
-    @primary_inj_alt_shc.setter
-    def primary_inj_alt_shc(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._primary_inj_alt_shc.clear()
-            self._primary_inj_alt_shc += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("float")):
-            self._primary_inj_alt_shc._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for primary_inj_alt_shc {type(value)}. Either a list, an array or a ROOT.vector of floats required."
-            )
-
-
-
-    @property
-    def primary_inj_dir_shc(self):
-        """primary injection direction in Shower Coordinates"""
-        return np.array(self._primary_inj_dir_shc)
-
-    @primary_inj_dir_shc.setter
-    def primary_inj_dir_shc(self, value):
-        set_vector_of_vectors(value, "vector<float>", self._primary_inj_dir_shc, "primary_inj_dir_shc")
 
 
 
@@ -1034,83 +446,6 @@ class RawShowerTree(MotherEventTree):
     def atmos_model_param(self, value):
         self._atmos_model_param = np.array(value).astype(np.float32)
         self._tree.SetBranchAddress("atmos_model_param", self._atmos_model_param)
-
-
-
-    @property
-    def atmos_altitude(self):
-        """height above sea level in meters, for the atmos_density and atmos_depth table"""
-        return self._atmos_altitude
-
-    @atmos_altitude.setter
-    def atmos_altitude(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._atmos_altitude.clear()
-            self._atmos_altitude += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._atmos_altitude._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for atmos_altitude {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )            
-        
-
-
-    @property
-    def atmos_density(self):
-        """Table of air density [g/cm3]"""
-        return self._atmos_density
- 
-    @atmos_density.setter
-    def atmos_density(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._atmos_density.clear()
-            self._atmos_density += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._atmos_density._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for atmos_density {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            ) 
- 
-        
-    @property
-    def atmos_depth(self):
-        """Table of vertical depth [g/cm2]"""
-        return self._atmos_depth
-        
-    @atmos_depth.setter
-    def atmos_depth(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._atmos_depth.clear()
-            self._atmos_depth += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._atmos_depth._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for atmos_depth {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )
 
 
 
@@ -1237,55 +572,6 @@ class RawShowerTree(MotherEventTree):
     @unix_date.setter
     def unix_date(self, val: np.uint32) -> None:
         self._unix_date[0] = val
-
-
-
-    @property
-    def long_ed_depth(self):
-        return self._long_ed_depth
-    
-    @long_ed_depth.setter
-    def long_ed_depth(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_ed_depth.clear()
-            self._long_ed_depth += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_ed_depth._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_ed_depth {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )  
-
-    
-    @property
-    def long_pd_depth(self):
-        return self._long_pd_depth
-    
-    @long_pd_depth.setter
-    def long_pd_depth(self, value):
-        # A list was given
-        if (
-            isinstance(value, list)
-            or isinstance(value, np.ndarray)
-            or isinstance(value, StdVectorList)
-        ):
-            # Clear the vector before setting
-            self._long_pd_depth.clear()
-            self._long_pd_depth += value
-        # A vector of strings was given
-        elif isinstance(value, ROOT.vector("vector<float>")):
-            self._long_pd_depth._vector = value
-        else:
-            raise ValueError(
-                f"Incorrect type for _long_pd_depth {type(value)}. Either a list, an array or a ROOT.vector of vector<float> required."
-            )  
 
 
 
