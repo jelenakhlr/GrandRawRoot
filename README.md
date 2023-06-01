@@ -24,4 +24,5 @@ python3 ZHAireSRawToRawROOT.py ./GP10_192745211400_SD075V standard 0 1  GP10_192
 
 ## rawroot to grandroot - sim2root.py
 Inside Common you can find the final converter, sim2root.py
+
 As input you need to give the ROOT file containing GRANDRaw data TTrees, as created with CoreasToRawROOT or ZHAireSRawToRawROOT.
