@@ -7175,8 +7175,9 @@ class TShowerSim(MotherEventTree):
     ## Time it took for the simulation
     _cpu_time: np.ndarray = field(default_factory=lambda: np.zeros(1, np.float32))
 
+    #banished
+    #_long_depth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     ## Slant depth of the observing levels for longitudinal development tables
-    _long_depth: StdVectorList = field(default_factory=lambda: StdVectorList("float"))
     long_pd_depth: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Number of electrons
     _long_pd_eminus: StdVectorListDesc = field(default=StdVectorListDesc("float"))
@@ -7369,14 +7370,15 @@ class TShowerSim(MotherEventTree):
         self._cpu_time = np.array(value).astype(np.float32)
         self._tree.SetBranchAddress("cpu_time", self._cpu_time)
 
-    @property
-    def long_depth(self):
-        """Slant depth of the observing levels for longitudinal development tables"""
-        return np.array(self._long_depth)
+    #banished
+    #@property
+    #def long_depth(self):
+    #    """Slant depth of the observing levels for longitudinal development tables"""
+    #    return np.array(self._long_depth)
 
-    @long_depth.setter
-    def long_depth(self, value):
-        set_vector_of_vectors(value, "float", self._long_depth, "long_depth")
+    #@long_depth.setter
+    #def long_depth(self, value):
+    #    set_vector_of_vectors(value, "float", self._long_depth, "long_depth")
 
     @property
     def long_eminus(self):

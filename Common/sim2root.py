@@ -260,8 +260,8 @@ def rawshower2grandroot(trawshower, gt):
 
     ### Longitudinal Pofiles (those compatible between Coreas/ZHAires)
 
-    ## Longitudinal Profile of vertical depth (g/cm2)
-    gt.tshowersim.long_depth = trawshower.long_depth
+    ## Longitudinal Profile of vertical depth (g/cm2) #we remove these becouse is not easily available in CORSIKA 
+    #gt.tshowersim.long_depth = trawshower.long_depth
     ## Longitudinal Profile of slant depth (g/cm2)
     #gt.tshowersim.long_pd_depth = trawshower.long_slantdepth
     gt.tshowersim.long_pd_depth = trawshower.long_pd_depth

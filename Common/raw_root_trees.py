@@ -172,10 +172,10 @@ class RawShowerTree(MotherEventTree):
  
     ### Longitudinal Pofiles (those compatible between Coreas/ZHAires)
     
-    ## Longitudinal Profile of vertical depth (g/cm2)
-    long_depth: StdVectorListDesc = field(default=StdVectorListDesc("float"))
+    ## Longitudinal Profile of vertical depth (g/cm2) (we remove this becouse corsika seems to output always in slant
+    #long_depth: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of slant depth (g/cm2)
-    #long_slantdepth: StdVectorListDesc = field(default=StdVectorListDesc("float"))
+    #long_slantdepth: StdVectorListDesc = field(default=StdVectorListDesc("float")) (we renamed this to long_pd_dpepth, these coments are to be removed once we agree)
     long_pd_depth: StdVectorListDesc = field(default=StdVectorListDesc("float"))
     ## Longitudinal Profile of Number of Gammas      
     long_pd_gammas: StdVectorListDesc = field(default=StdVectorListDesc("float"))
