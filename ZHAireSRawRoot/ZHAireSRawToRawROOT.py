@@ -4,7 +4,7 @@ import os
 import glob
 import logging
 import numpy as np
-import datetime #to get the unix timestamp
+#import datetime #to get the unix timestamp
 import time #to get the unix timestamp
 
 
@@ -156,6 +156,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         InjectionAltitude=AiresInfo.GetInjectionAltitudeFromSry(sryfile[0]) #Used                         
         Date=AiresInfo.GetDateFromSry(sryfile[0])                           #Used
         t1=time.strptime(Date.strip(),"%d/%b/%Y")
+        Date = time.strftime("%Y-%m-%d",t1) #adapted to iso
         UnixDate = int(time.mktime(t1))                                     #Used
         FieldIntensity,FieldInclination,FieldDeclination=AiresInfo.GetMagneticFieldFromSry(sryfile[0]) #Used
         AtmosphericModel=AiresInfo.GetAtmosphericModelFromSry(sryfile[0])                              #Used
@@ -254,27 +255,27 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
 
         #Fill the tables
         table=AiresInfo.GetLongitudinalTable(InputFolder,1001,Slant=False,Precision="Simple",TaskName=TaskName)               
-        RawShower.long_depth.append(np.array(table.T[0], dtype=np.float32))  
-        RawShower.long_pd_gamma.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_pd_depth=np.array(table.T[0], dtype=np.float32) 
+        RawShower.long_pd_gammas==np.array(table.T[1], dtype=np.float32)
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1005,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_slantdepth.append(np.array(table.T[0], dtype=np.float32))  
-        RawShower.long_pd_eminus.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_slantdepth=np.array(table.T[0], dtype=np.float32)
+        RawShower.long_pd_eminus=np.array(table.T[1], dtype=np.float32)
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1006,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_pd_eplus.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_eplus=np.array(table.T[1], dtype=np.float32)
         
         table=AiresInfo.GetLongitudinalTable(InputFolder,1008,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_pd_muminus.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_muminus=np.array(table.T[1], dtype=np.float32)
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1007,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_pd_muplus.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_muplus=np.array(table.T[1], dtype=np.float32)
         
         table=AiresInfo.GetLongitudinalTable(InputFolder,1291,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_pd_allch.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_allch=np.array(table.T[1], dtype=np.float32)
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,1041,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_pd_nuclei.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_nuclei=np.array(table.T[1], dtype=np.float32)
         
         ##I will add as hadr pi,K,other cherged, other neutral, proton, antiproton, neutron
         #This means tables: 1211,1213,1091,1092,1021,1022,1023,
@@ -285,18 +286,20 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         table+=AiresInfo.GetLongitudinalTable(InputFolder,1021,Slant=True,Precision="Simple",TaskName=TaskName)
         table+=AiresInfo.GetLongitudinalTable(InputFolder,1022,Slant=True,Precision="Simple",TaskName=TaskName)
         table+=AiresInfo.GetLongitudinalTable(InputFolder,1023,Slant=True,Precision="Simple",TaskName=TaskName)
-        RawShower.long_pd_hadr.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_pd_hadr=np.array(table.T[1], dtype=np.float32)
         
         table=AiresInfo.GetLongitudinalTable(InputFolder,6796,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_ed_neutrino.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_ed_depth=np.array(table.T[0], dtype=np.float32) 
+        RawShower.long_ed_neutrino=np.array(table.T[1], dtype=np.float32)
 
         #In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level.
         #In CORSIKA, this is stored at the last bin of the Cut tables so i add it as an extra line to the table.        
         table=AiresInfo.GetLongitudinalTable(InputFolder,7501,Slant=True,Precision="Simple",TaskName=TaskName)
         ground=AiresInfo.GetLongitudinalTable(InputFolder,5001,Slant=True,Precision="Simple",TaskName=TaskName)
         ground[0]=GroundDepth
-        table=np.vstack((table,ground))                            
-        RawShower.long_ed_gamma_cut.append(np.array(table.T[1], dtype=np.float32))        
+        table=np.vstack((table,ground))
+                                    
+        RawShower.long_ed_gamma_cut=np.array(table.T[1], dtype=np.float32)        
 
         #In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level.
         #In CORSIKA, this is stored at the last bin of the Cut tables so i add it as an extra line to the table.  
@@ -304,7 +307,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         ground=AiresInfo.GetLongitudinalTable(InputFolder,5205,Slant=True,Precision="Simple",TaskName=TaskName)
         ground[0]=GroundDepth
         table=np.vstack((table,ground))                                                          
-        RawShower.long_ed_e_cut.append(np.array(table.T[1], dtype=np.float32))
+        RawShower.long_ed_e_cut=np.array(table.T[1], dtype=np.float32)
 
         #In order to compute the calorimetric/invisible energy of the cascade we need the energy arriving at ground level.
         #In CORSIKA, this is stored at the last bin of the Cut tables so i add it as an extra line to the table.          
@@ -312,7 +315,7 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         ground=AiresInfo.GetLongitudinalTable(InputFolder,5207,Slant=True,Precision="Simple",TaskName=TaskName)
         ground[0]=GroundDepth
         table=np.vstack((table,ground))                            
-        RawShower.long_ed_mu_cut.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_ed_mu_cut=np.array(table.T[1], dtype=np.float32) 
                 
         ##I will add as hadr other cherged, other neutral (becouse aires for energy cut has fewer categories)
         #This means tables: 7591 and 7592
@@ -331,22 +334,22 @@ def ZHAiresRawToRawROOT(OutputFileName, RunID, EventID, InputFolder, TaskName="L
         ground+=AiresInfo.GetLongitudinalTable(InputFolder,5213,Slant=True,Precision="Simple",TaskName=TaskName) #kaons
         ground[0]=GroundDepth
         table=np.vstack((table,ground))        
-        RawShower.long_ed_hadr_cut.append(np.array(table.T[1], dtype=np.float32))              
+        RawShower.long_ed_hadr_cut=np.array(table.T[1], dtype=np.float32)              
                          
         table=AiresInfo.GetLongitudinalTable(InputFolder,7801,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_ed_gamma_ioniz.append(np.array(table.T[1], dtype=np.float32))        
+        RawShower.long_ed_gamma_ioniz=np.array(table.T[1], dtype=np.float32)        
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,7905,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_ed_e_ioniz.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_ed_e_ioniz=np.array(table.T[1], dtype=np.float32) 
 
         table=AiresInfo.GetLongitudinalTable(InputFolder,7907,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_ed_mu_ioniz.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_ed_mu_ioniz=np.array(table.T[1], dtype=np.float32) 
 
         ##I will add as hadr other cherged, other neutral (becouse aires for energy cut has fewer categories)
         #This means tables: 7891 and 7892        
         table=AiresInfo.GetLongitudinalTable(InputFolder,7891,Slant=True,Precision="Simple",TaskName=TaskName)                      
         table=AiresInfo.GetLongitudinalTable(InputFolder,7892,Slant=True,Precision="Simple",TaskName=TaskName)                      
-        RawShower.long_ed_hadr_ioniz.append(np.array(table.T[1], dtype=np.float32)) 
+        RawShower.long_ed_hadr_ioniz=np.array(table.T[1], dtype=np.float32) 
               
         RawShower.fill()
         RawShower.write()
