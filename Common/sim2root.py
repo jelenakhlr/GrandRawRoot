@@ -327,6 +327,7 @@ def rawefield2grandroot(trawefield, gt):
     # gt.tefield.t_0 = trawefield.t_0
     gt.tefield.p2p = trawefield.p2p
 
+    # ToDo: this should be a single vector of xyz
     ## X position in shower referential
     gt.tefield.du_x = trawefield.du_x
     ## Y position in shower referential
@@ -335,7 +336,7 @@ def rawefield2grandroot(trawefield, gt):
     gt.tefield.du_z = trawefield.du_z
 
     ## Efield trace in X,Y,Z direction
-    gt.tefield.trace = np.array([trawefield.trace_x, trawefield.trace_y, trawefield.trace_z])
+    gt.tefield.trace = np.moveaxis(np.array([trawefield.trace_x, trawefield.trace_y, trawefield.trace_z]), 0,1)
 
 # Convert the RawMetaTree entries
 def rawmeta2grandroot(trawmeta, gt):
