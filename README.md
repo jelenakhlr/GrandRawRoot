@@ -1,9 +1,9 @@
 # Welcome to Sim2Root
 
 ## authors
-Lech Piotrowski (grandroot) - @lwpiotr\
-Matias Tueros (Zhaires) - @mtueros\
-Jelena Köhler (Coreas) - @jelenakhlr
+Lech Piotrowski, University of Warsaw - @lwpiotr (grandroot)\
+Matias Tueros, Instituto de Fisica La Plata - @mtueros (Zhaires)\
+Jelena Köhler, Kalrsruhe Institute of Technology  - @jelenakhlr (Coreas)
 
 ## motivation
 In GRAND we want to be able to simulate air showers using both Zhaires and Coreas.
