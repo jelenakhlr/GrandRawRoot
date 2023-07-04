@@ -1,11 +1,14 @@
 # Welcome to Sim2Root
+This repository is the base model for the sim2root directory in 
+https://github.com/grand-mother/grand/tree/dev_io_root
+Newer versions of these converters will be found there.
 
 ## authors
 Lech Piotrowski, University of Warsaw - @lwpiotr (grandroot)\
 Matias Tueros, Instituto de Fisica La Plata - @mtueros (Zhaires)\
 Jelena Köhler, Kalrsruhe Institute of Technology  - @jelenakhlr (Coreas)
 
-## motivation
+## Motivation
 In GRAND we want to be able to simulate air showers using both Zhaires and Coreas.
 The _RawRoot_ file format is a step towards common output between CoREAS and ZHAireS. Its based on the _GRANDRoot_ file format.
 The idea is for _RawRoot_ to be the starting point for the generation of _GRANDRoot_ files.
