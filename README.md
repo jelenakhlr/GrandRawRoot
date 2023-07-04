@@ -1,6 +1,6 @@
 # Welcome to Sim2Root
-This repository is the base model for the sim2root directory in 
-https://github.com/grand-mother/grand/tree/dev_io_root
+This repository is the base model for the sim2root directory in \
+https://github.com/grand-mother/grand/tree/dev_io_root \
 Newer versions of these converters will be found there.
 
 ## authors
