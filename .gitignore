@@ -5,7 +5,6 @@
 __pycache__
 *.pyc
 *.pyo
-*.root
 
 # jupyterlab checkpoints
 .ipynb_checkpoints
